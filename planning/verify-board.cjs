@@ -1,0 +1,55 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const path=require('node:path');
+const {pathToFileURL}=require('node:url');
+(async()=>{
+ const browser=await chromium.launch({headless:true,channel:'msedge'});
+ try{
+  const page=await browser.newPage({viewport:{width:1600,height:1000}});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(pathToFileURL(path.join(__dirname,'ANDROID-KANBAN.html')).href);
+  assert.equal(await page.locator('.card').count(),30);
+  assert.equal(await page.locator('.column[data-status="Ready"] .card').count(),1);
+  assert.match(await page.locator('#endDate').textContent(),/28 Oct 2026/);
+  await page.getByLabel('Status for D02').selectOption('Ready');
+  assert.equal(await page.getByLabel('Status for D02').inputValue(),'Backlog');
+  await page.getByLabel('Status for D01').selectOption('Done');
+  assert.equal(await page.getByLabel('Status for D01').inputValue(),'Ready');
+  await page.locator('[data-id="D01"] summary').click();
+  for(const check of await page.locator('[data-id="D01"] input[type=checkbox]').all())await check.check();
+  await page.getByLabel('Evidence or blocker notes for D01').fill('Board verification fixture: scope accepted; matrix recorded.');
+  await page.getByLabel('Status for D01').selectOption('Done');
+  assert.equal(await page.locator('.column[data-status="Done"] .card').count(),1);
+  await page.getByLabel('Status for D02').selectOption('In progress');
+  await page.reload();
+  assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
+  assert.equal(await page.getByLabel('Status for D02').inputValue(),'In progress');
+  const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress'}).click();
+  assert.equal((await download).suggestedFilename(),'tala-native-android-progress.json');
+  const raw=await page.evaluate(()=>JSON.stringify(state));
+  await page.getByLabel('Show sprint').selectOption('4');
+  assert.equal(await page.locator('.card').count(),9);
+  await page.getByLabel('Start date').fill('2026-10-01');await page.getByLabel('Start date').press('Tab');
+  assert.match(await page.locator('#endDate').textContent(),/30 Oct 2026/);
+  await page.locator('#fileInput').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from('{}')});
+  await page.waitForFunction(()=>document.querySelector('#notice').textContent.startsWith('Import failed:'));
+  assert.equal(await page.getByLabel('Start date').inputValue(),'2026-10-01');
+  page.once('dialog',d=>d.accept());
+  await page.locator('#fileInput').setInputFiles({name:'restore.json',mimeType:'application/json',buffer:Buffer.from(raw)});
+  await page.waitForFunction(()=>document.querySelector('#notice').textContent.startsWith('Progress restored'));
+  assert.equal(await page.getByLabel('Start date').inputValue(),'2026-09-29');
+  assert.equal(await page.getByLabel('Status for D02').inputValue(),'In progress');
+  // Capture the unstarted baseline, keeping test progress out of the deliverable.
+  await page.evaluate(()=>localStorage.clear());await page.reload();
+  await page.getByLabel('Show sprint').selectOption('1');
+  await page.locator('[data-id="D01"] summary').click();
+  await page.screenshot({path:path.join(__dirname,'board-desktop.png')});
+  await page.setViewportSize({width:390,height:844});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  await page.screenshot({path:path.join(__dirname,'board-mobile.png')});
+  await page.setViewportSize({width:320,height:800});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  assert.deepEqual(errors,[]);
+  console.log('Board passed: 30 cards, dependency/done gates, progress persistence, export/import, date shifting, sprint filter, mobile widths and no script errors.');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

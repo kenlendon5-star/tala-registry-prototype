@@ -1,5 +1,7 @@
 # Tala UI prototype
 
+Native Android roadmap: [30-day kanban board](planning/ANDROID-KANBAN.html) and [daily Kotlin + Jetpack Compose plan](planning/ANDROID-30-DAY-PLAN.md). See [board usage](planning/README.md) for progress tracking.
+
 Start: `npm start`, then visit http://localhost:5173.
 
 All 18 prototype sections are interactive, including per-member Demographics, Education and Employment.

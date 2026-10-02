@@ -16,3 +16,9 @@ Thumbs.db
 # Editor
 .vscode/
 .idea/
+
+# Local agent settings
+.claude/
+
+# Android build caches
+android-native/.kotlin/
