@@ -25,13 +25,13 @@ typealias AnswerState = Map<String, AnswerValue>
  * so two members never share or overwrite answers.
  */
 sealed interface AnswerScope {
-    val householdId: String
+    val householdId: HouseholdId
 
-    data class Household(override val householdId: String) : AnswerScope
+    data class Household(override val householdId: HouseholdId) : AnswerScope
 
     data class Member(
-        override val householdId: String,
-        val memberId: String,
+        override val householdId: HouseholdId,
+        val memberId: MemberId,
     ) : AnswerScope
 }
 

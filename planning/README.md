@@ -12,6 +12,8 @@ Open **ANDROID-KANBAN.html** directly in a browser. It is self-contained and wor
 
 Files:
 
+- `implementation-progress.json`: repository defaults and evidence for implemented cards. Existing browser progress is preserved; reconcile the evidence with your saved statuses. Day 3 evidence is in `evidence/D03.md`.
+
 - `ANDROID-KANBAN.html`: interactive board.
 - `ANDROID-30-DAY-PLAN.md`: daily plan, scope, sprint gates, cadence, risks and release checklist.
 - `build-board.cjs`: editable plan data and Markdown generator.

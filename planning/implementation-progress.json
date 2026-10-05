@@ -1,0 +1,7 @@
+{
+  "D03": {
+    "status": "Verify",
+    "checks": [true, true, true],
+    "notes": "2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass (keyboard, system bars, Android Back, selected-record/tab restoration and offline permission check). Screenshots and recording: planning/evidence/D03.md. Verify remains open: Android lint could not download intellij-core/kotlin-compiler 32.4.1; rerun when downloads are available. Reconcile D01/D02 acceptance evidence with your saved board before Done; their statuses are unchanged."
+  }
+}

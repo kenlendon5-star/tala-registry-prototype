@@ -7,7 +7,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// Palette lifted from the browser prototype (style.css) so the native shell reads as the same product.
+// Native Tala palette, shared with the Android delivery board.
 // Dynamic colour is deliberately not used: the barangay sees one brand, not the device wallpaper.
 private val Teal = Color(0xFF006B65)
 private val TealSoft = Color(0xFFDCEEE9)
@@ -29,6 +29,7 @@ private val LightColors = lightColorScheme(
     background = Paper,
     onBackground = Ink,
     surface = Color.White,
+    surfaceContainer = Paper,
     onSurface = Ink,
     surfaceVariant = TealSoft,
     onSurfaceVariant = Muted,
@@ -44,9 +45,12 @@ private val DarkColors = darkColorScheme(
     onPrimaryContainer = Color(0xFFB9EFE7),
     secondary = Color(0xFFB3C4CE),
     onSecondary = Color(0xFF1D303B),
+    secondaryContainer = Color(0xFF004D48),
+    onSecondaryContainer = Color(0xFFB9EFE7),
     background = Color(0xFF101B21),
     onBackground = Color(0xFFDCE4E9),
     surface = Color(0xFF16242B),
+    surfaceContainer = Color(0xFF16242B),
     onSurface = Color(0xFFDCE4E9),
     surfaceVariant = Color(0xFF25353D),
     onSurfaceVariant = Color(0xFFB3C4CE),

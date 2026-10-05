@@ -18,9 +18,10 @@
 <div class="progressline"><span id="progressText"></span><div class="track" role="progressbar" aria-label="Daily cards complete" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0"><div class="fill" id="fill"></div></div><span>WIP limit: 1 building / 1 verifying</span></div>
 <p class="notice" id="notice" role="status" aria-live="polite">Expand a card to work its checklist. Progress stays in this browser; export a backup for handover.</p>
 <section class="board" id="board" aria-label="Kanban board"></section>
+<p class="small"><strong>Repository update · 2 October 2026:</strong> D03 native shell is in Verify. <a href="evidence/D03.md">Read the implementation and device evidence.</a> Existing browser progress is preserved; reconcile D01/D02 acceptance before closing D03.</p>
 <details class="guidance"><summary>Release scope, capacity and architecture</summary><div class="guidance-body"><p id="scope"></p><p><strong>Native implementation:</strong> Compose screens → ViewModels / StateFlow → repositories → Room DAOs. Keep form rules in testable Kotlin. Use app-private attachment files, Android photo/document pickers and a native map/location integration. Start with a single app module and organize by feature. The browser prototype defines expected behavior; its DOM and JavaScript are rewritten.</p><p><strong>Schedule risk:</strong> This assumes an experienced Kotlin developer. If the reusable form renderer and durable household/member slice are not demonstrated by Day 7, re-estimate immediately. Production accounts, cloud sync and field deployment are outside this month's acceptance scope.</p></div></details>
 <details class="guidance"><summary>Daily cadence and kanban rules</summary><div class="guidance-body"><p id="cadence"></p><p><strong>Release gate:</strong> The exact signed APK must pass fresh install, upgrade, offline interview, all 18 sections, permission denial, backup/restore and zero crash/data-loss/required-flow blockers. Deliver source, build instructions, capstone report, test/UAT evidence, user guide and ownership records. If a gate fails, hold release and revise the date.</p><p><strong>Tracking:</strong> Checklists record work, and notes record acceptance evidence or blocker owner/next action. Dates do not move automatically when a card is blocked. A Done card requires all tasks, evidence and completed dependencies. Reopening an upstream card flags its dependents for review. Exported progress is a local JSON backup; it does not update the Markdown baseline.</p></div></details>
-<div class="sources" id="sources"></div><footer>Planning baseline: 29 September 2026 · Day 1 is Ready; all implementation remains unstarted. This board is the plan, not a built Android app.</footer>
+<div class="sources" id="sources"></div><footer>Planning baseline: 29 September 2026 · Repository evidence updated 2 October 2026. Saved browser progress takes precedence over repository defaults.</footer>
 </main>
 <script>
 const plan=__PLAN_DATA__;
@@ -38,7 +39,7 @@ function validate(raw){
  return clean;
 }
 try{const saved=localStorage.getItem(key);if(saved)state=validate(JSON.parse(saved));}catch(e){storageWorks=false;}
-function item(c){return state.cards[c.id]||(state.cards[c.id]={status:c.status,checks:c.tasks.map(()=>false),notes:''});}
+function item(c){return state.cards[c.id]||(state.cards[c.id]={status:c.status,checks:c.checks?[...c.checks]:c.tasks.map(()=>false),notes:c.notes||''});}
 function message(s){$('#notice').textContent=s+(storageWorks?'':' Browser saving is unavailable; export progress before closing.');}
 function persist(){try{localStorage.setItem(key,JSON.stringify(state));storageWorks=true;}catch(e){storageWorks=false;message('Browser storage is unavailable. Export progress before closing this board.');}}
 function date(day){const d=new Date(state.start+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+day-1);return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});}

@@ -5,7 +5,7 @@ package ph.tala.registry.domain.model
  * already uses (for example `HH-00452`), so exported records stay recognisable.
  */
 data class Household(
-    val id: String,
+    val id: HouseholdId,
     val headName: String,
     val address: String,
     val status: HouseholdStatus,
@@ -15,8 +15,8 @@ data class Household(
 
 /** One household member. Answers live here, not on the household, for member-scoped sections. */
 data class Member(
-    val id: String,
-    val householdId: String,
+    val id: MemberId,
+    val householdId: HouseholdId,
     val displayName: String,
     val answers: AnswerState = emptyMap(),
 )

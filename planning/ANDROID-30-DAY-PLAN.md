@@ -22,7 +22,7 @@ The initial board has D01 Ready and D02–D30 Backlog. No app task is marked Don
 
 Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptance criteria and evidence notes. Status changes and checklists save in that browser when storage is available; Export progress creates a portable JSON backup and Import progress restores it. This Markdown file is the static planning baseline.
 
-## Initial kanban
+## Original planning baseline
 
 | Backlog | Ready | In progress | Verify | Blocked | Done |
 |---|---|---|---|---|---|
@@ -36,6 +36,10 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 | Sprint 2 · Days 8–14 | Complete interviews | All 18 sections, conditional fields, callbacks, review and signatures pass on-device. |
 | Sprint 3 · Days 15–21 | Complete phone workflows | GPS, maps, export/restore, migration, archive/restore and lifecycle checks pass. |
 | Sprint 4 · Days 22–30 | Validate and hand over | Regression, UAT, blocker fixes, signed release, capstone documentation and final acceptance are complete. |
+
+## Repository implementation update
+
+D03 is in Verify; see [Day 3 evidence](evidence/D03.md). Existing browser progress remains independent. D01/D02 acceptance is not inferred from a successful shell build.
 
 ## Daily work packages
 
@@ -75,17 +79,19 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 
 **Goal:** Establish navigation and state ownership.
 
-**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Verify
 
 **Depends on:** D02
 
-- [ ] Create the Tala Material 3 theme, Compose home/household-list shells and navigation routes with typed record IDs.
-- [ ] Set up ViewModels, immutable UI state, coroutines/StateFlow and repository interfaces; use a small single-module package structure.
-- [ ] Install a debug APK and verify offline startup, system insets, keyboard resize, Android Back and state restoration with placeholder data.
+- [x] Create the Tala Material 3 theme, Compose home/household-list shells and navigation routes with typed record IDs.
+- [x] Set up ViewModels, immutable UI state, coroutines/StateFlow and repository interfaces; use a small single-module package structure.
+- [x] Install a debug APK and verify offline startup, system insets, keyboard resize, Android Back and state restoration with placeholder data.
 
 **Done when:** A native Compose APK cold-starts offline and navigates between home, list and interview shells without a WebView or laptop server.
 
 **Evidence/deliverable:** Native debug APK + navigation recording
+
+**Implementation evidence:** 2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass (keyboard, system bars, Android Back, selected-record/tab restoration and offline permission check). Screenshots and recording: planning/evidence/D03.md. Verify remains open: Android lint could not download intellij-core/kotlin-compiler 32.4.1; rerun when downloads are available. Reconcile D01/D02 acceptance evidence with your saved board before Done; their statuses are unchanged.
 
 ### D04 · 2026-10-02 · Build reusable Compose form controls
 

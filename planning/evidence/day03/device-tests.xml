@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="3" failures="0" errors="0" skipped="0" time="0.000" timestamp="2026-10-02T07:59:03" hostname="localhost">
+  <testsuite name="ph.tala.registry.ui.ShellDeviceTest" tests="3" failures="0" errors="0" skipped="0" time="12.716" timestamp="2026-10-02T07:59:03" hostname="localhost">
+    <properties>
+      <property name="device" value="e7d5dc18" />
+    </properties>
+    <testcase name="launchHasNoNetworkPermissionAndContentRespectsSystemBars" classname="ph.tala.registry.ui.ShellDeviceTest" time="2.021" />
+    <testcase name="navigationKeyboardBackAndRecreation" classname="ph.tala.registry.ui.ShellDeviceTest" time="8.524" />
+    <testcase name="restoredFilterAndEmptySearchHaveRecovery" classname="ph.tala.registry.ui.ShellDeviceTest" time="2.171" />
+  </testsuite>
+</testsuites>
