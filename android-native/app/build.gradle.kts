@@ -1,4 +1,6 @@
 plugins {
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
     // AGP 9 ships built-in Kotlin support. Applying org.jetbrains.kotlin.android on top
     // registers a second 'kotlin' extension and fails configuration.
     alias(libs.plugins.android.application)
@@ -13,8 +15,8 @@ android {
         applicationId = "ph.tala.registry"
         minSdk = 26
         targetSdk = 37
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,7 +46,16 @@ android {
     }
 }
 
+room { schemaDirectory("$projectDir/schemas") }
+
 dependencies {
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    androidTestImplementation(libs.androidx.room.testing)
+    // Aligns serialization with Room 2.8.5 so schema helpers can decode exported schemas.
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)

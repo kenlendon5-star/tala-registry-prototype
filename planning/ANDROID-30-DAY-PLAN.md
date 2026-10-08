@@ -41,6 +41,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 
 - D03: Verify. [Implementation evidence](evidence/D03.md).
 - D04: Done. [Implementation evidence](evidence/D04.md).
+- D05: Done. [Implementation evidence](evidence/D05.md).
 
 Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
@@ -118,17 +119,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Prove native persistence on the target device.
 
-**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D03
 
-- [ ] Define Room entities/relations and DAO/repository contracts for households, members, visits, scoped answers, coordinates and attachment references with stable UUIDs.
-- [ ] Implement Room transactions, schema export and a migration test; demonstrate reopen, rollback and failed-write reporting on the phone.
-- [ ] Document the ERD, app-private attachment strategy and backup policy. Keep small settings in DataStore; do not use destructive database migration.
+- [x] Define Room entities/relations and DAO/repository contracts for households, members, visits, scoped answers, coordinates and attachment references with stable UUIDs.
+- [x] Implement Room transactions, schema export and a migration test; demonstrate reopen, rollback and failed-write reporting on the phone.
+- [x] Document the ERD, app-private attachment strategy and backup policy. Keep small settings in DataStore; do not use destructive database migration.
 
 **Done when:** A small saved record survives force-stop and reboot; a failed transaction rolls back and reports failure.
 
 **Evidence/deliverable:** Schema diagram + storage spike evidence
+
+**Implementation evidence:** 2026-10-08: Day 5 Room storage complete on OPPO CPH2529 / Android 15. Eight entities with UUID identities, foreign keys and scoped answers; RegistryDao and RegistryDatabase v1 with schema export to app/schemas and no destructive migration; RoomRecordStore saves a whole record in one transaction and reports Saved or Failed without leaking paths or SQL. Verified on the phone: 6 storage tests (reopen, member scoping, cleared-answer replacement, rollback of a mid-transaction constraint failure, failed-write reporting, answer codec) and 1 schema/migration test pass; a seeded record passes seed, force-stop and reboot checks with the same 131072-byte database file listed afterwards. Regression: 18 JVM tests, 8 device UI tests, lint 0 errors / 10 version-notice warnings; serialization core and json pinned to 1.8.1 to fix a MigrationTestHelper AbstractMethodError. Evidence, ERD, attachment strategy and backup policy: planning/evidence/D05.md. No user-facing save yet: the UI still reads demo fixtures and practice answers stay session-only until Day 6; no cloud, auth, encryption or DataStore settings.
 
 ### D06 · 2026-10-04 · Connect native editing and saves
 

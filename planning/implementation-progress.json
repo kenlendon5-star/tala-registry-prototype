@@ -8,5 +8,10 @@
     "status": "Done",
     "checks": [true, true, true],
     "notes": "2026-10-05: Day 4 implementation and representative-section acceptance complete. Shared Compose controls, inline validation and first-error focus, strict dates/numbers/phone/options, conditional clearing, and separate household/member session drafts are connected through Try a practice interview. Debug APK 0.2.0 installed on OPPO CPH2529 / Android 15. All 18 JVM and 8 device tests pass; lint passes with 0 errors and 8 dependency-version notices. Evidence and reviewed screenshots: planning/evidence/D04.md. Entries are session-only; Room persistence follows in Day 5. This requested work package is complete; earlier acceptance records and any upstream dependency flags remain separate and unchanged."
+  },
+  "D05": {
+    "status": "Done",
+    "checks": [true, true, true],
+    "notes": "2026-10-08: Day 5 Room storage complete on OPPO CPH2529 / Android 15. Eight entities with UUID identities, foreign keys and scoped answers; RegistryDao and RegistryDatabase v1 with schema export to app/schemas and no destructive migration; RoomRecordStore saves a whole record in one transaction and reports Saved or Failed without leaking paths or SQL. Verified on the phone: 6 storage tests (reopen, member scoping, cleared-answer replacement, rollback of a mid-transaction constraint failure, failed-write reporting, answer codec) and 1 schema/migration test pass; a seeded record passes seed, force-stop and reboot checks with the same 131072-byte database file listed afterwards. Regression: 18 JVM tests, 8 device UI tests, lint 0 errors / 10 version-notice warnings; serialization core and json pinned to 1.8.1 to fix a MigrationTestHelper AbstractMethodError. Evidence, ERD, attachment strategy and backup policy: planning/evidence/D05.md. No user-facing save yet: the UI still reads demo fixtures and practice answers stay session-only until Day 6; no cloud, auth, encryption or DataStore settings."
   }
 }

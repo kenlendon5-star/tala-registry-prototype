@@ -1,0 +1,3 @@
+-- Intentionally empty. Day 5 delivered local Room storage only; no cloud schema has been
+-- applied. Read planning/D05-SUPABASE-ANALYSIS.md and agree the offline/cloud split before
+-- writing the first real migration.

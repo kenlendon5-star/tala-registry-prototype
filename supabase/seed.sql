@@ -1,0 +1,1 @@
+-- Add non-sensitive local development fixtures here after the Day 5 schema exists.

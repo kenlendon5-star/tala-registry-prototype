@@ -1,0 +1,23 @@
+INSTRUMENTATION_STATUS: class=ph.tala.registry.data.local.DurableSaveTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.data.local.DurableSaveTest:
+INSTRUMENTATION_STATUS: test=test2_savedRecordSurvivesProcessRestartAndReboot
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.data.local.DurableSaveTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=test2_savedRecordSurvivesProcessRestartAndReboot
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 0.114
+
+OK (1 test)
+
+
+INSTRUMENTATION_CODE: -1

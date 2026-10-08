@@ -1,0 +1,3 @@
+total 128
+-rw-rw---- 1 u0_a147 u0_a147 131072 2026-10-08 10:44 tala-registry-evidence.db
+-rw------- 1 u0_a147 u0_a147      0 2026-10-08 10:43 tala-registry-schema-test.db.lck
