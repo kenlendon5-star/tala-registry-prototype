@@ -2,6 +2,11 @@
   "D03": {
     "status": "Verify",
     "checks": [true, true, true],
-    "notes": "2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass (keyboard, system bars, Android Back, selected-record/tab restoration and offline permission check). Screenshots and recording: planning/evidence/D03.md. Verify remains open: Android lint could not download intellij-core/kotlin-compiler 32.4.1; rerun when downloads are available. Reconcile D01/D02 acceptance evidence with your saved board before Done; their statuses are unchanged."
+    "notes": "2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass. Screenshots and test results: planning/evidence/D03.md; device recording was unavailable. 2026-10-05: shell regression passed again during D04 and the lint-download blocker is resolved (0 errors, dependency-version notices only). Verify remains pending reconciliation of D01/D02 acceptance records with saved browser progress; their statuses are unchanged."
+  },
+  "D04": {
+    "status": "Done",
+    "checks": [true, true, true],
+    "notes": "2026-10-05: Day 4 implementation and representative-section acceptance complete. Shared Compose controls, inline validation and first-error focus, strict dates/numbers/phone/options, conditional clearing, and separate household/member session drafts are connected through Try a practice interview. Debug APK 0.2.0 installed on OPPO CPH2529 / Android 15. All 18 JVM and 8 device tests pass; lint passes with 0 errors and 8 dependency-version notices. Evidence and reviewed screenshots: planning/evidence/D04.md. Entries are session-only; Room persistence follows in Day 5. This requested work package is complete; earlier acceptance records and any upstream dependency flags remain separate and unchanged."
   }
 }

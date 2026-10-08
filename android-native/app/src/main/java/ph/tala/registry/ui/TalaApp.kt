@@ -32,6 +32,8 @@ import androidx.navigation.navArgument
 import ph.tala.registry.data.HouseholdRepository
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
+import ph.tala.registry.ui.form.FormSessionViewModel
+import ph.tala.registry.ui.form.PracticeFormScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,10 +42,12 @@ fun TalaApp(repository: HouseholdRepository) {
         initializer { RegistryViewModel(repository, createSavedStateHandle()) }
     })
     val state by registry.uiState.collectAsStateWithLifecycle()
+    val forms: FormSessionViewModel = viewModel()
+    val formState by forms.state.collectAsStateWithLifecycle()
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val route = entry?.destination?.route ?: Destination.Home.route
-    val isInterview = route == Destination.Interview.PATTERN
+    val isInterview = route == Destination.Interview.PATTERN || route == Destination.Practice.PATTERN
     val openHousehold: (HouseholdId) -> Unit = { nav.navigate(Destination.Interview(it).route) { launchSingleTop = true } }
 
     Scaffold(
@@ -98,7 +102,13 @@ fun TalaApp(repository: HouseholdRepository) {
                         initializer { InterviewViewModel(id, repository, createSavedStateHandle()) }
                     })
                     val interviewState by interview.uiState.collectAsStateWithLifecycle()
-                    InterviewScreen(interviewState, interview::selectTab, onBack = { nav.popBackStack() })
+                    InterviewScreen(interviewState, interview::selectTab, onBack = { nav.popBackStack() }, onPractice = { nav.navigate(Destination.Practice(id).route) { launchSingleTop = true } })
+                }
+                composable(Destination.Practice.PATTERN, arguments = listOf(navArgument(Destination.Interview.ARGUMENT) { type = HouseholdIdNavType })) { backStack ->
+                    val id = requireNotNull(HouseholdIdNavType.get(requireNotNull(backStack.arguments), Destination.Interview.ARGUMENT))
+                    val household = state.households.find { it.id == id }
+                    if (household != null) PracticeFormScreen(household, formState, forms::answer, forms::check)
+                    else Text(if (state.loading) "Loading household…" else "Household unavailable", Modifier.padding(24.dp))
                 }
             }
         }
@@ -193,7 +203,7 @@ private fun HouseholdsScreen(
 }
 
 @Composable
-private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Unit, onBack: () -> Unit) {
+private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Unit, onBack: () -> Unit, onPractice: () -> Unit) {
     val household = state.household
     if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
     if (household == null) {
@@ -235,6 +245,7 @@ private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Un
                 }
                 item { Button(onClick = { onTab(InterviewTab.Members) }, modifier = Modifier.fillMaxWidth()) { Text("View members") } }
                 item { OutlinedButton(onClick = { onTab(InterviewTab.Sections) }, modifier = Modifier.fillMaxWidth()) { Text("View interview sections") } }
+                item { OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().testTag("open-practice")) { Text("Try a practice interview") } }
             }
             InterviewTab.Members -> {
                 item { Text("Household members", style = MaterialTheme.typography.titleLarge) }
@@ -251,7 +262,8 @@ private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Un
             InterviewTab.Sections -> {
                 item {
                     Text("Interview sections", style = MaterialTheme.typography.titleLarge)
-                    Text("Preview the interview structure. Entry forms are coming next.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Preview the interview structure. Try the practice interview to check the shared controls.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().testTag("open-practice")) { Text("Try a practice interview") }
                 }
                 items(SectionTitles.withIndex().toList(), key = { it.index }) { (index, title) ->
                     Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -298,9 +310,9 @@ private fun DemoNotice() {
 }
 
 @Composable
-private fun RegistryIcon(house: Boolean, modifier: Modifier = Modifier.size(24.dp)) {
+private fun RegistryIcon(house: Boolean, modifier: Modifier = Modifier) {
     val color = LocalContentColor.current
-    Canvas(modifier) {
+    Canvas(modifier.size(24.dp)) {
         fun line(x1: Float, y1: Float, x2: Float, y2: Float) = drawLine(color, Offset(size.width * x1, size.height * y1), Offset(size.width * x2, size.height * y2), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
         if (house) {
             line(.1f, .45f, .5f, .12f); line(.5f, .12f, .9f, .45f)

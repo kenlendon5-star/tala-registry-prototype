@@ -2,7 +2,6 @@ package ph.tala.registry.ui
 
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.ParcelFileDescriptor
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.core.view.ViewCompat
@@ -10,7 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.*
-import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import ph.tala.registry.MainActivity
@@ -19,13 +17,10 @@ import java.io.File
 /** Runs against the installed app and a real Android window/keyboard. */
 class ShellDeviceTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
-    private var recordingPid: String? = null
-    private var recordingOutput: ParcelFileDescriptor? = null
 
     @Test fun navigationKeyboardBackAndRecreation() {
         compose.onNodeWithTag("home-screen").assertIsDisplayed()
         capture("01-home")
-        startRecording()
         compose.onNodeWithText("Browse households").performScrollTo().performClick()
         compose.onNodeWithTag("households-screen").assertIsDisplayed()
         capture("02-households")
@@ -110,25 +105,6 @@ class ShellDeviceTest {
         instrumentation.uiAutomation.takeScreenshot().useBitmap { bitmap ->
             File(directory, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         }
-    }
-
-    private fun shell(command: String): String = ParcelFileDescriptor.AutoCloseInputStream(
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command),
-    ).bufferedReader().use { it.readText().trim() }
-
-    private fun startRecording() {
-        // shell cannot write app-owned external files on all OEMs. Keep its video in shell-owned storage.
-        val output = "/data/local/tmp/tala-day03-navigation.mp4"
-        recordingOutput = InstrumentationRegistry.getInstrumentation().uiAutomation
-            .executeShellCommand("screenrecord --bit-rate 1500000 --time-limit 120 $output")
-        recordingPid = shell("pgrep -f screenrecord.*tala-day03-navigation.mp4").lineSequence()
-            .firstOrNull { it.matches(Regex("[0-9]+")) }
-        assertNotNull("Navigation recorder did not start", recordingPid)
-    }
-
-    @After fun stopRecording() {
-        recordingPid?.let { shell("kill -2 $it") }
-        recordingOutput?.close()
     }
 
     private fun Bitmap.useBitmap(action: (Bitmap) -> Unit) { try { action(this) } finally { recycle() } }

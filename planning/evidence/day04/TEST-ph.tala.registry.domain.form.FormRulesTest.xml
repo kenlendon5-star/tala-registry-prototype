@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.FormRulesTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-05T05:51:59.665Z" hostname="KEN" time="0.358">
+  <properties/>
+  <testcase name="predicatesAndAllRepresentativeInputTypesAreCovered" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.174"/>
+  <testcase name="phoneNormalizationDoesNotTurnMalformedInputIntoValidData" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.081"/>
+  <testcase name="multiSelectValidatesMembershipDuplicatesAndExclusivity" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.004"/>
+  <testcase name="appointmentsRequireAnActualLocalDateAndMinute" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.03"/>
+  <testcase name="numericBoundsAreInclusiveAndRejectNonIntegers" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.011"/>
+  <testcase name="aLateHiddenFieldCallbackCannotResurrectAnAnswer" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.006"/>
+  <testcase name="choiceAndSelectRejectInventedOptions" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.002"/>
+  <testcase name="completedRepresentativeSectionPassesWhileOptionalAnswersStayBlank" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.009"/>
+  <testcase name="hiddenAnswersClearToFixedPointEvenWhenDependenciesAreOutOfOrder" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.004"/>
+  <testcase name="calendarValidationIsStrictAndAllowsToday" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.007"/>
+  <testcase name="requiredOptionalAndHiddenFields" classname="ph.tala.registry.domain.form.FormRulesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

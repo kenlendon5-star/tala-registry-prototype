@@ -60,7 +60,16 @@ data class FieldSpec(
     val max: Int? = null,
     val mustBePast: Boolean = false,
     val visibleWhen: Condition? = null,
+    /** A choice such as None cannot coexist with another selection. */
+    val exclusiveOptions: Set<String> = emptySet(),
 ) {
+    init {
+        require(key.isNotBlank())
+        require(min == null || max == null || min <= max)
+        require(options.distinct().size == options.size)
+        require(exclusiveOptions.all { it in options })
+        require(exclusiveOptions.isEmpty() || type == FieldType.MultiSelect)
+    }
     val isChoiceLike: Boolean
         get() = type == FieldType.Choice || type == FieldType.Select || type == FieldType.MultiSelect
 
@@ -77,6 +86,7 @@ data class SectionSpec(
     val fields: List<FieldSpec>,
     val scopedToMember: Boolean = false,
 ) {
+    init { require(fields.map { it.key }.distinct().size == fields.size) { "Section field keys must be unique" } }
     /** Fields the respondent can currently see, given what has been answered so far. */
     fun visibleFields(answers: AnswerState): List<FieldSpec> = fields.filter { it.isVisible(answers) }
 }

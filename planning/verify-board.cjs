@@ -9,7 +9,12 @@ const {pathToFileURL}=require('node:url');
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(pathToFileURL(path.join(__dirname,'ANDROID-KANBAN.html')).href);
   assert.equal(await page.locator('.card').count(),30);
+  const initialDoneCount=await page.locator('.column[data-status="Done"] .card').count();
   assert.equal(await page.locator('.column[data-status="Ready"] .card').count(),1);
+  // Free the single WIP slot in this isolated test profile before exercising D02.
+  for(const status of await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').all()) {
+   await status.selectOption('Backlog');
+  }
   assert.match(await page.locator('#endDate').textContent(),/28 Oct 2026/);
   await page.getByLabel('Status for D02').selectOption('Ready');
   assert.equal(await page.getByLabel('Status for D02').inputValue(),'Backlog');
@@ -19,7 +24,7 @@ const {pathToFileURL}=require('node:url');
   for(const check of await page.locator('[data-id="D01"] input[type=checkbox]').all())await check.check();
   await page.getByLabel('Evidence or blocker notes for D01').fill('Board verification fixture: scope accepted; matrix recorded.');
   await page.getByLabel('Status for D01').selectOption('Done');
-  assert.equal(await page.locator('.column[data-status="Done"] .card').count(),1);
+  assert.equal(await page.locator('.column[data-status="Done"] .card').count(),initialDoneCount+1);
   await page.getByLabel('Status for D02').selectOption('In progress');
   await page.reload();
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
@@ -39,7 +44,7 @@ const {pathToFileURL}=require('node:url');
   await page.waitForFunction(()=>document.querySelector('#notice').textContent.startsWith('Progress restored'));
   assert.equal(await page.getByLabel('Start date').inputValue(),'2026-09-29');
   assert.equal(await page.getByLabel('Status for D02').inputValue(),'In progress');
-  // Capture the unstarted baseline, keeping test progress out of the deliverable.
+  // Capture repository defaults, keeping this test's temporary progress out of the deliverable.
   await page.evaluate(()=>localStorage.clear());await page.reload();
   await page.getByLabel('Show sprint').selectOption('1');
   await page.locator('[data-id="D01"] summary').click();

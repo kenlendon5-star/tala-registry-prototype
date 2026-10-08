@@ -39,7 +39,10 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 
 ## Repository implementation update
 
-D03 is in Verify; see [Day 3 evidence](evidence/D03.md). Existing browser progress remains independent. D01/D02 acceptance is not inferred from a successful shell build.
+- D03: Verify. [Implementation evidence](evidence/D03.md).
+- D04: Done. [Implementation evidence](evidence/D04.md).
+
+Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
 ## Daily work packages
 
@@ -91,23 +94,25 @@ D03 is in Verify; see [Day 3 evidence](evidence/D03.md). Existing browser progre
 
 **Evidence/deliverable:** Native debug APK + navigation recording
 
-**Implementation evidence:** 2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass (keyboard, system bars, Android Back, selected-record/tab restoration and offline permission check). Screenshots and recording: planning/evidence/D03.md. Verify remains open: Android lint could not download intellij-core/kotlin-compiler 32.4.1; rerun when downloads are available. Reconcile D01/D02 acceptance evidence with your saved board before Done; their statuses are unchanged.
+**Implementation evidence:** 2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass. Screenshots and test results: planning/evidence/D03.md; device recording was unavailable. 2026-10-05: shell regression passed again during D04 and the lint-download blocker is resolved (0 errors, dependency-version notices only). Verify remains pending reconciliation of D01/D02 acceptance records with saved browser progress; their statuses are unchanged.
 
 ### D04 · 2026-10-02 · Build reusable Compose form controls
 
 **Goal:** Make the 18-section rewrite feasible.
 
-**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D03
 
-- [ ] Translate the field specification from forms.js into Kotlin models: text, phone, number, date, date/time, choice, select, multi-select and conditional predicates.
-- [ ] Build labeled Compose controls, a reusable section renderer, inline errors and household/member-scoped answer state. Keep specialized photo/signature UI for later cards.
-- [ ] Create focused unit/Compose tests for required/optional fields, limits, conditional clearing, error focus and switching member IDs.
+- [x] Translate the field specification from forms.js into Kotlin models: text, phone, number, date, date/time, choice, select, multi-select and conditional predicates.
+- [x] Build labeled Compose controls, a reusable section renderer, inline errors and household/member-scoped answer state. Keep specialized photo/signature UI for later cards.
+- [x] Create focused unit/Compose tests for required/optional fields, limits, conditional clearing, error focus and switching member IDs.
 
 **Done when:** One representative section renders and validates each shared input type, including a conditional field and two distinct member states.
 
 **Evidence/deliverable:** Form renderer + rule tests
+
+**Implementation evidence:** 2026-10-05: Day 4 implementation and representative-section acceptance complete. Shared Compose controls, inline validation and first-error focus, strict dates/numbers/phone/options, conditional clearing, and separate household/member session drafts are connected through Try a practice interview. Debug APK 0.2.0 installed on OPPO CPH2529 / Android 15. All 18 JVM and 8 device tests pass; lint passes with 0 errors and 8 dependency-version notices. Evidence and reviewed screenshots: planning/evidence/D04.md. Entries are session-only; Room persistence follows in Day 5. This requested work package is complete; earlier acceptance records and any upstream dependency flags remain separate and unchanged.
 
 ### D05 · 2026-10-03 · Build the Room database
 

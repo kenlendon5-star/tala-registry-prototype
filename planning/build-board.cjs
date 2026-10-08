@@ -172,7 +172,7 @@ for(const card of cards){
     +`\n**Implementation evidence:** ${card.notes}\n`;
 }
 md[0]=md[0].replace('## Initial kanban','## Original planning baseline')
-  .replace('## Daily work packages','## Repository implementation update\n\nD03 is in Verify; see [Day 3 evidence](evidence/D03.md). Existing browser progress remains independent. D01/D02 acceptance is not inferred from a successful shell build.\n\n## Daily work packages');
+  .replace('## Daily work packages',`## Repository implementation update\n\n${cards.filter(c=>c.notes).map(c=>`- ${c.id}: ${c.status}. [Implementation evidence](evidence/${c.id}.md).`).join('\n')}\n\nExisting browser progress remains independent. Earlier acceptance is not inferred from a later successful build.\n\n## Daily work packages`);
 fs.writeFileSync(path.join(__dirname,'ANDROID-30-DAY-PLAN.md'),md.join('\n'));
 const template=fs.readFileSync(path.join(__dirname,'board-template.html'),'utf8');
 fs.writeFileSync(path.join(__dirname,'ANDROID-KANBAN.html'),template.replace('__PLAN_DATA__',JSON.stringify({cards,scope,cadence,milestones,sources}).replace(/</g,'\\u003c')));
