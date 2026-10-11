@@ -9,6 +9,8 @@ data class HouseholdRow(
     val headName: String,
     val address: String,
     val status: String = "InProgress",
+    /** Epoch millis while archived; null keeps the record active. Added by migration 1 → 2. */
+    val archivedAt: Long? = null,
 )
 
 @Entity(tableName = "members", foreignKeys = [ForeignKey(entity = HouseholdRow::class, parentColumns = ["id"], childColumns = ["householdId"], onDelete = ForeignKey.CASCADE)], indices = [Index("householdId"), Index(value = ["id", "householdId"], unique = true)])
@@ -48,4 +50,11 @@ data class StoredRecord(
     val memberAnswers: List<MemberAnswerRow> = emptyList(),
     val coordinates: CoordinateRow? = null,
     val attachments: List<AttachmentRow> = emptyList(),
+)
+
+/** Read model for lists and screens: one household row with its members, no answers. */
+data class HouseholdWithMembers(
+    @Embedded val household: HouseholdRow,
+    @Relation(parentColumn = "id", entityColumn = "householdId")
+    val members: List<MemberRow>,
 )

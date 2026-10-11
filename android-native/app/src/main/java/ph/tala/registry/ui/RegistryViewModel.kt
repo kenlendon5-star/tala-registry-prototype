@@ -44,7 +44,7 @@ class RegistryViewModel(
             households = records,
             visibleHouseholds = records.filter {
                 (filter.status == null || it.status == filter.status) &&
-                    listOf(it.headName, it.id.value, it.address).any { text -> text.contains(needle, ignoreCase = true) }
+                    listOf(it.headName, it.displayCode, it.id.value, it.address).any { text -> text.contains(needle, ignoreCase = true) }
             },
             query = query,
             filter = filter,

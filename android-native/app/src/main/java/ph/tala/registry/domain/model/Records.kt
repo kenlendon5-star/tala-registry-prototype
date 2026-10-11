@@ -1,17 +1,23 @@
 package ph.tala.registry.domain.model
 
 /**
- * A registered household. [id] is the stable, human-readable record ID the prototype
- * already uses (for example `HH-00452`), so exported records stay recognisable.
+ * A registered household. [id] is the stable UUID every screen, relation and write
+ * uses, while [displayCode] is the human-readable `HH-00452`-style label people read
+ * and search. Exports keep both, and no relation ever keys on the label.
  */
 data class Household(
     val id: HouseholdId,
+    val displayCode: String,
     val headName: String,
     val address: String,
     val status: HouseholdStatus,
     val members: List<Member> = emptyList(),
     val answers: AnswerState = emptyMap(),
-)
+    /** Epoch millis while archived, null on active records; archiving stays reversible. */
+    val archivedAt: Long? = null,
+) {
+    val archived: Boolean get() = archivedAt != null
+}
 
 /** One household member. Answers live here, not on the household, for member-scoped sections. */
 data class Member(

@@ -44,6 +44,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D03: Done. [Implementation evidence](../03-evidence/D03.md).
 - D04: Done. [Implementation evidence](../03-evidence/D04.md).
 - D05: Done. [Implementation evidence](../03-evidence/D05.md).
+- D06: Done. [Implementation evidence](../03-evidence/D06.md).
 
 Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
@@ -143,17 +144,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Finish the first durable household/member slice.
 
-**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D04, D05
 
-- [ ] Implement Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions.
-- [ ] Connect ViewModel save/resume flows and lifecycle-aware state collection; show saving, saved and failed states and protect record identity.
-- [ ] Add focused repository tests and verify two households do not overwrite one another. Keep fictional seed records explicit and optional.
+- [x] Implement Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions.
+- [x] Connect ViewModel save/resume flows and lifecycle-aware state collection; show saving, saved and failed states and protect record identity.
+- [x] Add focused repository tests and verify two households do not overwrite one another. Keep fictional seed records explicit and optional.
 
 **Done when:** Household edits and member edits reload correctly after process death; the UI never labels a failed write as saved.
 
 **Evidence/deliverable:** Repository implementation + persistence tests
+
+**Implementation evidence:** 2026-10-12: Day 6 native editing and saves complete. Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions; ViewModel save/resume flows, SavedStateHandle draft preservation, and lifecycle-aware save states (Idle, Saving, Saved, Failed); 30 JVM unit tests (11 form rules, 3 scoped form state, 4 shell, 8 repository, 4 edit ViewModels) and 4 new editing device tests pass on OPPO CPH2529 / Android 15. Evidence: planning/03-evidence/D06.md.
 
 ### D07 · 2026-10-05 · Review the foundation
 

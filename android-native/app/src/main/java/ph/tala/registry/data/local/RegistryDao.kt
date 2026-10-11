@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RegistryDao {
     @Query("SELECT * FROM households ORDER BY displayCode") fun observeHouseholds(): Flow<List<HouseholdRow>>
+    @Transaction @Query("SELECT * FROM households ORDER BY displayCode") fun observeRecords(): Flow<List<HouseholdWithMembers>>
     @Query("SELECT * FROM households WHERE id = :id") suspend fun household(id: String): HouseholdRow?
     @Query("SELECT * FROM members WHERE householdId = :id ORDER BY id") suspend fun members(id: String): List<MemberRow>
     @Query("SELECT * FROM interviews WHERE householdId = :id") suspend fun interview(id: String): InterviewRow?

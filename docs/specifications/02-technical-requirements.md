@@ -18,7 +18,7 @@ flowchart TD
   REPO -. Later only .-> SYNC[Authenticated cloud sync adapter]
 ```
 
-The current MainActivity still uses DemoHouseholdRepository. Storage exists but the production editing adapter is pending. The browser uses globals and localStorage; retain it as a reference and regression surface, not the native storage architecture.
+As of the Day 6 card, `MainActivity` opens the Room database and reads and writes through `RoomHouseholdRepository`; the fictional `DemoFixtures` records are seeded once and are explicitly optional. The browser uses globals and localStorage; retain it as a reference and regression surface, not the native storage architecture.
 
 ## 2. Technical requirements
 

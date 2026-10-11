@@ -1,8 +1,8 @@
 # Tala native Android
 
-The native app includes the Day 3 shell, Day 4 shared form controls and the Day 5 Room storage layer. Open a household, then **Try a practice interview**. The practice form supports text, notes, phone, integer, date, date/time, choice, dropdown and multi-select controls, including conditional questions and inline errors. Switch **Answering for** between the household and its members to keep separate session drafts.
+The native app includes the Day 3 shell, Day 4 shared form controls, the Day 5 Room storage layer and the Day 6 household/member editing slice. Open a household, then **Try a practice interview**. The practice form supports text, notes, phone, integer, date, date/time, choice, dropdown and multi-select controls, including conditional questions and inline errors. Switch **Answering for** between the household and its members to keep separate session drafts.
 
-**Check answers** validates the visible questions and scrolls/focuses the first error. It does not save an interview: session drafts survive activity recreation and navigation in the running app, but closing the process clears them. Room storage for households, members, visits, scoped answers, coordinates and attachment references exists and is verified by device tests; connecting it to the editing UI is Day 6. Photos and signatures are later cards.
+Household add/edit and member add/edit screens save through `RoomHouseholdRepository` into the app-private Room database (version 2). Saving, saved and failed states are explicit and a failed write is never reported as saved; drafts and generated UUID identities survive process death through `SavedStateHandle`. Fictional fixtures (`HH-00452`–`HH-00454`) seed once per installed database, are skipped when already present, and never overwrite user edits. **Check answers** validates the visible practice questions and scrolls/focuses the first error. It does not save an interview: session drafts survive activity recreation and navigation in the running app, but closing the process clears them. Photos and signatures are later cards.
 
 ## Build and run
 
@@ -26,7 +26,8 @@ Gradle's connected-test runner may uninstall the test apps afterward, removing t
 ## State ownership
 
 - `domain/model`: typed household/member identities, immutable record and questionnaire models.
-- `data/HouseholdRepository`: observable read contract and explicit demo implementation; the UI keeps reading these fixtures until Day 6 swaps in the Room-backed repository.
+- `data/HouseholdRepository`: observable read contract plus `RoomHouseholdRepository` — one mutex-serialised write stream over full-snapshot `RecordStore` saves, UUID identities with unique `HH-#####` display labels, reversible archiving and explicit optional fictional fixtures.
+- `ui/households`: `HouseholdEditViewModel`/`MemberEditViewModel` with `SavedStateHandle` drafts and generated identities, plus `HouseholdEditScreen`/`MemberEditScreen` with explicit `Idle/Saving/Saved/Failed` states and archive/remove confirmations.
 - `data/local`: Room entities with UUID identities and foreign keys, `RegistryDao`, `RegistryDatabase` (schema export to `app/schemas/`, no destructive migration) and `RoomRecordStore`, which saves a whole record snapshot in one transaction and reports `Saved` or `Failed` without leaking database details.
 - `ui/RegistryViewModel`: household list/search/filter state. Small UI inputs use `SavedStateHandle`.
 - `ui/InterviewViewModel`: observes one typed household ID, with a separately saved interview tab per navigation entry.
@@ -43,11 +44,12 @@ Missing records show an explicit unavailable state. Screens pass IDs to reposito
 
 ## Checks and evidence
 
-- JVM: filtering, restored inputs, repository updates, typed-ID validation, identity across reorder/removal, required/optional inputs, numeric/date/phone limits, conditional clearing, exclusive answers and household/member draft isolation.
-- Device: navigation, keyboard visibility/resize, Android Back, activity recreation, selected household/tab, empty-state recovery, system bars, absence of Internet permission, all shared form controls, first-error focus, pickers and draft isolation across scope changes.
-- Device storage: snapshot save and reopen, per-member answer scoping, cleared-answer replacement, transaction rollback, failed-write reporting, export/migration validation and force-stop/reboot durability.
+- JVM: filtering, restored inputs, repository updates, typed-ID validation, identity across reorder/removal, required/optional inputs, numeric/date/phone limits, conditional clearing, exclusive answers, household/member draft isolation, create/update/archive/remove flows, stable generated identities, failed-write reporting and idempotent fixture seeding.
+- Device: navigation, keyboard visibility/resize, Android Back, activity recreation, selected household/tab, empty-state recovery, system bars, absence of Internet permission, all shared form controls, first-error focus, pickers, draft isolation across scope changes, household/member add/edit saves, member removal, archive/restore round trip and editing persistence across reopen.
+- Device storage: snapshot save and reopen, per-member answer scoping, cleared-answer replacement, transaction rollback, failed-write reporting, export/migration validation (v1→v2 with `archivedAt`) and force-stop/reboot durability.
 - [Day 3 acceptance record](../planning/03-evidence/D03.md).
 - [Day 4 acceptance record](../planning/03-evidence/D04.md).
 - [Day 5 acceptance record](../planning/03-evidence/D05.md).
+- [Day 6 acceptance record](../planning/03-evidence/D06.md).
 
 Implementation follows Android's [saved-state guidance](https://developer.android.com/develop/ui/compose/state-saving) and [edge-to-edge setup](https://developer.android.com/develop/ui/compose/system/setup-e2e).

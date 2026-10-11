@@ -9,13 +9,22 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import ph.tala.registry.MainActivity
+import ph.tala.registry.data.DemoFixtures
 import java.io.File
 import java.time.LocalDate
 
 class FormDeviceTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
+    /** MainActivity seeds the fictional fixtures on first launch; navigation waits for them. */
+    private fun awaitSeededFixtures() {
+        compose.waitUntil(10_000) {
+            compose.onAllNodesWithTag("household-HH-00452").fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
     @Before fun openPractice() {
+        awaitSeededFixtures()
         compose.onNodeWithTag("home-screen").performScrollToNode(hasTestTag("household-HH-00452"))
         compose.onNodeWithTag("household-HH-00452").performClick()
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("open-practice"))
@@ -104,14 +113,14 @@ class FormDeviceTest {
 
     @Test fun householdAndTwoMembersKeepDistinctDraftsAcrossNavigationAndRecreation() {
         input("firstName", "Household respondent")
-        scope("DEMO-SANTOS-1")
+        scope(DemoFixtures.MARIA)
         input("firstName", "Maria")
-        scope("DEMO-SANTOS-2")
+        scope(DemoFixtures.JUAN)
         input("firstName", "Juan")
         compose.activityRule.scenario.recreate()
         compose.onNodeWithTag("answer-scope").assertTextContains("Answering for: Juan Santos")
         compose.onNodeWithTag("field-firstName").assertTextContains("Juan")
-        scope("DEMO-SANTOS-1")
+        scope(DemoFixtures.MARIA)
         compose.onNodeWithTag("field-firstName").assertTextContains("Maria")
         capture("04-member-scope")
         scope("household")

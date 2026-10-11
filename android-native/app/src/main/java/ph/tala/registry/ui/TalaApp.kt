@@ -10,6 +10,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
@@ -32,8 +33,13 @@ import androidx.navigation.navArgument
 import ph.tala.registry.data.HouseholdRepository
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
+import ph.tala.registry.domain.model.MemberId
 import ph.tala.registry.ui.form.FormSessionViewModel
 import ph.tala.registry.ui.form.PracticeFormScreen
+import ph.tala.registry.ui.households.HouseholdEditScreen
+import ph.tala.registry.ui.households.HouseholdEditViewModel
+import ph.tala.registry.ui.households.MemberEditScreen
+import ph.tala.registry.ui.households.MemberEditViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +53,11 @@ fun TalaApp(repository: HouseholdRepository) {
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val route = entry?.destination?.route ?: Destination.Home.route
-    val isInterview = route == Destination.Interview.PATTERN || route == Destination.Practice.PATTERN
+    // Task screens own the full window: forms and interviews hide the bottom bar so a
+    // mis-tap cannot abandon an unfinished edit.
+    val isFullScreen = route == Destination.Interview.PATTERN || route == Destination.Practice.PATTERN ||
+        route == Destination.HouseholdAdd.route || route == Destination.HouseholdEdit.PATTERN ||
+        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN
     val openHousehold: (HouseholdId) -> Unit = { nav.navigate(Destination.Interview(it).route) { launchSingleTop = true } }
 
     Scaffold(
@@ -69,7 +79,7 @@ fun TalaApp(repository: HouseholdRepository) {
             )
         },
         bottomBar = {
-            if (!isInterview) NavigationBar {
+            if (!isFullScreen) NavigationBar {
                 listOf(Destination.Home to "Home", Destination.Households to "Households").forEach { (destination, label) ->
                     NavigationBarItem(
                         selected = route == destination.route,
@@ -91,7 +101,56 @@ fun TalaApp(repository: HouseholdRepository) {
                     HomeScreen(state, onBrowse = { nav.navigate(Destination.Households.route) { launchSingleTop = true } }, onOpen = openHousehold)
                 }
                 composable(Destination.Households.route) {
-                    HouseholdsScreen(state, registry::setQuery, registry::setFilter, registry::clearSearch, openHousehold)
+                    HouseholdsScreen(state, registry::setQuery, registry::setFilter, registry::clearSearch, openHousehold) {
+                        nav.navigate(Destination.HouseholdAdd.route) { launchSingleTop = true }
+                    }
+                }
+                composable(Destination.HouseholdAdd.route) {
+                    val edit: HouseholdEditViewModel = viewModel(factory = viewModelFactory {
+                        initializer { HouseholdEditViewModel(null, repository, createSavedStateHandle()) }
+                    })
+                    val editState by edit.uiState.collectAsStateWithLifecycle()
+                    HouseholdEditScreen(editState, edit::setHeadName, edit::setAddress, edit::setStatus, edit::save, edit::setArchived)
+                }
+                composable(
+                    Destination.HouseholdEdit.PATTERN,
+                    arguments = listOf(navArgument(Destination.HouseholdEdit.ARGUMENT) { type = HouseholdIdNavType }),
+                ) { backStack ->
+                    val id = requireNotNull(HouseholdIdNavType.get(requireNotNull(backStack.arguments), Destination.HouseholdEdit.ARGUMENT))
+                    val edit: HouseholdEditViewModel = viewModel(factory = viewModelFactory {
+                        initializer { HouseholdEditViewModel(id, repository, createSavedStateHandle()) }
+                    })
+                    val editState by edit.uiState.collectAsStateWithLifecycle()
+                    HouseholdEditScreen(editState, edit::setHeadName, edit::setAddress, edit::setStatus, edit::save, edit::setArchived)
+                }
+                composable(
+                    Destination.MemberAdd.PATTERN,
+                    arguments = listOf(navArgument(Destination.MemberAdd.ARGUMENT) { type = HouseholdIdNavType }),
+                ) { backStack ->
+                    val householdId = requireNotNull(HouseholdIdNavType.get(requireNotNull(backStack.arguments), Destination.MemberAdd.ARGUMENT))
+                    val edit: MemberEditViewModel = viewModel(factory = viewModelFactory {
+                        initializer { MemberEditViewModel(householdId, null, repository, createSavedStateHandle()) }
+                    })
+                    val editState by edit.uiState.collectAsStateWithLifecycle()
+                    if (editState.removed) LaunchedEffect(editState.removed) { nav.popBackStack() }
+                    MemberEditScreen(editState, edit::setDisplayName, edit::save, edit::remove)
+                }
+                composable(
+                    Destination.MemberEdit.PATTERN,
+                    arguments = listOf(
+                        navArgument(Destination.MemberEdit.HOUSEHOLD_ARGUMENT) { type = HouseholdIdNavType },
+                        navArgument(Destination.MemberEdit.ARGUMENT) { type = HouseholdIdNavType },
+                    ),
+                ) { backStack ->
+                    val arguments = requireNotNull(backStack.arguments)
+                    val householdId = requireNotNull(HouseholdIdNavType.get(arguments, Destination.MemberEdit.HOUSEHOLD_ARGUMENT))
+                    val memberId = MemberId(requireNotNull(HouseholdIdNavType.get(arguments, Destination.MemberEdit.ARGUMENT)).value)
+                    val edit: MemberEditViewModel = viewModel(factory = viewModelFactory {
+                        initializer { MemberEditViewModel(householdId, memberId, repository, createSavedStateHandle()) }
+                    })
+                    val editState by edit.uiState.collectAsStateWithLifecycle()
+                    if (editState.removed) LaunchedEffect(editState.removed) { nav.popBackStack() }
+                    MemberEditScreen(editState, edit::setDisplayName, edit::save, edit::remove)
                 }
                 composable(
                     Destination.Interview.PATTERN,
@@ -102,7 +161,15 @@ fun TalaApp(repository: HouseholdRepository) {
                         initializer { InterviewViewModel(id, repository, createSavedStateHandle()) }
                     })
                     val interviewState by interview.uiState.collectAsStateWithLifecycle()
-                    InterviewScreen(interviewState, interview::selectTab, onBack = { nav.popBackStack() }, onPractice = { nav.navigate(Destination.Practice(id).route) { launchSingleTop = true } })
+                    InterviewScreen(
+                        interviewState,
+                        interview::selectTab,
+                        onBack = { nav.popBackStack() },
+                        onPractice = { nav.navigate(Destination.Practice(id).route) { launchSingleTop = true } },
+                        onEditHousehold = { nav.navigate(Destination.HouseholdEdit(id).route) { launchSingleTop = true } },
+                        onAddMember = { nav.navigate(Destination.MemberAdd(id).route) { launchSingleTop = true } },
+                        onEditMember = { memberId -> nav.navigate(Destination.MemberEdit(id, memberId).route) { launchSingleTop = true } },
+                    )
                 }
                 composable(Destination.Practice.PATTERN, arguments = listOf(navArgument(Destination.Interview.ARGUMENT) { type = HouseholdIdNavType })) { backStack ->
                     val id = requireNotNull(HouseholdIdNavType.get(requireNotNull(backStack.arguments), Destination.Interview.ARGUMENT))
@@ -160,6 +227,7 @@ private fun HouseholdsScreen(
     onFilter: (HouseholdFilter) -> Unit,
     onClear: () -> Unit,
     onOpen: (HouseholdId) -> Unit,
+    onAdd: () -> Unit,
 ) {
     // Search and results share a scroll container so a keyboard or large type cannot trap content.
     LazyColumn(
@@ -169,6 +237,11 @@ private fun HouseholdsScreen(
         item {
             Text("Your households", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
             Text("Find the right record before you begin.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        item {
+            Button(onClick = onAdd, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("add-household")) {
+                Text("Register a household")
+            }
         }
         item {
             OutlinedTextField(
@@ -203,7 +276,15 @@ private fun HouseholdsScreen(
 }
 
 @Composable
-private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Unit, onBack: () -> Unit, onPractice: () -> Unit) {
+private fun InterviewScreen(
+    state: InterviewUiState,
+    onTab: (InterviewTab) -> Unit,
+    onBack: () -> Unit,
+    onPractice: () -> Unit,
+    onEditHousehold: () -> Unit,
+    onAddMember: () -> Unit,
+    onEditMember: (MemberId) -> Unit,
+) {
     val household = state.household
     if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
     if (household == null) {
@@ -219,10 +300,13 @@ private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Un
         contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
-            Text(household.id.value, fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary, modifier = Modifier.testTag("record-id"))
+            Text(household.displayCode, fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary, modifier = Modifier.testTag("record-id"))
             Spacer(Modifier.height(8.dp))
             Text(household.headName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
             Text(household.address, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (household.archived) {
+                Text("Archived · still recoverable", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+            }
         }
         item {
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -243,6 +327,7 @@ private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Un
                         }
                     }
                 }
+                item { Button(onClick = onEditHousehold, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("edit-household")) { Text("Edit household profile") } }
                 item { Button(onClick = { onTab(InterviewTab.Members) }, modifier = Modifier.fillMaxWidth()) { Text("View members") } }
                 item { OutlinedButton(onClick = { onTab(InterviewTab.Sections) }, modifier = Modifier.fillMaxWidth()) { Text("View interview sections") } }
                 item { OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().testTag("open-practice")) { Text("Try a practice interview") } }
@@ -250,14 +335,27 @@ private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Un
             InterviewTab.Members -> {
                 item { Text("Household members", style = MaterialTheme.typography.titleLarge) }
                 items(household.members, key = { it.id.value }) { member ->
-                    Surface(shape = RoundedCornerShape(14.dp), color = MaterialTheme.colorScheme.surface) {
-                        Column(Modifier.fillMaxWidth().padding(18.dp)) {
-                            Text(member.displayName, style = MaterialTheme.typography.titleMedium)
-                            Text("Sample member · Forms coming next", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Surface(
+                        onClick = { onEditMember(member.id) },
+                        shape = RoundedCornerShape(14.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.testTag("member-${member.id.value}"),
+                    ) {
+                        Row(Modifier.fillMaxWidth().padding(18.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.size(40.dp).background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(10.dp)), contentAlignment = Alignment.Center) { RegistryIcon(house = false) }
+                            Column(Modifier.weight(1f)) {
+                                Text(member.displayName, style = MaterialTheme.typography.titleMedium)
+                                Text("Tap to edit this member", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
                         }
                     }
                 }
                 if (household.members.isEmpty()) item { Text("No members in this sample household.") }
+                item {
+                    Button(onClick = onAddMember, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("add-member")) {
+                        Text("Add household member")
+                    }
+                }
             }
             InterviewTab.Sections -> {
                 item {
@@ -281,16 +379,20 @@ private fun InterviewScreen(state: InterviewUiState, onTab: (InterviewTab) -> Un
 @Composable
 private fun HouseholdCard(household: Household, onOpen: (HouseholdId) -> Unit) {
     Card(
-        onClick = { onOpen(household.id) }, modifier = Modifier.fillMaxWidth().testTag("household-${household.id.value}"),
+        onClick = { onOpen(household.id) }, modifier = Modifier.fillMaxWidth().testTag("household-${household.displayCode}"),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(18.dp),
     ) {
         Row(Modifier.padding(18.dp), horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(44.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { RegistryIcon(true) }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 Text(household.headName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Text(household.id.value, style = MaterialTheme.typography.labelMedium, fontFamily = FontFamily.Monospace)
+                Text(household.displayCode, style = MaterialTheme.typography.labelMedium, fontFamily = FontFamily.Monospace)
                 Text(household.address, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(household.status.label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                Text(
+                    if (household.archived) "Archived" else household.status.label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (household.archived) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
+                )
             }
         }
     }
@@ -306,7 +408,7 @@ private fun Metric(label: String, value: Int, modifier: Modifier = Modifier) {
 
 @Composable
 private fun DemoNotice() {
-    Text("Fictional sample records · Read-only preview.\nHousehold editing and saved interviews arrive in a later build.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text("Fictional sample records · Saves stay on this device.\nSaved interviews and pictures arrive in later builds.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable

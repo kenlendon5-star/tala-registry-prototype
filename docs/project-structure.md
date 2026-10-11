@@ -31,7 +31,7 @@ Capstone/
 ├── planning/
 │   ├── 01-boards/                # Generated kanban/plan, template and previews
 │   ├── 02-progress/              # Progress JSON, generator and verification
-│   ├── 03-evidence/              # D01–D05 acceptance and device evidence
+│   ├── 03-evidence/              # D01–D06 acceptance and device evidence
 │   └── 04-utils/                 # Existing board diagnostic utility
 ├── tools/                        # Documentation generation/verification
 └── logs/android/                 # Local build logs; *.log stays ignored

@@ -22,3 +22,15 @@ Thumbs.db
 
 # Android build caches
 android-native/.kotlin/
+android-native/.gradle/
+android-native/app/build/
+
+# Local scratch / downloaded toolchains
+tmp/
+nl.txt
+ver.txt
+temp-gradle-version.txt
+
+# Local build evidence (tracked acceptance lives in planning/03-evidence/)
+android-native/build-*.txt
+logs/android/

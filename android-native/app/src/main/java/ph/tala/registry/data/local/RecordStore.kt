@@ -15,6 +15,8 @@ sealed interface WriteResult {
 
 interface RecordStore {
     val households: Flow<List<HouseholdRow>>
+    /** Households with their members, ordered by display code; used by the editing screens. */
+    val records: Flow<List<HouseholdWithMembers>>
     suspend fun load(id: String): StoredRecord?
     suspend fun save(record: StoredRecord): WriteResult
 }
@@ -23,6 +25,7 @@ interface RecordStore {
 class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
     private val dao = database.records()
     override val households = dao.observeHouseholds()
+    override val records = dao.observeRecords()
 
     override suspend fun load(id: String): StoredRecord? = database.withTransaction {
         val household = dao.household(id) ?: return@withTransaction null

@@ -8,7 +8,7 @@ Tala is an offline-first household enumeration capstone. The primary release tar
 
 | Folder | Purpose / current status |
 |---|---|
-| [android-native](android-native/README.md) | Compose shell, practice forms and Room storage. Editing-to-Room integration is still pending |
+| [android-native](android-native/README.md) | Compose shell, practice forms, Room storage and household/member editing |
 | [browser](browser/README.md) | Working 18-section browser prototype; localStorage only |
 | mobile/ | Earlier Expo starter; no Tala workflows; outside the active native build |
 | [supabase](supabase/README.md) | Development tooling and placeholder migrations; no app backend connected |
@@ -42,7 +42,7 @@ Root shortcuts are also available: `rtk npm start`, `rtk npm run check`, `rtk np
 
 ## Build native Android
 
-Open android-native/ in Android Studio or follow its [setup and build guide](android-native/README.md). Run the Gradle wrapper from that directory. The current UI uses demo fixtures; database durability tests do not mean practice entries are already durable.
+Open android-native/ in Android Studio or follow its [setup and build guide](android-native/README.md). Run the Gradle wrapper from that directory. Household and member add/edit screens save through the Room repository; practice-form drafts remain session-only until the questionnaire cards port them.
 
 ## Planning and documentation
 

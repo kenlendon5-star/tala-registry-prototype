@@ -6,7 +6,7 @@ Version 1.0 · 11 October 2026. **Current:** offline app architecture and browse
 
 | Integration | Data exchanged | Authentication / network | State |
 |---|---|---|---|
-| Room repository | Typed local record snapshots and change streams | App process; no network | Store implemented; editing adapter pending |
+| Room repository | Typed local record snapshots and change streams | App process; no network | Store and editing adapter implemented (Days 5–6) |
 | Device location | Latitude, longitude, optional accuracy, capture time | Foreground user permission | Browser implemented; native pending |
 | OSM raster tiles | Visible viewport z/x/y requests | Online public service, policy applies | Browser implemented |
 | Google Maps URLs | Saved coordinates or user-selected address | Explicit external action; api=1 URL needs no API key | Browser implemented; native launcher pending |
@@ -17,7 +17,7 @@ Version 1.0 · 11 October 2026. **Current:** offline app architecture and browse
 
 ## 2. Current local interfaces
 
-HouseholdRepository exposes `Flow<List<Household>>` and `observeHousehold(HouseholdId)`. Current implementation is DemoHouseholdRepository. RecordStore exposes `households: Flow<List<HouseholdRow>>`, `suspend load(id: String): StoredRecord?`, and `suspend save(record: StoredRecord): WriteResult`. Current WriteResult is Saved or Failed(message); cancellation is rethrown.
+HouseholdRepository exposes `households: Flow<List<Household>>` and `observeHousehold(HouseholdId)`, plus the Day 6 writes `createHousehold(id, draft)`, `updateHousehold(id, draft)`, `setArchived(id, archived)`, `saveMember(householdId, memberId, draft)`, `removeMember(householdId, memberId)` and `seedMissing(records)`. The current implementation is RoomHouseholdRepository: one mutex-serialised write stream over RecordStore full-snapshot saves, UUID identities with unique `HH-#####` display labels, and defensive validation before every write. RecordStore exposes `households: Flow<List<HouseholdRow>>`, `records: Flow<List<HouseholdWithMembers>>`, `suspend load(id: String): StoredRecord?`, and `suspend save(record: StoredRecord): WriteResult`. Current WriteResult is Saved or Failed(message); cancellation is rethrown. Conflict detection and revision checks (TR-06) are not implemented yet; a stale editor currently overwrites the latest snapshot.
 
 The current snapshot save validates identity/ownership, then updates the household and replaces members, interview/visits/answers, coordinates and attachment references in one Room transaction. The caller must supply the entire graph. Do not implement Save Section by discarding other sections and passing only the current answers.
 

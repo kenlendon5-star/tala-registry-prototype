@@ -18,7 +18,15 @@ import java.io.File
 class ShellDeviceTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
+    /** MainActivity seeds the fictional fixtures on first launch; list assertions wait for them. */
+    private fun awaitSeededFixtures() {
+        compose.waitUntil(10_000) {
+            compose.onAllNodesWithTag("household-HH-00452").fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
     @Test fun navigationKeyboardBackAndRecreation() {
+        awaitSeededFixtures()
         compose.onNodeWithTag("home-screen").assertIsDisplayed()
         capture("01-home")
         compose.onNodeWithText("Browse households").performScrollTo().performClick()
@@ -67,6 +75,7 @@ class ShellDeviceTest {
     }
 
     @Test fun restoredFilterAndEmptySearchHaveRecovery() {
+        awaitSeededFixtures()
         compose.onNodeWithTag("nav-Households").performClick()
         compose.onNodeWithText("Reviewed", useUnmergedTree = true).performClick()
         compose.onNodeWithText("No matching households").assertIsDisplayed()

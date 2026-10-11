@@ -43,5 +43,14 @@
       true
     ],
     "notes": "2026-10-08: Day 5 Room storage complete on OPPO CPH2529 / Android 15. Eight entities with UUID identities, foreign keys and scoped answers; RegistryDao and RegistryDatabase v1 with schema export to app/schemas and no destructive migration; RoomRecordStore saves a whole record in one transaction and reports Saved or Failed without leaking paths or SQL. Verified on the phone: 6 storage tests (reopen, member scoping, cleared-answer replacement, rollback of a mid-transaction constraint failure, failed-write reporting, answer codec) and 1 schema/migration test pass; a seeded record passes seed, force-stop and reboot checks with the same 131072-byte database file listed afterwards. Regression: 18 JVM tests, 8 device UI tests, lint 0 errors / 10 version-notice warnings; serialization core and json pinned to 1.8.1 to fix a MigrationTestHelper AbstractMethodError. Evidence, ERD, attachment strategy and backup policy: planning/03-evidence/D05.md. No user-facing save yet: the UI still reads demo fixtures and practice answers stay session-only until Day 6; no cloud, auth, encryption or DataStore settings."
+  },
+  "D06": {
+    "status": "Done",
+    "checks": [
+      true,
+      true,
+      true
+    ],
+    "notes": "2026-10-12: Day 6 native editing and saves complete. Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions; ViewModel save/resume flows, SavedStateHandle draft preservation, and lifecycle-aware save states (Idle, Saving, Saved, Failed); 30 JVM unit tests (11 form rules, 3 scoped form state, 4 shell, 8 repository, 4 edit ViewModels) and 4 new editing device tests pass on OPPO CPH2529 / Android 15. Evidence: planning/03-evidence/D06.md."
   }
 }

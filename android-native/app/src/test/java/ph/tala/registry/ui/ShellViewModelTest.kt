@@ -17,9 +17,14 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import ph.tala.registry.data.HouseholdRepository
+import ph.tala.registry.data.local.StoredRecord
+import ph.tala.registry.data.local.WriteResult
+import ph.tala.registry.domain.edit.HouseholdDraft
+import ph.tala.registry.domain.edit.MemberDraft
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.HouseholdStatus
+import ph.tala.registry.domain.model.MemberId
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ShellViewModelTest {
@@ -29,9 +34,19 @@ class ShellViewModelTest {
 
     private class Repository : HouseholdRepository {
         override val households = MutableStateFlow(listOf(
-            Household(HouseholdId("A"), "Maria Santos", "Purok 2", HouseholdStatus.InProgress),
-            Household(HouseholdId("B"), "Ramon Reyes", "Purok 3", HouseholdStatus.Callback),
+            Household(HouseholdId("A"), "HH-00001", "Maria Santos", "Purok 2", HouseholdStatus.InProgress),
+            Household(HouseholdId("B"), "HH-00002", "Ramon Reyes", "Purok 3", HouseholdStatus.Callback),
         ))
+
+        // Read-only fixture: writes are rejected so a test can never claim a save happened.
+        override suspend fun createHousehold(id: HouseholdId, draft: HouseholdDraft) = WriteResult.Failed(READ_ONLY)
+        override suspend fun updateHousehold(id: HouseholdId, draft: HouseholdDraft) = WriteResult.Failed(READ_ONLY)
+        override suspend fun setArchived(id: HouseholdId, archived: Boolean) = WriteResult.Failed(READ_ONLY)
+        override suspend fun saveMember(householdId: HouseholdId, memberId: MemberId, draft: MemberDraft) = WriteResult.Failed(READ_ONLY)
+        override suspend fun removeMember(householdId: HouseholdId, memberId: MemberId) = WriteResult.Failed(READ_ONLY)
+        override suspend fun seedMissing(records: List<StoredRecord>) = WriteResult.Saved
+
+        private companion object { const val READ_ONLY = "Read-only test fixture." }
     }
 
     @Test fun searchAndStatusCombineWithoutChangingHomeTotals() = runTest(dispatcher) {

@@ -19,7 +19,7 @@ fun PracticeFormScreen(household: Household, session: FormSessionState, onAnswer
     val section = if (member == null) PracticeSection.household else PracticeSection.member
     Column(Modifier.fillMaxSize().testTag("practice-screen")) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
-            Text("${household.id.value} · ${household.headName}", style = MaterialTheme.typography.labelLarge)
+            Text("${household.displayCode} · ${household.headName}", style = MaterialTheme.typography.labelLarge)
             Box {
                 OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth().testTag("answer-scope")) {
                     Text("Answering for: ${member?.displayName ?: "Household"}", Modifier.weight(1f)); Text("▾")

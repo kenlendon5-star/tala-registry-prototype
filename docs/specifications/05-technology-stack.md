@@ -9,7 +9,7 @@ Version 1.0 · 11 October 2026. Versions below are project declarations, not cla
 | Native frontend | Kotlin + Jetpack Compose + Material 3 | Primary release application in android-native/ |
 | State/navigation | AndroidX ViewModel, SavedStateHandle, StateFlow, Navigation Compose | Current native shell and practice workflow |
 | Domain | Pure Kotlin field specifications, conditions and FormRules | Current validation/branching; full questionnaire port pending |
-| Native persistence | Room 2.8.5 over SQLite | Current transactional storage; editing adapter pending |
+| Native persistence | Room 2.8.5 over SQLite | Current transactional storage; Day 6 editing adapter implemented |
 | Media | Android app-private files + Room references | Proposed lifecycle; references exist |
 | Backend for offline release | None | Core workflow must work without network or hosted API |
 | Future backend | Supabase Auth + PostgreSQL + private Storage | Proposed only; no client/schema integration currently exists |
@@ -43,7 +43,7 @@ Source: [version catalog](../../android-native/gradle/libs.versions.toml), [wrap
 | AndroidX test JUnit | 1.1.5 |
 | Espresso | 3.5.1 |
 | minSdk / compileSdk / targetSdk | 26 / 37 / 37 |
-| Current app version | 0.3.0, versionCode 3 |
+| Current app version | 0.4.0, versionCode 4 |
 
 AGP uses built-in Kotlin support; do not apply a second org.jetbrains.kotlin.android plugin without a deliberate toolchain change. The catalog's Kotlin value pins the Compose plugin; resolve the actual compiler dependency when diagnosing compatibility. The checked-in settings limit Gradle to one worker and a 1536 MiB daemon heap for the development machine.
 

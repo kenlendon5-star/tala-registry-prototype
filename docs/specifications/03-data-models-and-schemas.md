@@ -27,13 +27,13 @@ erDiagram
 
 One interview per household is enforced by a unique householdId index. The store expects an interview when loading a complete snapshot, although the household row can exist independently at the SQL level. Multiple visits belong to that interview. A future repeated census cycle needs a deliberate change to interview uniqueness; it is not supported by silently adding another interview now.
 
-## 3. Current Room version-1 dictionary
+## 3. Current Room version-2 dictionary
 
 All String columns use SQLite TEXT; Double uses REAL; Long uses INTEGER. Fields are non-null unless suffixed `?` below. UUID validation is performed by RoomRecordStore, not a SQL UUID column type.
 
 | Table | Fields | Keys / relationships |
 |---|---|---|
-| households | id:String; displayCode:String; headName:String; address:String; status:String | PK id; unique displayCode. Store permits NotStarted, InProgress, Callback, Reviewed |
+| households | id:String; displayCode:String; headName:String; address:String; status:String; archivedAt:Long? | PK id; unique displayCode. Store permits NotStarted, InProgress, Callback, Reviewed; archivedAt is null on active records and set when a record is archived. Migration 1 → 2 adds this column with `ALTER TABLE households ADD COLUMN archivedAt INTEGER` and keeps every existing row active |
 | members | id:String; householdId:String; displayName:String | PK id; FK householdId→households.id CASCADE; household index; unique (id,householdId) |
 | interviews | id:String; householdId:String; questionnaireVersion:String | PK id; unique householdId; FK→households CASCADE; unique (id,householdId). Kotlin default practice-v1 |
 | visits | id:String; interviewId:String; outcome:String; callbackAt:String? | PK id; FK→interviews CASCADE; interview index. Current callback has no explicit zone column |
