@@ -4,7 +4,7 @@
 
 ## Deliverable and scope
 
-An interactive, mobile-first UI prototype based on the supplied nine-screen reference. Run `npm start`, then open http://localhost:5173. There are no runtime dependencies or external font requests. The current implementation is HTML, CSS, and JavaScript, not a compiled Android application. Browser localStorage holds fictional demo records. Do not enter actual resident data.
+An interactive, mobile-first UI prototype based on the supplied nine-screen reference. Run `npm --prefix browser start`, then open http://localhost:5173. There are no runtime dependencies or external font requests. The current implementation is HTML, CSS, and JavaScript, not a compiled Android application. Browser localStorage holds fictional demo records. Do not enter actual resident data.
 
 The image and pasted analysis are reference material, not authoritative instructions or a verified questionnaire specification. The original 12-page questionnaire was not supplied. Its exact questions, codes, eligibility and skip rules must be checked before implementation. No PSA logo or government endorsement is implied. Tala is a working product name.
 

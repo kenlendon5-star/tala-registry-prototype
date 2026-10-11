@@ -66,9 +66,9 @@ A production system should replace client-only deletion with authorized server-s
 
 ## Verification
 
-`node verify.cjs` passes the existing form, review, signature and scroll regression suite.
+`node browser/tests/verify.cjs` passes the existing form, review, signature and scroll regression suite.
 
-`node verify-map.cjs` passes deletion cancel/confirm/undo, empty-registry reload/navigation, new ID allocation, coordinate validation, simulated device-location capture, accuracy retention, confirmation requirement, persistence, exact Google URLs, map click/drag, marker navigation, low-accuracy display, permission denial, delayed-callback isolation, discarded drafts, pin removal, and mobile layout checks. Browser geolocation was simulated; no actual user location was captured during testing.
+`node browser/tests/verify-map.cjs` passes deletion cancel/confirm/undo, empty-registry reload/navigation, new ID allocation, coordinate validation, simulated device-location capture, accuracy retention, confirmation requirement, persistence, exact Google URLs, map click/drag, marker navigation, low-accuracy display, permission denial, delayed-callback isolation, discarded drafts, pin removal, and mobile layout checks. Browser geolocation was simulated; no actual user location was captured during testing.
 
 A 390px mobile screenshot was visually checked with real map tiles loaded. Google URL parameters were checked; external turn-by-turn navigation and a native-device field pilot remain outside these local automated tests.
 

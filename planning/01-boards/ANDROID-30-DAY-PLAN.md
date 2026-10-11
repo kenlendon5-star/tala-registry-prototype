@@ -39,9 +39,11 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 
 ## Repository implementation update
 
-- D03: Verify. [Implementation evidence](evidence/D03.md).
-- D04: Done. [Implementation evidence](evidence/D04.md).
-- D05: Done. [Implementation evidence](evidence/D05.md).
+- D01: Done. [Implementation evidence](../03-evidence/D01.md).
+- D02: Done. [Implementation evidence](../03-evidence/D02.md).
+- D03: Done. [Implementation evidence](../03-evidence/D03.md).
+- D04: Done. [Implementation evidence](../03-evidence/D04.md).
+- D05: Done. [Implementation evidence](../03-evidence/D05.md).
 
 Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
@@ -51,39 +53,43 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Lock a realistic Android capstone scope.
 
-**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Ready
+**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** None
 
-- [ ] Inventory all 18 sections, mapping, household/member editing, callbacks, signatures, photos and exports against the current prototype.
-- [ ] Record the chosen native Kotlin + Jetpack Compose architecture, demo-only scope, one developer, target phone, installation method and reviewer availability.
-- [ ] Create a requirements-to-test matrix; record unresolved questionnaire meanings and sample evacuation choices without inventing answers.
+- [x] Inventory all 18 sections, mapping, household/member editing, callbacks, signatures, photos and exports against the current prototype.
+- [x] Record the chosen native Kotlin + Jetpack Compose architecture, demo-only scope, one developer, target phone, installation method and reviewer availability.
+- [x] Create a requirements-to-test matrix; record unresolved questionnaire meanings and sample evacuation choices without inventing answers.
 
 **Done when:** A signed-off scope checklist, target-device list and acceptance matrix exist. Each required feature has a test ID.
 
 **Evidence/deliverable:** Scope checklist + requirements matrix
 
+**Implementation evidence:** 2026-10-08: Release agreement recorded. planning/01-boards/ANDROID-30-DAY-PLAN.md fixes the offline Kotlin + Jetpack Compose scope (all 18 sections plus editing, callbacks, signatures, photos, coordinates, mapping, export/restore, archiving, device tests, signed APK and documentation), the 30-day/164-hour capacity, one developer, the OPPO CPH2529 / Android 15 target phone, sprint gates, the release acceptance checklist and the risk/scope rules; every card carries a testable finish line and deliverable. Unresolved questionnaire wording stays on documented demo labels instead of invented official definitions. Evidence: planning/03-evidence/D01.md. Known gap: there is no separate spreadsheet-style requirements matrix; that mapping lives in the per-card acceptance lines and the release checklist.
+
 ### D02 · 2026-09-30 · Set up Android Studio
 
 **Goal:** Make the Android toolchain reproducible.
 
-**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D01
 
-- [ ] Create an Empty Activity Kotlin/Compose project in a new android-native directory using Android Studio; choose an app ID and device-compatible minimum SDK.
-- [ ] Connect a physical phone with USB debugging; create a second emulator/device configuration. Verify Android Studio, SDK, JDK and Gradle compatibility.
-- [ ] Pin dependencies with a version catalog and Compose BOM; build the empty app, record setup instructions and preserve the web prototype/Expo starter as references.
+- [x] Create an Empty Activity Kotlin/Compose project in a new android-native directory using Android Studio; choose an app ID and device-compatible minimum SDK.
+- [x] Connect a physical phone with USB debugging; create a second emulator/device configuration. Verify Android Studio, SDK, JDK and Gradle compatibility.
+- [x] Pin dependencies with a version catalog and Compose BOM; build the empty app, record setup instructions and preserve the web prototype/Expo starter as references.
 
 **Done when:** The phone and emulator are visible in Android Studio; the documented toolchain works and baseline failures are recorded.
 
 **Evidence/deliverable:** Setup guide + device evidence
 
+**Implementation evidence:** 2026-10-08: Toolchain reproducible. android-native/ carries the standard Gradle wrapper, a pinned version catalog with Compose BOM (AGP 9.4.1, Kotlin 2.2.10, JDK 17), gradle.properties tuned for an 8 GB machine, and the documented setup guide android-native/README.md. Debug and instrumentation APKs build, install and run every test suite against the OPPO CPH2529 (adb device e7d5dc18). Evidence: planning/03-evidence/D02.md. Known gap: no emulator or second device configuration exists in this environment, so the second-configuration check is carried to the Day 28 rehearsal instead of being claimed here.
+
 ### D03 · 2026-10-01 · Build the native app shell
 
 **Goal:** Establish navigation and state ownership.
 
-**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Verify
+**Sprint:** 1 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D02
 
@@ -95,7 +101,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Native debug APK + navigation recording
 
-**Implementation evidence:** 2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass. Screenshots and test results: planning/evidence/D03.md; device recording was unavailable. 2026-10-05: shell regression passed again during D04 and the lint-download blocker is resolved (0 errors, dependency-version notices only). Verify remains pending reconciliation of D01/D02 acceptance records with saved browser progress; their statuses are unchanged.
+**Implementation evidence:** 2026-10-02: Day 3 shell implemented and installed on OPPO CPH2529 / Android 15. Native Home, search/filter household list, typed-ID interview navigation, ViewModels, StateFlow, repository interface and saved UI state are connected. Debug build, 4 JVM tests and 3 connected-device tests pass. Screenshots and test results: planning/03-evidence/D03.md; device recording was unavailable. 2026-10-05: shell regression passed again during D04 and the lint-download blocker is resolved (0 errors, dependency-version notices only). 2026-10-08: moved from Verify to Done because the D01 and D02 acceptance records this card was waiting on now exist (planning/03-evidence/D01.md, D02.md); the shell suite passed again during Day 5.
 
 ### D04 · 2026-10-02 · Build reusable Compose form controls
 
@@ -113,7 +119,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Form renderer + rule tests
 
-**Implementation evidence:** 2026-10-05: Day 4 implementation and representative-section acceptance complete. Shared Compose controls, inline validation and first-error focus, strict dates/numbers/phone/options, conditional clearing, and separate household/member session drafts are connected through Try a practice interview. Debug APK 0.2.0 installed on OPPO CPH2529 / Android 15. All 18 JVM and 8 device tests pass; lint passes with 0 errors and 8 dependency-version notices. Evidence and reviewed screenshots: planning/evidence/D04.md. Entries are session-only; Room persistence follows in Day 5. This requested work package is complete; earlier acceptance records and any upstream dependency flags remain separate and unchanged.
+**Implementation evidence:** 2026-10-05: Day 4 implementation and representative-section acceptance complete. Shared Compose controls, inline validation and first-error focus, strict dates/numbers/phone/options, conditional clearing, and separate household/member session drafts are connected through Try a practice interview. Debug APK 0.2.0 installed on OPPO CPH2529 / Android 15. All 18 JVM and 8 device tests pass; lint passes with 0 errors and 8 dependency-version notices. Evidence and reviewed screenshots: planning/03-evidence/D04.md. Entries are session-only; Room persistence follows in Day 5. This requested work package is complete; earlier acceptance records and any upstream dependency flags remain separate and unchanged.
 
 ### D05 · 2026-10-03 · Build the Room database
 
@@ -131,7 +137,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Schema diagram + storage spike evidence
 
-**Implementation evidence:** 2026-10-08: Day 5 Room storage complete on OPPO CPH2529 / Android 15. Eight entities with UUID identities, foreign keys and scoped answers; RegistryDao and RegistryDatabase v1 with schema export to app/schemas and no destructive migration; RoomRecordStore saves a whole record in one transaction and reports Saved or Failed without leaking paths or SQL. Verified on the phone: 6 storage tests (reopen, member scoping, cleared-answer replacement, rollback of a mid-transaction constraint failure, failed-write reporting, answer codec) and 1 schema/migration test pass; a seeded record passes seed, force-stop and reboot checks with the same 131072-byte database file listed afterwards. Regression: 18 JVM tests, 8 device UI tests, lint 0 errors / 10 version-notice warnings; serialization core and json pinned to 1.8.1 to fix a MigrationTestHelper AbstractMethodError. Evidence, ERD, attachment strategy and backup policy: planning/evidence/D05.md. No user-facing save yet: the UI still reads demo fixtures and practice answers stay session-only until Day 6; no cloud, auth, encryption or DataStore settings.
+**Implementation evidence:** 2026-10-08: Day 5 Room storage complete on OPPO CPH2529 / Android 15. Eight entities with UUID identities, foreign keys and scoped answers; RegistryDao and RegistryDatabase v1 with schema export to app/schemas and no destructive migration; RoomRecordStore saves a whole record in one transaction and reports Saved or Failed without leaking paths or SQL. Verified on the phone: 6 storage tests (reopen, member scoping, cleared-answer replacement, rollback of a mid-transaction constraint failure, failed-write reporting, answer codec) and 1 schema/migration test pass; a seeded record passes seed, force-stop and reboot checks with the same 131072-byte database file listed afterwards. Regression: 18 JVM tests, 8 device UI tests, lint 0 errors / 10 version-notice warnings; serialization core and json pinned to 1.8.1 to fix a MigrationTestHelper AbstractMethodError. Evidence, ERD, attachment strategy and backup policy: planning/03-evidence/D05.md. No user-facing save yet: the UI still reads demo fixtures and practice answers stay session-only until Day 6; no cloud, auth, encryption or DataStore settings.
 
 ### D06 · 2026-10-04 · Connect native editing and saves
 

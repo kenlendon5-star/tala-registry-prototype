@@ -1,25 +1,23 @@
-# Tala native Android delivery plan
+# Native Android delivery planning
 
-Open **ANDROID-KANBAN.html** directly in a browser. It is self-contained and works offline.
+Open [ANDROID-KANBAN.html](01-boards/ANDROID-KANBAN.html) directly in a browser. It is self-contained and works offline. Read the [daily plan](01-boards/ANDROID-30-DAY-PLAN.md) for the 30-card, 164-hour baseline and acceptance gates; dates are planning assumptions, not a completion guarantee.
 
-- The plan is a **Kotlin + Jetpack Compose rewrite in Android Studio**, with Room for local data.
-- Thirty calendar days, initially September 29–October 28, 2026; change the start date in the board.
-- Four sprint goals, thirty daily cards, ninety checklist tasks, dependencies and acceptance evidence.
-- One experienced developer, 164 focused hours. This is an aggressive offline capstone scope; learning time or production backend work needs a revised schedule.
-- Expand a card, complete its checklist, record evidence, then change its status. WIP is limited to one card building and one verifying.
-- Browser progress is local. Use **Export progress** for a backup and **Import progress** to restore it. Imports replace the current browser's progress after confirmation.
-- The Markdown plan is the complete static baseline; browser changes do not modify it.
+| Folder | Contents |
+|---|---|
+| 01-boards/ | Generated board, Markdown plan, editable HTML template and previews |
+| 02-progress/ | Repository progress JSON, build-board.cjs and verify-board.cjs |
+| 03-evidence/ | D01–D05 acceptance records and device/test artifacts |
+| 04-utils/ | Existing ad-hoc board diagnostic script |
 
-Files:
+From repository root:
 
-- `implementation-progress.json`: repository defaults and evidence for implemented cards. Existing browser progress is preserved; reconcile the evidence with your saved statuses. Day 3 evidence is in `evidence/D03.md`.
+```powershell
+rtk proxy node planning/02-progress/build-board.cjs
+rtk proxy node planning/02-progress/verify-board.cjs
+```
 
-- `ANDROID-KANBAN.html`: interactive board.
-- `ANDROID-30-DAY-PLAN.md`: daily plan, scope, sprint gates, cadence, risks and release checklist.
-- `build-board.cjs`: editable plan data and Markdown generator.
-- `board-template.html`: board UI template.
-- `verify-board.cjs`: focused board verification using the existing Playwright/Edge setup.
+Edit card definitions in build-board.cjs, repository defaults in implementation-progress.json, and layout in 01-boards/board-template.html. Generated HTML and Markdown should be rebuilt, not independently edited.
 
-Rebuild after editing the plan or template: `rtk proxy node planning/build-board.cjs` from the repository root. Verify with `rtk proxy node planning/verify-board.cjs`.
+Browser progress remains local and can differ from repository defaults. Export progress creates a portable JSON backup; Import progress replaces the browser's progress after confirmation. Existing browser status is not silently reset when repository defaults change. Keep one card building and one verifying; Done requires checks and evidence.
 
-The board does not create or install an Android app. Native implementation begins with D01/D02. Keep the existing web prototype and Expo starter as references; the proposed new project directory is `android-native/`.
+The board preserves the historical offline-native scope. The [current specifications](../docs/README.md) add explicit requirement IDs and a [traceability matrix](../docs/traceability.md). D01–D05 completion does not mean the whole application is ready.

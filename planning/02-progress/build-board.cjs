@@ -172,8 +172,8 @@ for(const card of cards){
     +`\n**Implementation evidence:** ${card.notes}\n`;
 }
 md[0]=md[0].replace('## Initial kanban','## Original planning baseline')
-  .replace('## Daily work packages',`## Repository implementation update\n\n${cards.filter(c=>c.notes).map(c=>`- ${c.id}: ${c.status}. [Implementation evidence](evidence/${c.id}.md).`).join('\n')}\n\nExisting browser progress remains independent. Earlier acceptance is not inferred from a later successful build.\n\n## Daily work packages`);
-fs.writeFileSync(path.join(__dirname,'ANDROID-30-DAY-PLAN.md'),md.join('\n'));
-const template=fs.readFileSync(path.join(__dirname,'board-template.html'),'utf8');
-fs.writeFileSync(path.join(__dirname,'ANDROID-KANBAN.html'),template.replace('__PLAN_DATA__',JSON.stringify({cards,scope,cadence,milestones,sources}).replace(/</g,'\\u003c')));
+  .replace('## Daily work packages',`## Repository implementation update\n\n${cards.filter(c=>c.notes).map(c=>`- ${c.id}: ${c.status}. [Implementation evidence](../03-evidence/${c.id}.md).`).join('\n')}\n\nExisting browser progress remains independent. Earlier acceptance is not inferred from a later successful build.\n\n## Daily work packages`);
+fs.writeFileSync(path.join(__dirname,'../01-boards/ANDROID-30-DAY-PLAN.md'),md.join('\n'));
+const template=fs.readFileSync(path.join(__dirname,'../01-boards/board-template.html'),'utf8');
+fs.writeFileSync(path.join(__dirname,'../01-boards/ANDROID-KANBAN.html'),template.replace('__PLAN_DATA__',JSON.stringify({cards,scope,cadence,milestones,sources}).replace(/</g,'\\u003c')));
 console.log(`Generated board and daily plan: ${cards.length} cards, ${cards.reduce((n,c)=>n+c.hours,0)} hours.`);

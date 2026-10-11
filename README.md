@@ -1,16 +1,59 @@
-# Tala UI prototype
+# Tala — Barangay Household Registry
 
-Native Android roadmap: [30-day kanban board](planning/ANDROID-KANBAN.html) and [daily Kotlin + Jetpack Compose plan](planning/ANDROID-30-DAY-PLAN.md). See [board usage](planning/README.md) for progress tracking.
+Tala is an offline-first household enumeration capstone. The primary release target is the native Kotlin/Jetpack Compose app. The browser prototype is the working behavior reference; the Expo project is a retained starter. Use fictional data during development.
 
-Start: `npm start`, then visit http://localhost:5173.
+**Start here:** [Documentation index](docs/README.md) · [Product requirements](docs/specifications/01-product-requirements.md) · [Wireframes](docs/design/wireframes.html) · [Project folder map](docs/project-structure.md).
 
-All 18 prototype sections are interactive, including per-member Demographics, Education and Employment.
+## Project areas
 
-Read [PROTOTYPE-UPDATE.md](PROTOTYPE-UPDATE.md) for current functionality and verification, and [BUILD-PLAN.md](BUILD-PLAN.md) for initial research and proposed production architecture.
+| Folder | Purpose / current status |
+|---|---|
+| [android-native](android-native/README.md) | Compose shell, practice forms and Room storage. Editing-to-Room integration is still pending |
+| [browser](browser/README.md) | Working 18-section browser prototype; localStorage only |
+| mobile/ | Earlier Expo starter; no Tala workflows; outside the active native build |
+| [supabase](supabase/README.md) | Development tooling and placeholder migrations; no app backend connected |
+| [docs](docs/README.md) | Six specifications, schemas, wireframes, traceability and reviews |
+| [planning](planning/README.md) | Delivery board, progress source, acceptance and device evidence |
+| [tools](tools/README.md) | Documentation/reference generation and consistency checks |
+| [logs](logs/README.md) | Local ignored build logs |
 
-Fictional demo data only. Browser-local storage; no production backend or authentication.
+## Run the browser reference
 
-Syntax check: `npm run check`.
-Browser verification: `node verify.cjs` (requires Playwright and installed Microsoft Edge).
+Repository tooling uses Node 24.18.0 (see .nvmrc). Install the pinned development tools once with `rtk npm ci --ignore-scripts` from the root. Microsoft Edge must also be installed for browser checks. These tools do not install or modify the Android app.
 
-Household removal and geomapping are available. See [GEOMAPPING.md](GEOMAPPING.md) for research, map providers, usage, and testing. Run `node verify-map.cjs` for the location/removal checks.
+From this repository root:
+
+```powershell
+rtk npm --prefix browser start
+```
+
+Open [http://localhost:5173](http://localhost:5173). The preview server binds to loopback. Records, images and signatures save in that browser, with known limitations recorded in the [system review](docs/reviews/SYSTEM-ANALYSIS.md).
+
+```powershell
+rtk npm --prefix browser run check
+rtk proxy node browser/tests/verify.cjs
+rtk proxy node browser/tests/verify-map.cjs
+rtk proxy node browser/tests/verify-revisions.cjs
+```
+
+Browser checks require the preview server, Playwright, and installed Microsoft Edge. They use isolated fictional records and write screenshots under browser/screenshots/.
+
+Root shortcuts are also available: `rtk npm start`, `rtk npm run check`, `rtk npm run docs:verify`, `rtk npm run board:build` and `rtk npm run test:browser`.
+
+## Build native Android
+
+Open android-native/ in Android Studio or follow its [setup and build guide](android-native/README.md). Run the Gradle wrapper from that directory. The current UI uses demo fixtures; database durability tests do not mean practice entries are already durable.
+
+## Planning and documentation
+
+Open the [30-day board](planning/01-boards/ANDROID-KANBAN.html) directly in a browser. From the repository root:
+
+```powershell
+rtk proxy node planning/02-progress/build-board.cjs
+rtk proxy node planning/02-progress/verify-board.cjs
+rtk proxy node tools/generate-reference.cjs
+rtk proxy node tools/build-wireframes.cjs
+rtk proxy node tools/check-docs.cjs
+```
+
+See [traceability](docs/traceability.md) for requirement-to-code/test coverage. Specifications distinguish current implementation, target release behavior, and future cloud work. No hosted service, schema migration, app installation, or production deployment is implied by the documents.

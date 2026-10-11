@@ -1,0 +1,40 @@
+{
+  "progress": "Expected ',' or '}' after property value in JSON at position 689 (line 5 column 621)",
+  "malformedUrl": "URIError: URI malformed",
+  "rules": {
+    "impossibleDateError": "",
+    "invalidCallbackError": "",
+    "unknownMultiOptionError": "",
+    "phoneLetters": "0917-123-4567"
+  },
+  "names": {
+    "name": "Different Person",
+    "firstName": "Alex",
+    "lastName": "Reyes"
+  },
+  "protection": {
+    "ready": true,
+    "answers": {
+      "barangay": "Barangay Cogon",
+      "head": "Maria Santos",
+      "address": "24 Mabini Street · Purok 2",
+      "name": "Different Person",
+      "philHealth": "No",
+      "dswd": "No",
+      "fourPs": "No",
+      "programs": [
+        "PhilHealth"
+      ],
+      "assistance": "No"
+    }
+  },
+  "staleTab": "0917-123-4567",
+  "failedSaveToast": "Picture saved.",
+  "corruptStorage": {
+    "errors": [
+      "Cannot read properties of undefined (reading '0')",
+      "data.households is not iterable"
+    ],
+    "appText": ""
+  }
+}

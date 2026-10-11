@@ -73,7 +73,7 @@ Stop them when finished using `rtk proxy supabase stop` (local data is preserved
 
 This setup provides development tooling; it does not connect the Android app's
 repository layer to Supabase. Day 5 schema, RLS, authentication, and client
-integration are tracked in [the Day 5 analysis](../planning/D05-SUPABASE-ANALYSIS.md).
+integration are tracked in [the Day 5 analysis](D05-SUPABASE-ANALYSIS.md).
 Create versioned schema changes with `rtk proxy supabase migration new <name>`
 and review them before applying them to the hosted database.
 

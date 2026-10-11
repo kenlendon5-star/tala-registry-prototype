@@ -1,0 +1,20 @@
+{
+  "name": "tala-project-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Repository commands and pinned documentation/browser verification tools; not an application backend.",
+  "engines": { "node": ">=24.18.0 <25" },
+  "scripts": {
+    "start": "npm --prefix browser start",
+    "check": "npm --prefix browser run check && node tools/check-docs.cjs",
+    "docs:generate": "node tools/generate-reference.cjs && node tools/prepare-backup-schema.cjs && node tools/build-wireframes.cjs",
+    "docs:verify": "node tools/verify-artifacts.cjs",
+    "board:build": "node planning/02-progress/build-board.cjs",
+    "board:verify": "node planning/02-progress/verify-board.cjs",
+    "test:browser": "node browser/tests/verify.cjs && node browser/tests/verify-map.cjs && node browser/tests/verify-revisions.cjs"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "playwright": "1.62.1"
+  }
+}

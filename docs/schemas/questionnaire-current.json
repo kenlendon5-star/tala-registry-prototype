@@ -1,0 +1,1180 @@
+{
+  "description": "Current browser field inventory; conditional expressions are documentation, not an executable portable rules format.",
+  "source": "browser/forms.js",
+  "generatedFor": "2026-10-11",
+  "sections": [
+    {
+      "number": 1,
+      "route": "setup",
+      "title": "Survey setup",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "enumerator",
+          "label": "Enumerator name",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "barangay",
+          "label": "Barangay",
+          "type": "select",
+          "options": [
+            "Barangay Cogon"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "purok",
+          "label": "Purok / zone",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "interviewDate",
+          "label": "Interview date",
+          "type": "date",
+          "options": [],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "route": "visit",
+      "title": "Visit information",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "visitDate",
+          "label": "Visit date",
+          "type": "date",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "visitResult",
+          "label": "Visit result",
+          "type": "select",
+          "options": [
+            "Interview started",
+            "Completed visit",
+            "Callback",
+            "No respondent",
+            "Refused"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "callbackDate",
+          "label": "Callback appointment",
+          "type": "datetime-local",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.visitResult==='Callback'"
+        },
+        {
+          "key": "visitNotes",
+          "label": "Visit notes",
+          "type": "textarea",
+          "options": [],
+          "optional": true,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "route": "household",
+      "title": "Household profile",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "head",
+          "label": "Household Head",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "firstName",
+          "label": "First Name",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "middleName",
+          "label": "Middle Name (Optional)",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "lastName",
+          "label": "Last Name",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "extension",
+          "label": "Extension (Optional)",
+          "type": "select",
+          "options": [
+            "Jr.",
+            "Sr.",
+            "II",
+            "III",
+            "IV"
+          ],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "alias",
+          "label": "Nickname / Alias (Optional)",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "address",
+          "label": "Address / purok",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "respondent",
+          "label": "Respondent name",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "phone",
+          "label": "Contact Number (Optional)",
+          "type": "tel",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "previousCity",
+          "label": "Previous City (Optional)",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "photo",
+          "label": "Household Profile Picture (Optional)",
+          "type": "photo",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "houseSafe",
+          "label": "Is Your House Safe?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "safetyReason",
+          "label": "Reason (Optional)",
+          "type": "textarea",
+          "options": [],
+          "optional": true,
+          "condition": "a=>!!a.houseSafe",
+          "hint": "For example: Has CCTV installed."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "route": "members",
+      "title": "Household members",
+      "scope": "household",
+      "fields": []
+    },
+    {
+      "number": 5,
+      "route": "demographics",
+      "title": "Demographics",
+      "scope": "member",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Full Name",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "firstName",
+          "label": "First Name",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "middleName",
+          "label": "Middle Name (Optional)",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "lastName",
+          "label": "Last Name",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "extension",
+          "label": "Extension (Optional)",
+          "type": "select",
+          "options": [
+            "Jr.",
+            "Sr.",
+            "II",
+            "III",
+            "IV"
+          ],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "alias",
+          "label": "Nickname / Alias (Optional)",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "phone",
+          "label": "Contact Number (Optional)",
+          "type": "tel",
+          "options": [],
+          "optional": true,
+          "condition": null
+        },
+        {
+          "key": "registeredVoter",
+          "label": "Registered Voter?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "relationship",
+          "label": "Relationship to household head",
+          "type": "select",
+          "options": [
+            "Head",
+            "Spouse",
+            "Daughter",
+            "Son",
+            "Parent",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "sex",
+          "label": "Sex",
+          "type": "choice",
+          "options": [
+            "Male",
+            "Female"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "dob",
+          "label": "Date of birth",
+          "type": "date",
+          "options": [],
+          "optional": false,
+          "condition": null,
+          "past": true
+        },
+        {
+          "key": "birth",
+          "label": "Birth registered with the civil registry?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No",
+            "Don't know"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "civilStatus",
+          "label": "Civil status",
+          "type": "select",
+          "options": [
+            "Single",
+            "Married",
+            "Widowed",
+            "Separated",
+            "Other",
+            "Prefer not to answer"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "route": "other",
+      "title": "Other demographics",
+      "scope": "member",
+      "fields": [
+        {
+          "key": "nationalId",
+          "label": "Has a National ID?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "soloParent",
+          "label": "Identifies as a Solo Parent?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "soloParentId",
+          "label": "Solo Parent ID (Optional)",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": "a=>a.soloParent==='Yes'"
+        },
+        {
+          "key": "disability",
+          "label": "Has Disability?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "registeredPwd",
+          "label": "Registered PWD?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": "a=>a.disability==='Yes'"
+        },
+        {
+          "key": "pwdId",
+          "label": "PWD / Disability ID",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.disability==='Yes'&&a.registeredPwd==='Yes'"
+        },
+        {
+          "key": "disabilityDetail",
+          "label": "Disability description",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.disability==='Yes'"
+        },
+        {
+          "key": "seniorId",
+          "label": "Has a senior citizen ID?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No",
+            "Not applicable"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "route": "migration",
+      "title": "Migration",
+      "scope": "member",
+      "fields": [
+        {
+          "key": "citizenship",
+          "label": "Citizenship",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "moved",
+          "label": "Moved into this barangay?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "previousResidence",
+          "label": "Previous city / municipality",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.moved==='Yes'"
+        },
+        {
+          "key": "moveYear",
+          "label": "Year moved",
+          "type": "number",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.moved==='Yes'",
+          "min": 1900,
+          "max": 2026
+        },
+        {
+          "key": "overseas",
+          "label": "Currently residing overseas?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "route": "education",
+      "title": "Education",
+      "scope": "member",
+      "fields": [
+        {
+          "key": "attending",
+          "label": "Currently attending school?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "school",
+          "label": "Type of school",
+          "type": "select",
+          "options": [
+            "Public",
+            "Private",
+            "Special Needs Education (SNED)",
+            "Special Education (SPED)"
+          ],
+          "optional": false,
+          "condition": "a=>a.attending==='Yes'"
+        },
+        {
+          "key": "reason",
+          "label": "Reason for not attending",
+          "type": "select",
+          "options": [
+            "Not yet school age",
+            "Completed schooling",
+            "Financial concerns",
+            "Working",
+            "Other",
+            "Prefer not to answer"
+          ],
+          "optional": false,
+          "condition": "a=>a.attending==='No'"
+        },
+        {
+          "key": "grade",
+          "label": "Highest grade / year completed",
+          "type": "select",
+          "options": [
+            "No grade completed",
+            "Kindergarten",
+            "Grade 1",
+            "Grade 2",
+            "Grade 3",
+            "Grade 4",
+            "Grade 5",
+            "Grade 6",
+            "Grade 7",
+            "Grade 8",
+            "Grade 9",
+            "Grade 10",
+            "Grade 11",
+            "Grade 12",
+            "College level",
+            "College graduate"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "educationAssistance",
+          "label": "Did You Receive Educational Assistance?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "track",
+          "label": "Program / track (optional)",
+          "type": "text",
+          "options": [],
+          "optional": true,
+          "condition": "a=>a.attending==='Yes'"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "route": "employment",
+      "title": "Employment",
+      "scope": "member",
+      "fields": [
+        {
+          "key": "worked",
+          "label": "Did This Member Earn for Pay or Profit in the Past 7 Days?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "occupation",
+          "label": "Occupation / job title",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.worked==='Yes'"
+        },
+        {
+          "key": "industry",
+          "label": "Industry / business activity",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.worked==='Yes'"
+        },
+        {
+          "key": "employmentType",
+          "label": "Employment type",
+          "type": "select",
+          "options": [
+            "Employee",
+            "Self-employed",
+            "Employer",
+            "Paid family worker"
+          ],
+          "optional": false,
+          "condition": "a=>a.worked==='Yes'"
+        },
+        {
+          "key": "hours",
+          "label": "Hours worked in the past 7 days",
+          "type": "number",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.worked==='Yes'",
+          "min": 0,
+          "max": 168
+        },
+        {
+          "key": "looking",
+          "label": "Currently looking for work?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": "a=>a.worked==='No'"
+        },
+        {
+          "key": "notWorkingReason",
+          "label": "Main reason for not working",
+          "type": "select",
+          "options": [
+            "Student",
+            "Below working age",
+            "Homemaking / caregiving",
+            "Retired",
+            "Health condition",
+            "Unable to find work",
+            "Other"
+          ],
+          "optional": false,
+          "condition": "a=>a.worked==='No'"
+        },
+        {
+          "key": "available",
+          "label": "Available to start work?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": "a=>a.worked==='No'&&a.looking==='Yes'"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "route": "health",
+      "title": "Health",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "illness",
+          "label": "Did anyone need medical care in the past 30 days?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "treatment",
+          "label": "Where was care sought?",
+          "type": "select",
+          "options": [
+            "Barangay health center",
+            "Public hospital",
+            "Private facility",
+            "No care sought",
+            "Other"
+          ],
+          "optional": false,
+          "condition": "a=>a.illness==='Yes'"
+        },
+        {
+          "key": "healthAccess",
+          "label": "Can the household reach a health facility when needed?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "route": "food",
+      "title": "Food security",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "foodWorry",
+          "label": "In the past 30 days, how often did the household worry about food?",
+          "type": "select",
+          "options": [
+            "Never",
+            "Rarely",
+            "Sometimes",
+            "Often"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "skippedMeals",
+          "label": "Did anyone skip a meal due to lack of resources?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "foodAssistance",
+          "label": "Received food assistance in the past 30 days?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "route": "transport",
+      "title": "Transport & finance",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "transport",
+          "label": "Usual mode of transport",
+          "type": "select",
+          "options": [
+            "Walking",
+            "Bicycle",
+            "Motorcycle",
+            "Tricycle",
+            "Jeepney / bus",
+            "Private car",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "accounts",
+          "label": "Financial accounts held",
+          "type": "multi",
+          "options": [
+            "Bank",
+            "Digital bank",
+            "E-money",
+            "Cooperative",
+            "None",
+            "Prefer not to answer"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "route": "disaster",
+      "title": "Disaster preparedness",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "disasterType",
+          "label": "Type of Disaster",
+          "type": "select",
+          "options": [
+            "Man-made",
+            "Natural",
+            "Biological Disaster"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "hazards",
+          "label": "Hazards experienced in the past year",
+          "type": "multi",
+          "options": [
+            "Flood",
+            "Typhoon",
+            "Earthquake",
+            "Fire",
+            "Landslide",
+            "None"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "evacuationKnown",
+          "label": "Knows the designated evacuation area?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "evacuation",
+          "label": "Identified Evacuation Area",
+          "type": "select",
+          "options": [
+            "Barangay Hall (Sample)",
+            "School Evacuation Center (Sample)",
+            "Covered Court (Sample)",
+            "Other"
+          ],
+          "optional": false,
+          "condition": "a=>a.evacuationKnown==='Yes'",
+          "hint": "Sample options; confirm the designated local evacuation areas."
+        },
+        {
+          "key": "evacuationOther",
+          "label": "Other Evacuation Area",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.evacuationKnown==='Yes'&&a.evacuation==='Other'"
+        },
+        {
+          "key": "emergencyKit",
+          "label": "Has an emergency kit?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "route": "internet",
+      "title": "Internet & public safety",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "internet",
+          "label": "Does anyone have internet access?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "connection",
+          "label": "Internet connection",
+          "type": "select",
+          "options": [
+            "Mobile data",
+            "Fiber / cable",
+            "Public Wi-Fi",
+            "Other"
+          ],
+          "optional": false,
+          "condition": "a=>a.internet==='Yes'"
+        },
+        {
+          "key": "safety",
+          "label": "How safe does the household feel in the neighborhood?",
+          "type": "select",
+          "options": [
+            "Very safe",
+            "Somewhat safe",
+            "Somewhat unsafe",
+            "Very unsafe",
+            "Prefer not to answer"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "route": "protection",
+      "title": "Social protection",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "philHealth",
+          "label": "Covered by PhilHealth?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "philHealthRole",
+          "label": "PhilHealth Coverage",
+          "type": "choice",
+          "options": [
+            "Member",
+            "Dependent"
+          ],
+          "optional": false,
+          "condition": "a=>a.philHealth==='Yes'"
+        },
+        {
+          "key": "dswd",
+          "label": "Receives DSWD Assistance?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "fourPs",
+          "label": "4Ps Beneficiary?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "programs",
+          "label": "Programs covering household members",
+          "type": "multi",
+          "options": [
+            "PhilHealth",
+            "SSS",
+            "GSIS",
+            "4Ps",
+            "Senior citizen assistance",
+            "PWD assistance",
+            "None",
+            "Prefer not to answer"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "assistance",
+          "label": "Received other government assistance in the past year?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "assistanceDetail",
+          "label": "Type of assistance",
+          "type": "text",
+          "options": [],
+          "optional": false,
+          "condition": "a=>a.assistance==='Yes'"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "route": "water",
+      "title": "Water & sanitation",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "water",
+          "label": "Main drinking water source",
+          "type": "select",
+          "options": [
+            "Piped into dwelling",
+            "Piped to yard or plot",
+            "Public tap or standpipe",
+            "Tube well or borehole",
+            "Protected well",
+            "Spring",
+            "Rainwater",
+            "Tanker truck",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "toilet",
+          "label": "Toilet facility",
+          "type": "select",
+          "options": [
+            "Flush / pour flush",
+            "Pit latrine",
+            "Shared toilet",
+            "No toilet",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "waste",
+          "label": "Waste disposal practices",
+          "type": "multi",
+          "options": [
+            "Collection service",
+            "Composting",
+            "Recycling",
+            "Burning",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "handwashing",
+          "label": "Has a handwashing place with soap and water?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "route": "housing",
+      "title": "Housing characteristics",
+      "scope": "household",
+      "fields": [
+        {
+          "key": "roof",
+          "label": "Main roofing material",
+          "type": "select",
+          "options": [
+            "Metal roofing sheets",
+            "Concrete / clay / slate tile",
+            "Wood / bamboo",
+            "Sod / thatch",
+            "Makeshift / salvaged",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "walls",
+          "label": "Main wall material",
+          "type": "select",
+          "options": [
+            "Concrete / brick",
+            "Wood",
+            "Bamboo",
+            "Mixed materials",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "tenure",
+          "label": "Housing tenure",
+          "type": "select",
+          "options": [
+            "Owned",
+            "Rented",
+            "Rent-free with permission",
+            "Other"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "electricity",
+          "label": "Has electricity?",
+          "type": "choice",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "optional": false,
+          "condition": null
+        },
+        {
+          "key": "rooms",
+          "label": "Number of sleeping rooms",
+          "type": "number",
+          "options": [],
+          "optional": false,
+          "condition": null,
+          "min": 0,
+          "max": 50
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "route": "consent",
+      "title": "Consent & review",
+      "scope": "household",
+      "fields": []
+    }
+  ]
+}

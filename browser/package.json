@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node server.cjs",
-    "check": "node --check app.js && node --check forms.js && node --check workflow.js && node --check geomapping.js"
+    "check": "node --check app.js && node --check forms.js && node --check workflow.js && node --check geomapping.js",
+    "test:workflow": "node tests/verify.cjs",
+    "test:map": "node tests/verify-map.cjs",
+    "test:revisions": "node tests/verify-revisions.cjs"
   }
 }

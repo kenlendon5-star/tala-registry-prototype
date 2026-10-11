@@ -46,8 +46,8 @@ Missing records show an explicit unavailable state. Screens pass IDs to reposito
 - JVM: filtering, restored inputs, repository updates, typed-ID validation, identity across reorder/removal, required/optional inputs, numeric/date/phone limits, conditional clearing, exclusive answers and household/member draft isolation.
 - Device: navigation, keyboard visibility/resize, Android Back, activity recreation, selected household/tab, empty-state recovery, system bars, absence of Internet permission, all shared form controls, first-error focus, pickers and draft isolation across scope changes.
 - Device storage: snapshot save and reopen, per-member answer scoping, cleared-answer replacement, transaction rollback, failed-write reporting, export/migration validation and force-stop/reboot durability.
-- [Day 3 acceptance record](../planning/evidence/D03.md).
-- [Day 4 acceptance record](../planning/evidence/D04.md).
-- [Day 5 acceptance record](../planning/evidence/D05.md).
+- [Day 3 acceptance record](../planning/03-evidence/D03.md).
+- [Day 4 acceptance record](../planning/03-evidence/D04.md).
+- [Day 5 acceptance record](../planning/03-evidence/D05.md).
 
 Implementation follows Android's [saved-state guidance](https://developer.android.com/develop/ui/compose/state-saving) and [edge-to-edge setup](https://developer.android.com/develop/ui/compose/system/setup-e2e).

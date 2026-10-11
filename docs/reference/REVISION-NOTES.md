@@ -13,4 +13,4 @@ Implemented in the browser prototype served at http://localhost:5173.
 
 The ambiguous Cash/count notes, unidentified abbreviation/program, and covered education follow-up were not assigned invented meanings. The numbers 15/30 are not hardcoded; counts reflect saved records. Actual evacuation sites still need to replace the labeled sample choices.
 
-Verification: `npm run check`, `node verify.cjs`, `node verify-map.cjs`, and `node verify-revisions.cjs`. Browser scripts use Playwright and installed Microsoft Edge. The revision checks cover names, counts, phone formatting, image upload, conditional clearing, persistence, and mobile layout.
+Verification: `npm --prefix browser run check`, `node browser/tests/verify.cjs`, `node browser/tests/verify-map.cjs`, and `node browser/tests/verify-revisions.cjs`. Browser scripts use Playwright and installed Microsoft Edge. The revision checks cover names, counts, phone formatting, image upload, conditional clearing, persistence, and mobile layout.
