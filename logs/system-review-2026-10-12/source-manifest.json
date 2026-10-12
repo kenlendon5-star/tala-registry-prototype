@@ -1,0 +1,219 @@
+{
+  "capturedAt": "2026-10-12T03:19:56.633Z",
+  "baseCommit": "01e4591",
+  "note": "Working tree changed externally during review. Snapshot is source evidence, not a passing build.",
+  "files": [
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/data/local/DurableSaveTest.kt",
+      "sha256": "004545e5091136d108102d53d7e30992bc942ab3efdab2754ba9abb3363dbc91"
+    },
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/data/local/EditingPersistenceDeviceTest.kt",
+      "sha256": "0df25a5fdc4967f950d2afdff47e904dbed5ae0ccffab02ec98a9e78441867c4"
+    },
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/data/local/RecordStoreDeviceTest.kt",
+      "sha256": "98a6f1101abb9570fc69100afaa3d9440e3a9323324ae062b0f79fa77cc06755"
+    },
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/data/local/SampleRecords.kt",
+      "sha256": "073c28478903e487a69ecffcc0a485ae2cf400b652b9d1cb1500c3887c987019"
+    },
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/data/local/SchemaMigrationTest.kt",
+      "sha256": "9baf1ffb97e3558e77c45e57d28529c38d1cf93fb7cca3655b18e4a69833eb56"
+    },
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/ui/EditingDeviceTest.kt",
+      "sha256": "8b8e835acd081b18915e02188314d8128c463caecb4a873c6ffe5bea96744c1c"
+    },
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/ui/FormDeviceTest.kt",
+      "sha256": "30c6cb0207e84b9952ce72ad9016757696787918f160b907e035f81676e963da"
+    },
+    {
+      "path": "android-native/app/src/androidTest/java/ph/tala/registry/ui/ShellDeviceTest.kt",
+      "sha256": "79fbdfc17839eb10ee990fbc9491a786d247277a8e2a04c948b6a65211d5b35d"
+    },
+    {
+      "path": "android-native/app/src/main/AndroidManifest.xml",
+      "sha256": "151429f0fa9f23d7d776ad205d2215701bd8498029b7450c5c9ccca9bf3b83c1"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/data/DemoFixtures.kt",
+      "sha256": "fa11c7bbaf0cd4fff28ad7a231b8edd19fba5cd28bec3406489a47b4045c4c47"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/data/HouseholdRepository.kt",
+      "sha256": "15a2393505e08fd6a1ce69078735c2d1679d0aa1f07267f6353bcc3e671e6a5d"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/data/local/Entities.kt",
+      "sha256": "b9dddcf65f93306892be3ae5fb23f34354d18b9d3996265261b5502c661467f0"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/data/local/RecordStore.kt",
+      "sha256": "2225d9c192a4c820941c9f6bff0e6388a8de037743948466ba7bf72a989df20c"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/data/local/RegistryDao.kt",
+      "sha256": "4fc14cebc4b18bcda9ab524c18c699332e49dff1019650f3569b0e0af3db593f"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/data/local/RegistryDatabase.kt",
+      "sha256": "a7267f190da4927f868186ce1752418d20762a9b7f5ffff69bae84bcb63a3f70"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/edit/EditRules.kt",
+      "sha256": "a166ec85364b41f2a2302a28947915acd18ff1bc7aa7d654d0e1e70bdf79e344"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/form/FormRules.kt",
+      "sha256": "08409fe7922dacfb6b38e0b429c77b0cb8f447c345f6dd9cc53cdcb2e9dc3b9a"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/form/PracticeSection.kt",
+      "sha256": "08c73415799189acac2d9017d7eab112394a2f0ca1fc64042d8e2dc0ff7720a4"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/form/RegistrySections.kt",
+      "sha256": "baf82fc7fec69637edf7d9e92fd6496fd6153ecf7a342411cdfde433664b2ea5"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/model/Answers.kt",
+      "sha256": "85f31e1942d063089636602592dea0ca7e97bcd0c8e0537bc25cc184aa8b315c"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/model/FieldSpec.kt",
+      "sha256": "08cafe88bcd332eb30d3873924836ebce72a81e18c4847580d47abe8f67de044"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/model/RecordIds.kt",
+      "sha256": "3414b8b91a66c164042a48f9550a77861d99a3136bef479d5a6b05419e27d33b"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/domain/model/Records.kt",
+      "sha256": "723b7a6776da056fea59f08c091ded687f8dbb56741a1e572d2dcea545091909"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/MainActivity.kt",
+      "sha256": "eec1289a5d7e452a42519d6953b099260ce5fcd45a53017d51155cc4a354c418"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/form/FormSessionViewModel.kt",
+      "sha256": "4f1723a38ee0e922d08a5f689d7a7c267746da133a934e80edf5aa249a34bff6"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/form/PracticeFormScreen.kt",
+      "sha256": "21a733b2f04421a0e20f6d40d16f2e5aeb6be0ce9beaf3ccacfe65403e6f1e35"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/form/SectionForm.kt",
+      "sha256": "2da6bd8cab69920c8eb25e3476942f0a6ac79087f6ac6f1f39d951b1ff0ee115"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/households/EditScreens.kt",
+      "sha256": "717ae93986a269f85f354619a98df14ed2b760ea91ee43504df272b8eefbfa8c"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/households/HouseholdEditViewModel.kt",
+      "sha256": "dfb937824c2286da6fc9dc9431739f2902a415f8c750a27c54444fcf402c80e6"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/households/MemberEditViewModel.kt",
+      "sha256": "8adbf8a652c7032965e731b7bd5d562941ccd440dea64cba550d6a47176a5fdf"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/interview/InterviewSectionsViewModel.kt",
+      "sha256": "c0bbf77da0c794babc55b7a67c2503ee28c01890b4a60bf40b7d96086632702f"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/InterviewViewModel.kt",
+      "sha256": "36350427e49dc1e6600768b0bd55f87baa312ca5ab61158c58fadd3b8d673181"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/RegistryViewModel.kt",
+      "sha256": "da4abb8781abdb7412ee3f75aeee24902b645b942d2121704a4b320d47838e61"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/Routes.kt",
+      "sha256": "abcdbe14f501dce96dd48404c0c5c36a732b51a2d1ba0bb49d66fd6f5bd2cc18"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/TalaApp.kt",
+      "sha256": "598ef9c23a5e9ef819e78ed0f3907fd9dc003aaae90283fcbf52ed08fe1b35f3"
+    },
+    {
+      "path": "android-native/app/src/main/java/ph/tala/registry/ui/theme/Theme.kt",
+      "sha256": "88b616ab42180a277e1ed14b906345762cc9e057a9e1db138a56b23a1b435a55"
+    },
+    {
+      "path": "android-native/app/src/main/res/values/strings.xml",
+      "sha256": "3a1c0fc9b04e66c4cfbcf1b35bcba7bfd8fe32e7eb92817055b120a75bb430a2"
+    },
+    {
+      "path": "android-native/app/src/main/res/values/themes.xml",
+      "sha256": "021848ba9828d2583b6619ca7c18bbc532c945b989217313cec5afce5094d12b"
+    },
+    {
+      "path": "android-native/app/src/main/res/xml/data_extraction_rules.xml",
+      "sha256": "8882b7d3c90b434232e58bed3b644d2ad19b0178896ac1bf90c515f835cef57b"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/audit/SprintAcceptanceRegressionTest.kt",
+      "sha256": "e1919a959f0c7c18d1d83fe4ec43d702773455c254e24bc97a2bb78bb0edf79a"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/data/FakeRecordStore.kt",
+      "sha256": "dc98d4f7ea621c6fb3d7e00a41c7e2b4a6658dbde2b91fecabde3c9239adbedd"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/data/HouseholdRepositoryTest.kt",
+      "sha256": "8bd993029fc6247b3a3d797d00067cb0591d3cd3df24c42215d027ef6a3cf78e"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/data/InterviewAnswersRepositoryTest.kt",
+      "sha256": "c3d267e1a0b9bf32e72ec56f462841b8894d8927dc6920119b7e3e4e15749fc8"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/domain/form/FormRulesTest.kt",
+      "sha256": "0ed6bc7e958917dce6378ab322299f8d98fa829fe2935958d2cc5b488912ac27"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/domain/form/RegistrySectionsTest.kt",
+      "sha256": "7075a809b04bc178ab4cb8a62c3b4fc104e2d6e96af73d40ec178bdeba31aec4"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/ui/EditScreensViewModelTest.kt",
+      "sha256": "959aaf545a4f9a04aa8d9f9533c7de4e7a6008f79877f341a9e21ac326e13b3a"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/ui/FormSessionViewModelTest.kt",
+      "sha256": "edeb8e376a5e6d3234df72b24006647f544e78f290352ab8ab3d58d714104a5e"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/ui/interview/InterviewSectionsViewModelTest.kt",
+      "sha256": "dac21e1b25a364e0bc7712ce81c27dff5fc5fbf0feb26aee454bf1efdf159faa"
+    },
+    {
+      "path": "android-native/app/src/test/java/ph/tala/registry/ui/ShellViewModelTest.kt",
+      "sha256": "ec8a1b9d00e636b1e37b540c6adc184e85402d83db05fe07c94cfa107eab117f"
+    },
+    {
+      "path": "android-native/app/build.gradle.kts",
+      "sha256": "8e49f942e0ae3afe5480c82ea7caf69d4d6037da07a798f16fc682009005ada9"
+    },
+    {
+      "path": "planning/02-progress/implementation-progress.json",
+      "sha256": "fed8180549e479b5fcb784dbd23dc3b0c423558740f4dd38d94b0b30a00a66bd"
+    },
+    {
+      "path": "planning/02-progress/verify-board.cjs",
+      "sha256": "9f4a9b3c41e82e7e601c200c664858315d7d9974b140a17e474c9fc19823ccc1"
+    },
+    {
+      "path": "planning/01-boards/ANDROID-30-DAY-PLAN.md",
+      "sha256": "7bed11f17ea4809aab6422fcf8c45da83d8d68e074a1e3957060c1a58d48a18c"
+    }
+  ]
+}

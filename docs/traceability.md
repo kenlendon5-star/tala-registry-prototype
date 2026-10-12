@@ -2,6 +2,8 @@
 
 11 October 2026. This matrix connects the six specifications to existing code and required acceptance work. Existing tests are evidence of their implemented scope, not proof that all proposed behavior is complete.
 
+12 October 2026 update: the delivery board was reset to match audited reality (D08 In progress, D09–D20 Backlog). Native registration sections (setup, visit, household profile) now save durably through `HouseholdRepository.saveSectionAnswers`, archived records leave active counts behind a new Archived filter, and the audit's regression guards live in `SprintAcceptanceRegressionTest`.
+
 | Requirements | Target screens | Current source / evidence | Remaining acceptance |
 |---|---|---|---|
 | PR-01–03 | S01, S02, S10 | browser/workflow.js; native RegistryViewModel; ShellDeviceTest | Native editable profile, sex counts, archived filter |

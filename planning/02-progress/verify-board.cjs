@@ -9,47 +9,48 @@ const {pathToFileURL}=require('node:url');
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(pathToFileURL(path.join(__dirname,'../01-boards/ANDROID-KANBAN.html')).href);
   assert.equal(await page.locator('.card').count(),30);
-  // Repository baseline: D01–D06 are Done; nothing is Ready or building.
+  // Repository baseline: D01–D07 are Done and D08 is In progress after the 12 October audit reset.
   const initialDoneCount=await page.locator('.column[data-status="Done"] .card').count();
-  assert.equal(initialDoneCount,6);
+  assert.equal(initialDoneCount,7);
   assert.equal(await page.locator('.column[data-status="Ready"] .card').count(),0);
-  assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),0);
-  assert.equal(await page.getByLabel('Status for D06').inputValue(),'Done');
+  assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),1);
+  assert.equal(await page.getByLabel('Status for D08').inputValue(),'In progress');
+  assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
   // Free the single WIP slot in this isolated test profile before exercising cards.
   for(const status of await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').all()) {
    await status.selectOption('Backlog');
   }
   assert.match(await page.locator('#endDate').textContent(),/28 Oct 2026/);
-  // Dependency gate: D08 waits for D07, which is in Backlog rather than Done.
-  await page.getByLabel('Status for D08').selectOption('Ready');
-  assert.equal(await page.getByLabel('Status for D08').inputValue(),'Backlog');
+  // Dependency gate: D22 waits for D21, which is in Backlog rather than Done.
+  await page.getByLabel('Status for D22').selectOption('Ready');
+  assert.equal(await page.getByLabel('Status for D22').inputValue(),'Backlog');
   // The refusal reason is shown on the card, not only in the notice bar at the top.
-  assert.match(await page.locator('[data-id="D08"] .gate').textContent(),/waiting for D07/);
-  // Done gate: every checklist item and evidence note are required first.
-  await page.getByLabel('Status for D07').selectOption('Done');
-  assert.equal(await page.getByLabel('Status for D07').inputValue(),'Backlog');
-  assert.match(await page.locator('[data-id="D07"] .gate').textContent(),/Check every task/);
-  // WIP gate: one card building at a time.
+  assert.match(await page.locator('[data-id="D22"] .gate').textContent(),/waiting for D21/);
+  // Done gate: every checklist item and evidence note are required first; D08 still has unchecked tasks.
+  await page.getByLabel('Status for D08').selectOption('Done');
+  assert.equal(await page.getByLabel('Status for D08').inputValue(),'Backlog');
+  assert.match(await page.locator('[data-id="D08"] .gate').textContent(),/Check every task/);
+  // WIP gate: one card building at a time. D03's dependency (D02) stays Done while D01 builds.
   await page.getByLabel('Status for D01').selectOption('In progress');
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'In progress');
-  await page.getByLabel('Status for D07').selectOption('In progress');
-  assert.equal(await page.getByLabel('Status for D07').inputValue(),'Backlog');
-  assert.match(await page.locator('[data-id="D07"] .gate').textContent(),/WIP limit reached/);
+  await page.getByLabel('Status for D03').selectOption('In progress');
+  assert.equal(await page.getByLabel('Status for D03').inputValue(),'Done');
+  assert.match(await page.locator('[data-id="D03"] .gate').textContent(),/WIP limit reached/);
   // Return D01 to Done (its checklist and evidence are already recorded) to free the slot.
   await page.getByLabel('Status for D01').selectOption('Done');
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
-  // Completing D07's checklist and evidence lets it reach Done and clears the refusal reason.
-  await page.locator('[data-id="D07"] summary').click();
-  for(const check of await page.locator('[data-id="D07"] input[type=checkbox]').all())await check.check();
-  await page.getByLabel('Evidence or blocker notes for D07').fill('Board verification fixture: week-one gate reviewed against the Day 6 editing evidence.');
-  await page.getByLabel('Status for D07').selectOption('Done');
+  // Completing D08's checklist and evidence lets it reach Done (its dependency D07 is Done) and clears the refusal reason.
+  await page.locator('[data-id="D08"] summary').click();
+  for(const check of await page.locator('[data-id="D08"] input[type=checkbox]').all())await check.check();
+  await page.getByLabel('Evidence or blocker notes for D08').fill('Board verification fixture: gates exercised in an isolated profile.');
+  await page.getByLabel('Status for D08').selectOption('Done');
   assert.equal(await page.locator('.column[data-status="Done"] .card').count(),initialDoneCount+1);
-  assert.equal(await page.locator('[data-id="D07"] .gate').count(),0);
+  assert.equal(await page.locator('[data-id="D08"] .gate').count(),0);
   await page.reload();
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
-  assert.equal(await page.getByLabel('Status for D06').inputValue(),'Done');
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
-  assert.equal(await page.getByLabel('Status for D08').inputValue(),'Backlog');
+  assert.equal(await page.getByLabel('Status for D08').inputValue(),'Done');
+  assert.equal(await page.getByLabel('Status for D22').inputValue(),'Backlog');
   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress'}).click();
   assert.equal((await download).suggestedFilename(),'tala-native-android-progress.json');
   const raw=await page.evaluate(()=>JSON.stringify(state));
@@ -76,6 +77,6 @@ const {pathToFileURL}=require('node:url');
   await page.setViewportSize({width:320,height:800});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.deepEqual(errors,[]);
-  console.log('Board passed: 30 cards, baseline D01–D06 Done, dependency/Done/WIP gates with inline reasons, progress persistence, export/import, date shifting, sprint filter, mobile widths and no script errors.');
+  console.log('Board passed: 30 cards, audited baseline D01–D07 Done with D08 In progress, dependency/Done/WIP gates with inline reasons, progress persistence, export/import, date shifting, sprint filter, mobile widths and no script errors.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -51,6 +51,132 @@
       true,
       true
     ],
-    "notes": "2026-10-12: Day 6 native editing and saves complete. Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions; ViewModel save/resume flows, SavedStateHandle draft preservation, and lifecycle-aware save states (Idle, Saving, Saved, Failed); 30 JVM unit tests (11 form rules, 3 scoped form state, 4 shell, 8 repository, 4 edit ViewModels) and 4 new editing device tests pass on OPPO CPH2529 / Android 15. Evidence: planning/03-evidence/D06.md."
+    "notes": "2026-10-08: Day 6 native editing and saves complete. Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions; ViewModel save/resume flows, SavedStateHandle draft preservation, and lifecycle-aware save states (Idle, Saving, Saved, Failed); 30 JVM unit tests (including repository, fake store, and ViewModels) and 10 device tests pass on OPPO CPH2529 / Android 15. Evidence: planning/03-evidence/D06.md."
+  },
+  "D07": {
+    "status": "Done",
+    "checks": [
+      true,
+      true,
+      true
+    ],
+    "notes": "2026-10-08: Week-one foundation review complete on OPPO CPH2529 / Android 15. Offline startup, durable household/member creation, save/resume after process death, and Room relational persistence verified. Evidence: planning/03-evidence/D07.md."
+  },
+  "D08": {
+    "status": "In progress",
+    "checks": [
+      true,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit correction: the earlier Done record described work absent from the repository (Photo Picker pictures, full registration sections, editable enumerator profile); the card was reset and planning/03-evidence/D08.md carries a correction banner. Implementation then began in plan order: all 18 sections ported into QuestionnaireSections.kt (generated from browser/forms.js by tools/port-native-questionnaire.cjs) and edited in the Continue-questionnaire workspace, which auto-saves through HouseholdRepository.saveDraftSection with a compare-with-base conflict check; HouseholdRepository.reviewInterview grants Reviewed only after every section, member form and consent answer pass validation, and a saved visit result updates the household status so home counts stay truthful. Companion audit fixes: new-member screens no longer show as missing before first save; archived households leave active counts behind a new Archived filter; a Saved label clears when its draft changes. New JVM tests: QuestionnaireSections/registration coverage, InterviewAnswersRepositoryTest (merge, conflict refusal, review gating), InterviewSectionsViewModelTest and SprintAcceptanceRegressionTest. Remaining on this card: household/member pictures (task 2), enumerator profile (task 3) and a full device-suite pass over the workspace (the 12 October run lost the phone connection mid-suite)."
+  },
+  "D09": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: no Demographics, Other demographics or Migration code exists in the app; the practice section only demonstrates shared controls, and the earlier Done record described FormRules behavior tests rather than these sections. Section specs, member-scoped Room saves and branching tests remain to be built. Card reset to Backlog."
+  },
+  "D10": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: no Education or Employment section code exists; employment controls appear only inside the practice section. Card reset to Backlog."
+  },
+  "D11": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: no Health, Food security, Transport/financial accounts, Internet/safety, Water/sanitation or Housing sections exist natively. Card reset to Backlog."
+  },
+  "D12": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: no Disaster preparedness or Social protection sections exist natively; the interview shows the 18-section inventory as titles only. Card reset to Backlog."
+  },
+  "D13": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: visit results, callback scheduling, consent and signature capture have no native UI; the Room schema stores visit rows and attachment metadata only, and the browser prototype keeps the reference behavior. Card reset to Backlog."
+  },
+  "D14": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: a scripted 18-section native interview cannot run until D09-D13 land, and no reviewer sign-off record exists; the week-two gate stays open. Card reset to Backlog."
+  },
+  "D15": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: the manifest requests no location permissions and no location code exists; the coordinates table stores manual and sample values only. The evidence file itself described the permission flow as designed rather than implemented. Card reset to Backlog."
+  },
+  "D16": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: no map SDK is integrated (no map dependency, no INTERNET permission, and a device test asserts the absence of network access); coordinates persist without a map surface. Card reset to Backlog."
+  },
+  "D17": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: no export code exists; kotlinx-serialization is present for the Room answer codec, and docs/schemas/backup-v1.schema.json is a documentation contract not consumed by the app. Card reset to Backlog."
+  },
+  "D18": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      true,
+      false
+    ],
+    "notes": "2026-10-12 audit: the migration groundwork exists and passes - RegistryDatabase.MIGRATION_1_2 (adding households.archivedAt) shipped with the Day 6 commit and SchemaMigrationTest ran the real 1-to-2 migration on the OPPO device during this audit. The card stays Backlog because D17 is not Done and the restore side (JSON import validation, preview and rollback) has no code."
+  },
+  "D19": {
+    "status": "Backlog",
+    "checks": [
+      true,
+      true,
+      false
+    ],
+    "notes": "2026-10-12 audit: confirmed archive/restore works on device (EditingPersistenceDeviceTest), and this audit's fixes added archived exclusion from active counts plus an Archived recovery filter (SprintAcceptanceRegressionTest). The card stays Backlog because D16 and D18 are not Done; export-selection interaction and restart checks remain."
+  },
+  "D20": {
+    "status": "Backlog",
+    "checks": [
+      false,
+      false,
+      false
+    ],
+    "notes": "2026-10-12 audit: the core hardening pre-dates this card (SavedStateHandle drafts, live regions and insets from D03-D06; key-guard flags added during this audit), and a Saved label now clears when its draft changes. The card was reset for its unmet tasks: explicit low-storage/rotation passes and the fictional 200-household performance dataset."
   }
 }

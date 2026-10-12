@@ -1,0 +1,11 @@
+// Isolated audit package and acceptance checks; no production source changes.
+gradle.beforeProject { project ->
+    project.pluginManager.withPlugin('com.android.application') {
+        def androidExtension = project.extensions.getByName('android')
+        androidExtension.buildTypes.getByName('debug').applicationIdSuffix = '.audit'
+        androidExtension.sourceSets.getByName('test').java.srcDir(project.file('../../logs/audit-2026-10-12/tests'))
+        project.tasks.withType(org.gradle.api.tasks.testing.Test).configureEach {
+            outputs.upToDateWhen { false }
+        }
+    }
+}

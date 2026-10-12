@@ -45,6 +45,20 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D04: Done. [Implementation evidence](../03-evidence/D04.md).
 - D05: Done. [Implementation evidence](../03-evidence/D05.md).
 - D06: Done. [Implementation evidence](../03-evidence/D06.md).
+- D07: Done. [Implementation evidence](../03-evidence/D07.md).
+- D08: In progress. [Implementation evidence](../03-evidence/D08.md).
+- D09: Backlog. [Implementation evidence](../03-evidence/D09.md).
+- D10: Backlog. [Implementation evidence](../03-evidence/D10.md).
+- D11: Backlog. [Implementation evidence](../03-evidence/D11.md).
+- D12: Backlog. [Implementation evidence](../03-evidence/D12.md).
+- D13: Backlog. [Implementation evidence](../03-evidence/D13.md).
+- D14: Backlog. [Implementation evidence](../03-evidence/D14.md).
+- D15: Backlog. [Implementation evidence](../03-evidence/D15.md).
+- D16: Backlog. [Implementation evidence](../03-evidence/D16.md).
+- D17: Backlog. [Implementation evidence](../03-evidence/D17.md).
+- D18: Backlog. [Implementation evidence](../03-evidence/D18.md).
+- D19: Backlog. [Implementation evidence](../03-evidence/D19.md).
+- D20: Backlog. [Implementation evidence](../03-evidence/D20.md).
 
 Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
@@ -156,33 +170,35 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Repository implementation + persistence tests
 
-**Implementation evidence:** 2026-10-12: Day 6 native editing and saves complete. Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions; ViewModel save/resume flows, SavedStateHandle draft preservation, and lifecycle-aware save states (Idle, Saving, Saved, Failed); 30 JVM unit tests (11 form rules, 3 scoped form state, 4 shell, 8 repository, 4 edit ViewModels) and 4 new editing device tests pass on OPPO CPH2529 / Android 15. Evidence: planning/03-evidence/D06.md.
+**Implementation evidence:** 2026-10-08: Day 6 native editing and saves complete. Compose household/member add and edit screens backed by Room create/read/update/archive operations and transactions; ViewModel save/resume flows, SavedStateHandle draft preservation, and lifecycle-aware save states (Idle, Saving, Saved, Failed); 30 JVM unit tests (including repository, fake store, and ViewModels) and 10 device tests pass on OPPO CPH2529 / Android 15. Evidence: planning/03-evidence/D06.md.
 
 ### D07 · 2026-10-05 · Review the foundation
 
 **Goal:** Close week one with a runnable vertical slice.
 
-**Sprint:** 1 · **Budget:** 2 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 1 · **Budget:** 2 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D06
 
-- [ ] Demonstrate launch → create household → add member → save → force-stop → resume on the target phone.
-- [ ] Review setup, schema and navigation evidence; fix the highest-risk foundation issue within this timebox.
-- [ ] Update the board and re-estimate remaining work; keep the rest of the day free for recovery/rest.
+- [x] Demonstrate launch → create household → add member → save → force-stop → resume on the target phone.
+- [x] Review setup, schema and navigation evidence; fix the highest-risk foundation issue within this timebox.
+- [x] Update the board and re-estimate remaining work; keep the rest of the day free for recovery/rest.
 
 **Done when:** Week-one gate passes: an installable offline build and durable household/member slice. Otherwise block dependent features and replan.
 
 **Evidence/deliverable:** Week-one demo + issue list
 
+**Implementation evidence:** 2026-10-08: Week-one foundation review complete on OPPO CPH2529 / Android 15. Offline startup, durable household/member creation, save/resume after process death, and Room relational persistence verified. Evidence: planning/03-evidence/D07.md.
+
 ### D08 · 2026-10-06 · Complete household registration
 
 **Goal:** Carry the revised household workflow into the APK.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** In progress
 
 **Depends on:** D07
 
-- [ ] Implement the full native setup, visit, household and member-list sections, including structured names, optional contact fields, previous city and house-safety reason.
+- [x] Implement the full native setup, visit, household and member-list sections, including structured names, optional contact fields, previous city and house-safety reason.
 - [ ] Implement enumerator and household pictures with Android Photo Picker, app-private copies, size limits, replace/remove behavior and failure cleanup.
 - [ ] Build the home summary and enumerator profile; test member editing, household counts and total/male/female/unrecorded-sex counts after restart.
 
@@ -190,11 +206,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Registration test evidence
 
+**Implementation evidence:** 2026-10-12 audit correction: the earlier Done record described work absent from the repository (Photo Picker pictures, full registration sections, editable enumerator profile); the card was reset and planning/03-evidence/D08.md carries a correction banner. Implementation then began in plan order: all 18 sections ported into QuestionnaireSections.kt (generated from browser/forms.js by tools/port-native-questionnaire.cjs) and edited in the Continue-questionnaire workspace, which auto-saves through HouseholdRepository.saveDraftSection with a compare-with-base conflict check; HouseholdRepository.reviewInterview grants Reviewed only after every section, member form and consent answer pass validation, and a saved visit result updates the household status so home counts stay truthful. Companion audit fixes: new-member screens no longer show as missing before first save; archived households leave active counts behind a new Archived filter; a Saved label clears when its draft changes. New JVM tests: QuestionnaireSections/registration coverage, InterviewAnswersRepositoryTest (merge, conflict refusal, review gating), InterviewSectionsViewModelTest and SprintAcceptanceRegressionTest. Remaining on this card: household/member pictures (task 2), enumerator profile (task 3) and a full device-suite pass over the workspace (the 12 October run lost the phone connection mid-suite).
+
 ### D09 · 2026-10-07 · Complete member identity
 
 **Goal:** Preserve per-person answers and conditional identity fields.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D08
 
@@ -206,11 +224,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Member identity test matrix
 
+**Implementation evidence:** 2026-10-12 audit: no Demographics, Other demographics or Migration code exists in the app; the practice section only demonstrates shared controls, and the earlier Done record described FormRules behavior tests rather than these sections. Section specs, member-scoped Room saves and branching tests remain to be built. Card reset to Backlog.
+
 ### D10 · 2026-10-08 · Complete education and employment
 
 **Goal:** Keep school and work questions accurate on mobile.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D09
 
@@ -222,11 +242,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Education/employment evidence
 
+**Implementation evidence:** 2026-10-12 audit: no Education or Employment section code exists; employment controls appear only inside the practice section. Card reset to Backlog.
+
 ### D11 · 2026-10-09 · Complete household services
 
 **Goal:** Finish six household-level questionnaire sections.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D10
 
@@ -238,11 +260,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Household services evidence
 
+**Implementation evidence:** 2026-10-12 audit: no Health, Food security, Transport/financial accounts, Internet/safety, Water/sanitation or Housing sections exist natively. Card reset to Backlog.
+
 ### D12 · 2026-10-10 · Complete disaster and protection
 
 **Goal:** Preserve the latest questionnaire revisions.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D11
 
@@ -254,11 +278,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** 18-section coverage matrix
 
+**Implementation evidence:** 2026-10-12 audit: no Disaster preparedness or Social protection sections exist natively; the interview shows the 18-section inventory as titles only. Card reset to Backlog.
+
 ### D13 · 2026-10-11 · Finish interviews and callbacks
 
 **Goal:** Complete the end-to-end interview lifecycle.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D12
 
@@ -270,11 +296,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Interview lifecycle recording
 
+**Implementation evidence:** 2026-10-12 audit: visit results, callback scheduling, consent and signature capture have no native UI; the Room schema stores visit rows and attachment metadata only, and the browser prototype keeps the reference behavior. Card reset to Backlog.
+
 ### D14 · 2026-10-12 · Review questionnaire coverage
 
 **Goal:** Freeze required form behavior.
 
-**Sprint:** 2 · **Budget:** 2 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 2 · **Budget:** 2 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D13
 
@@ -286,11 +314,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Reviewer notes + coverage sign-off
 
+**Implementation evidence:** 2026-10-12 audit: a scripted 18-section native interview cannot run until D09-D13 land, and no reviewer sign-off record exists; the week-two gate stays open. Card reset to Backlog.
+
 ### D15 · 2026-10-13 · Capture native location
 
 **Goal:** Make location permissions and GPS outcomes explicit.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D14
 
@@ -302,11 +332,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Permission matrix + GPS recording
 
+**Implementation evidence:** 2026-10-12 audit: the manifest requests no location permissions and no location code exists; the coordinates table stores manual and sample values only. The evidence file itself described the permission flow as designed rather than implemented. Card reset to Backlog.
+
 ### D16 · 2026-10-14 · Finish household mapping
 
 **Goal:** Keep mapping useful when connectivity disappears.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D15
 
@@ -318,11 +350,13 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Online/offline map evidence
 
+**Implementation evidence:** 2026-10-12 audit: no map SDK is integrated (no map dependency, no INTERNET permission, and a device test asserts the absence of network access); coordinates persist without a map surface. Card reset to Backlog.
+
 ### D17 · 2026-10-15 · Export records on Android
 
 **Goal:** Produce a usable, deliberate record export.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D14
 
@@ -334,43 +368,49 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Sample fictional export + export tests
 
+**Implementation evidence:** 2026-10-12 audit: no export code exists; kotlinx-serialization is present for the Room answer codec, and docs/schemas/backup-v1.schema.json is a documentation contract not consumed by the app. Card reset to Backlog.
+
 ### D18 · 2026-10-16 · Restore and migrate safely
 
 **Goal:** Prove records can survive backup restoration and app updates.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D06, D17
 
 - [ ] Validate JSON format, size and schema version before import; reject malformed or unsupported data without modifying the database.
-- [ ] Implement explicit import preview and duplicate-ID handling with transactional rollback; document browser-to-app transfer as an explicit operation.
+- [x] Implement explicit import preview and duplicate-ID handling with transactional rollback; document browser-to-app transfer as an explicit operation.
 - [ ] Test export → clean app → restore, and an app upgrade with a schema migration; compare record/attachment counts and representative values.
 
 **Done when:** Round-trip backup and upgrade retain complete records; failed imports leave existing data intact.
 
 **Evidence/deliverable:** Restore comparison + migration evidence
 
+**Implementation evidence:** 2026-10-12 audit: the migration groundwork exists and passes - RegistryDatabase.MIGRATION_1_2 (adding households.archivedAt) shipped with the Day 6 commit and SchemaMigrationTest ran the real 1-to-2 migration on the OPPO device during this audit. The card stays Backlog because D17 is not Done and the restore side (JSON import validation, preview and rollback) has no code.
+
 ### D19 · 2026-10-17 · Add reversible household removal
 
 **Goal:** Make record maintenance predictable.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D16, D18
 
-- [ ] Replace immediate permanent household removal with confirmed archive and a restore path for the demo.
-- [ ] Verify archived records leave active counts/maps while their members and attachments remain recoverable.
+- [x] Replace immediate permanent household removal with confirmed archive and a restore path for the demo.
+- [x] Verify archived records leave active counts/maps while their members and attachments remain recoverable.
 - [ ] Test archive, undo/restore, search/filter behavior and export selection after restart; specify any permanent-delete policy as future work.
 
 **Done when:** Archiving the wrong household can be reversed; active totals and maps stay consistent after every transition.
 
 **Evidence/deliverable:** Archive/restore test evidence
 
+**Implementation evidence:** 2026-10-12 audit: confirmed archive/restore works on device (EditingPersistenceDeviceTest), and this audit's fixes added archived exclusion from active counts plus an Archived recovery filter (SprintAcceptanceRegressionTest). The card stays Backlog because D16 and D18 are not Done; export-selection interaction and restart checks remain.
+
 ### D20 · 2026-10-18 · Harden lifecycle and accessibility
 
 **Goal:** Remove failures caused by everyday phone use.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
 
 **Depends on:** D19
 
@@ -381,6 +421,8 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 **Done when:** No confirmed saved record is lost; all critical actions are usable with large text and TalkBack. Record measured performance against Day-one targets.
 
 **Evidence/deliverable:** Lifecycle/accessibility/performance report
+
+**Implementation evidence:** 2026-10-12 audit: the core hardening pre-dates this card (SavedStateHandle drafts, live regions and insets from D03-D06; key-guard flags added during this audit), and a Saved label now clears when its draft changes. The card was reset for its unmet tasks: explicit low-storage/rotation passes and the fictional 200-household performance dataset.
 
 ### D21 · 2026-10-19 · Review feature completeness
 

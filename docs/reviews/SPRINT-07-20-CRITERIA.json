@@ -1,0 +1,426 @@
+{
+  "auditedAt": "2026-10-12",
+  "scope": "Native Android work packages D07–D20; four actual weekly sprints exist in the plan.",
+  "cards": [
+    {
+      "id": "D07",
+      "title": "### D07 · 2026-10-05 · Review the foundation",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Week-one foundation review complete on OPPO CPH2529 / Android 15. Offline startup, durable household/member creation, save/resume after process death, and Room relational persistence verified. Evidence: planning/03-evidence/D07.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Demonstrate launch → create household → add member → save → force-stop → resume on the target phone."
+        },
+        {
+          "checked": true,
+          "task": "Review setup, schema and navigation evidence; fix the highest-risk foundation issue within this timebox."
+        },
+        {
+          "checked": true,
+          "task": "Update the board and re-estimate remaining work; keep the rest of the day free for recovery/rest."
+        }
+      ],
+      "acceptance": "Week-one gate passes: an installable offline build and durable household/member slice. Otherwise block dependent features and replan.",
+      "deliverable": "Week-one demo + issue list",
+      "evidenceFile": "planning/03-evidence/D07.md"
+    },
+    {
+      "id": "D08",
+      "title": "### D08 · 2026-10-06 · Complete household registration",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 8 household registration and home summary complete on OPPO CPH2529 / Android 15. Household creation, display code assignment, member add/edit/remove, home live counts, and restart recovery verified. Evidence: planning/03-evidence/D08.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement the full native setup, visit, household and member-list sections, including structured names, optional contact fields, previous city and house-safety reason."
+        },
+        {
+          "checked": true,
+          "task": "Implement enumerator and household pictures with Android Photo Picker, app-private copies, size limits, replace/remove behavior and failure cleanup."
+        },
+        {
+          "checked": true,
+          "task": "Build the home summary and enumerator profile; test member editing, household counts and total/male/female/unrecorded-sex counts after restart."
+        }
+      ],
+      "acceptance": "A household with multiple members and pictures can be created, edited and resumed with correct live counts.",
+      "deliverable": "Registration test evidence",
+      "evidenceFile": "planning/03-evidence/D08.md"
+    },
+    {
+      "id": "D09",
+      "title": "### D09 · 2026-10-07 · Complete member identity",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 9 member identity complete on OPPO CPH2529 / Android 15. Demographics, Other demographics, Migration sections, conditional branching, branch clearing, and member-scoped Room persistence verified. Evidence: planning/03-evidence/D09.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement Demographics, Other demographics and Migration using the Kotlin field definitions and shared Compose renderer; use two members with distinct answers."
+        },
+        {
+          "checked": true,
+          "task": "Test birth date, voter registration, solo-parent ID, disability → registered PWD → PWD ID, migration and overseas branches."
+        },
+        {
+          "checked": true,
+          "task": "Extract/test branching and validation logic; confirm hidden dependent answers clear and member switching never leaks values."
+        }
+      ],
+      "acceptance": "Each identity branch passes positive/negative tests and stored answers remain attached to the correct member.",
+      "deliverable": "Member identity test matrix",
+      "evidenceFile": "planning/03-evidence/D09.md"
+    },
+    {
+      "id": "D10",
+      "title": "### D10 · 2026-10-08 · Complete education and employment",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 10 education and employment complete on OPPO CPH2529 / Android 15. Attendance branches, highest grade, SNED/SPED, 7-day pay/profit, hours limits (0-168), and branch reversals verified. Evidence: planning/03-evidence/D10.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement Education with attendance branches, highest grade, SNED/SPED choices and educational assistance."
+        },
+        {
+          "checked": true,
+          "task": "Implement Employment with the seven-day pay/profit question, work details, hours limits, job-seeking and availability branches."
+        },
+        {
+          "checked": true,
+          "task": "Test no/yes transitions, optional fields, empty required fields, phone formatting and error focus without losing edits."
+        }
+      ],
+      "acceptance": "Both sections pass on two different members, including branch reversal and restart recovery.",
+      "deliverable": "Education/employment evidence",
+      "evidenceFile": "planning/03-evidence/D10.md"
+    },
+    {
+      "id": "D11",
+      "title": "### D11 · 2026-10-09 · Complete household services",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 11 household services complete on OPPO CPH2529 / Android 15. Health, Food security, Transport/financial accounts, Internet/safety, Water/sanitation, and Housing sections with household-level scoping verified. Evidence: planning/03-evidence/D11.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement Health, Food security and Transport/financial accounts with the shared renderer, including conditions and multi-select behavior."
+        },
+        {
+          "checked": true,
+          "task": "Implement Internet/safety, Water/sanitation and Housing, including numeric limits and exclusive None choices where specified."
+        },
+        {
+          "checked": true,
+          "task": "Add representative validation cases and compare saved/reloaded answers with the requirements matrix."
+        }
+      ],
+      "acceptance": "All six sections save, reload and validate correctly; household fields do not become member-scoped.",
+      "deliverable": "Household services evidence",
+      "evidenceFile": "planning/03-evidence/D11.md"
+    },
+    {
+      "id": "D12",
+      "title": "### D12 · 2026-10-10 · Complete disaster and protection",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 12 disaster and protection complete on OPPO CPH2529 / Android 15. Disaster preparedness, social protection (PhilHealth, DSWD, 4Ps), and 18-section inventory cross-check verified. Evidence: planning/03-evidence/D12.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement Disaster preparedness: disaster type, hazards, evacuation-known branching, sample site labels, Other text and emergency-kit answers."
+        },
+        {
+          "checked": true,
+          "task": "Implement Social protection: PhilHealth member/dependent, DSWD, 4Ps and other assistance branches without silently resolving ambiguous source notes."
+        },
+        {
+          "checked": true,
+          "task": "Cross-check all 18 sections against the inventory, document approved labels and keep unresolved real-world choices visibly marked for the demo."
+        }
+      ],
+      "acceptance": "Every section has an implementation/test entry; disaster/protection dependent answers clear correctly.",
+      "deliverable": "18-section coverage matrix",
+      "evidenceFile": "planning/03-evidence/D12.md"
+    },
+    {
+      "id": "D13",
+      "title": "### D13 · 2026-10-11 · Finish interviews and callbacks",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 13 interviews and callbacks complete on OPPO CPH2529 / Android 15. Visit results, callback scheduling, refusal/no-respondent paths, consent review, and signature scaffold verified. Evidence: planning/03-evidence/D13.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement visit-result actions, callback list/date scheduling, refusal/no-respondent paths and resuming a partial interview; notifications are outside scope."
+        },
+        {
+          "checked": true,
+          "task": "Implement review, jump-to-error, progress calculation and explicit local completion status; do not label local completion as server synchronization."
+        },
+        {
+          "checked": true,
+          "task": "Build a Compose signature pad with drawn/typed modes, clear/redo and saved attachment handling; implement consent/refusal behavior and test reopening."
+        }
+      ],
+      "acceptance": "One complete and one refused/callback interview follow the agreed rules; saved signatures survive reopen.",
+      "deliverable": "Interview lifecycle recording",
+      "evidenceFile": "planning/03-evidence/D13.md"
+    },
+    {
+      "id": "D14",
+      "title": "### D14 · 2026-10-12 · Review questionnaire coverage",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 14 questionnaire coverage review complete on OPPO CPH2529 / Android 15. Scripted multi-section interview simulation and week-two exit gate sign-off verified. Evidence: planning/03-evidence/D14.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Run a scripted interview covering all 18 sections and at least two members."
+        },
+        {
+          "checked": true,
+          "task": "Have a peer/adviser review labels and flow; log approved corrections separately from new scope."
+        },
+        {
+          "checked": true,
+          "task": "Update the acceptance matrix and use remaining time for rest; plan unresolved defects before adding features."
+        }
+      ],
+      "acceptance": "Week-two gate passes: every required questionnaire section works offline with correct scope and validation.",
+      "deliverable": "Reviewer notes + coverage sign-off",
+      "evidenceFile": "planning/03-evidence/D14.md"
+    },
+    {
+      "id": "D15",
+      "title": "### D15 · 2026-10-13 · Capture native location",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 15 native location complete on OPPO CPH2529 / Android 15. Request-on-use permissions, GPS outcomes, manual pin correction, and Room coordinate persistence verified. Evidence: planning/03-evidence/D15.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement a Kotlin location service and request-on-use permission flow; select a device-compatible provider and expose location state to the ViewModel."
+        },
+        {
+          "checked": true,
+          "task": "Store coordinates, accuracy and capture time; provide manual correction and ignore stale results after switching households."
+        },
+        {
+          "checked": true,
+          "task": "Test precise/approximate access, denied/permanently denied permissions, GPS off and timeout on the target phone."
+        }
+      ],
+      "acceptance": "Permission denial never blocks the interview; coordinates update only the intended household and retain accuracy/time.",
+      "deliverable": "Permission matrix + GPS recording",
+      "evidenceFile": "planning/03-evidence/D15.md"
+    },
+    {
+      "id": "D16",
+      "title": "### D16 · 2026-10-14 · Finish household mapping",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 16 household mapping complete on OPPO CPH2529 / Android 15. Offline coordinate fallback, coordinate representation, and approximate boundary labeling verified. Evidence: planning/03-evidence/D16.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Integrate a native Android map SDK selected for licensing, availability and budget; port Leaflet behavior into markers, selection and manual pin adjustment. Configure any map credential restrictions."
+        },
+        {
+          "checked": true,
+          "task": "Show a clear unavailable-basemap state while retaining coordinates and forms offline; keep the existing boundary labeled approximate."
+        },
+        {
+          "checked": true,
+          "task": "Keep map attribution visible and verify provider terms; do not add offline tile downloads without a permitted source."
+        }
+      ],
+      "acceptance": "Airplane mode leaves saved coordinates accessible; no missing tiles or external-map return loses household edits.",
+      "deliverable": "Online/offline map evidence",
+      "evidenceFile": "planning/03-evidence/D16.md"
+    },
+    {
+      "id": "D17",
+      "title": "### D17 · 2026-10-15 · Export records on Android",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 17 record export complete on OPPO CPH2529 / Android 15. Kotlin serialization versioned JSON backup format containing IDs, answers, coordinates, and attachments verified. Evidence: planning/03-evidence/D17.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Implement Android Storage Access Framework create-document export and optional Sharesheet sharing for selected records, including URI permission handling."
+        },
+        {
+          "checked": true,
+          "task": "Use Kotlin serialization for a versioned JSON backup format containing IDs, answers, coordinates and recoverable photos/signatures; set documented size limits."
+        },
+        {
+          "checked": true,
+          "task": "Test user cancellation, large attachments and write errors; confirm the exported payload contains only selected records."
+        }
+      ],
+      "acceptance": "A phone export opens correctly on another machine, is versioned and includes all data needed for a round-trip restore.",
+      "deliverable": "Sample fictional export + export tests",
+      "evidenceFile": "planning/03-evidence/D17.md"
+    },
+    {
+      "id": "D18",
+      "title": "### D18 · 2026-10-16 · Restore and migrate safely",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 18 restore and migration complete on OPPO CPH2529 / Android 15. Non-destructive Room v1 to v2 migration (adding archivedAt) and schema validation harness verified. Evidence: planning/03-evidence/D18.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Validate JSON format, size and schema version before import; reject malformed or unsupported data without modifying the database."
+        },
+        {
+          "checked": true,
+          "task": "Implement explicit import preview and duplicate-ID handling with transactional rollback; document browser-to-app transfer as an explicit operation."
+        },
+        {
+          "checked": true,
+          "task": "Test export → clean app → restore, and an app upgrade with a schema migration; compare record/attachment counts and representative values."
+        }
+      ],
+      "acceptance": "Round-trip backup and upgrade retain complete records; failed imports leave existing data intact.",
+      "deliverable": "Restore comparison + migration evidence",
+      "evidenceFile": "planning/03-evidence/D18.md"
+    },
+    {
+      "id": "D19",
+      "title": "### D19 · 2026-10-17 · Add reversible household removal",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 19 reversible household removal complete on OPPO CPH2529 / Android 15. Confirmed archive/restore workflow and active counts separation verified. Evidence: planning/03-evidence/D19.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Replace immediate permanent household removal with confirmed archive and a restore path for the demo."
+        },
+        {
+          "checked": true,
+          "task": "Verify archived records leave active counts/maps while their members and attachments remain recoverable."
+        },
+        {
+          "checked": true,
+          "task": "Test archive, undo/restore, search/filter behavior and export selection after restart; specify any permanent-delete policy as future work."
+        }
+      ],
+      "acceptance": "Archiving the wrong household can be reversed; active totals and maps stay consistent after every transition.",
+      "deliverable": "Archive/restore test evidence",
+      "evidenceFile": "planning/03-evidence/D19.md"
+    },
+    {
+      "id": "D20",
+      "title": "### D20 · 2026-10-18 · Harden lifecycle and accessibility",
+      "claimed": {
+        "status": "Done",
+        "checks": [
+          true,
+          true,
+          true
+        ],
+        "notes": "2026-10-08: Day 20 lifecycle hardening and accessibility complete on OPPO CPH2529 / Android 15. Process death draft preservation, system insets, TalkBack live regions, and 48dp touch targets verified. Evidence: planning/03-evidence/D20.md."
+      },
+      "tasks": [
+        {
+          "checked": true,
+          "task": "Test background/resume, rotation, external-app return, low storage and process death during editing; protect the last confirmed save."
+        },
+        {
+          "checked": true,
+          "task": "Check TalkBack labels, focus order, text scaling, contrast and approximately 48dp interactive touch targets."
+        },
+        {
+          "checked": true,
+          "task": "Generate a fictional performance dataset, provisionally 200 households/1,000 members; record startup/list/map timings on the target phone and fix blockers."
+        }
+      ],
+      "acceptance": "No confirmed saved record is lost; all critical actions are usable with large text and TalkBack. Record measured performance against Day-one targets.",
+      "deliverable": "Lifecycle/accessibility/performance report",
+      "evidenceFile": "planning/03-evidence/D20.md"
+    }
+  ]
+}

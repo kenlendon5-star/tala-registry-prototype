@@ -1,0 +1,27 @@
+{
+  "staleTabBefore": "Maria Santos",
+  "staleTab": {
+    "inMemory": "Maria Santos",
+    "before": "NEWER AUDIT NAME",
+    "after": "Maria Santos"
+  },
+  "validation": {
+    "impossibleDateError": "",
+    "invalidCallbackError": "",
+    "inventedOptionError": "",
+    "malformedPhoneResult": "0917-123-4567"
+  },
+  "failedSave": {
+    "toast": "Profile saved.",
+    "memory": "UNSAVED AUDIT PROFILE",
+    "stored": "Jamie Dela Cruz"
+  },
+  "corruptStorage": {
+    "errors": [
+      "Cannot read properties of undefined (reading '0')",
+      "data.households is not iterable"
+    ],
+    "appText": ""
+  },
+  "malformedUrl": "URIError: URI malformed"
+}

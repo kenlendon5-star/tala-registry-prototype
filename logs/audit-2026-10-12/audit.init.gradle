@@ -1,0 +1,10 @@
+// Audit-only package isolation: preserve the installed Tala application's data.
+gradle.beforeProject { project ->
+    project.pluginManager.withPlugin('com.android.application') {
+        def androidExtension = project.extensions.getByName('android')
+        androidExtension.buildTypes.getByName('debug').applicationIdSuffix = '.audit'
+        if (project.hasProperty('sprintAuditChecks')) {
+            androidExtension.sourceSets.getByName('test').java.srcDir(project.file('../../logs/audit-2026-10-12/tests'))
+        }
+    }
+}
