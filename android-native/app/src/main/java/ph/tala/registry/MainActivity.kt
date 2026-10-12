@@ -18,8 +18,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val store: RecordStore = RoomRecordStore(RegistryDatabase.open(this))
-        val repository = RoomHouseholdRepository(store)
+        val repository = synchronized(MainActivity::class.java) {
+            sharedRepository ?: RoomHouseholdRepository(RoomRecordStore(RegistryDatabase.open(applicationContext)))
+                .also { sharedRepository = it }
+        }
         // Fictional fixtures are explicit and optional; set to false for an empty registry.
         if (SEED_DEMO_RECORDS) lifecycleScope.launch { repository.seedMissing(DemoFixtures.records()) }
         setContent {
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
+        private var sharedRepository: RoomHouseholdRepository? = null
         const val SEED_DEMO_RECORDS = true
     }
 }

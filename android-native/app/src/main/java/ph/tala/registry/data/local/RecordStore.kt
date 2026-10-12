@@ -3,8 +3,9 @@ package ph.tala.registry.data.local
 import androidx.room.withTransaction
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import org.json.JSONArray
-import org.json.JSONTokener
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
 import ph.tala.registry.domain.model.AnswerValue
 import java.util.UUID
 
@@ -80,13 +81,16 @@ class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
 
 object AnswerCodec {
     fun encode(value: AnswerValue): Pair<String, String> = when (value) {
-        is AnswerValue.Scalar -> "scalar" to org.json.JSONObject.quote(value.text)
-        is AnswerValue.Multi -> "multi" to JSONArray(value.selected.distinct()).toString()
+        is AnswerValue.Scalar -> "scalar" to JsonPrimitive(value.text).toString()
+        is AnswerValue.Multi -> "multi" to JsonArray(value.selected.distinct().map(::JsonPrimitive)).toString()
     }
 
     fun decode(kind: String, value: String): AnswerValue = when (kind) {
-        "scalar" -> AnswerValue.Scalar(JSONTokener(value).nextValue() as String)
-        "multi" -> JSONArray(value).let { a -> AnswerValue.Multi((0 until a.length()).map { a.get(it) as String }) }
+        "scalar" -> AnswerValue.Scalar(string(Json.parseToJsonElement(value)))
+        "multi" -> AnswerValue.Multi((Json.parseToJsonElement(value) as JsonArray).map(::string))
         else -> error("Unknown answer kind")
     }
+
+    private fun string(value: kotlinx.serialization.json.JsonElement): String =
+        (value as JsonPrimitive).also { require(it.isString) }.content
 }

@@ -93,9 +93,12 @@ class HouseholdEditViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HouseholdEditUiState(creating = householdId == null))
 
-    fun setHeadName(value: String) { savedState[HEAD] = value; head.value = value }
-    fun setAddress(value: String) { savedState[ADDRESS] = value; address.value = value }
-    fun setStatus(value: HouseholdStatus) { savedState[STATUS] = value.name; status.value = value.name }
+    /** Editing after a save drops the confirmation, so the label never claims unsaved work. */
+    private fun dropSavedAck() { if (saveStatus.value.phase == SavePhase.Saved) saveStatus.value = SaveStatus() }
+
+    fun setHeadName(value: String) { if (saveStatus.value.phase == SavePhase.Saving) return; dropSavedAck(); savedState[HEAD] = value; head.value = value }
+    fun setAddress(value: String) { if (saveStatus.value.phase == SavePhase.Saving) return; dropSavedAck(); savedState[ADDRESS] = value; address.value = value }
+    fun setStatus(value: HouseholdStatus) { if (saveStatus.value.phase == SavePhase.Saving) return; dropSavedAck(); savedState[STATUS] = value.name; status.value = value.name }
 
     fun save() {
         if (saveStatus.value.phase == SavePhase.Saving) return

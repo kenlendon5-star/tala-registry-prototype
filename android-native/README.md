@@ -1,8 +1,8 @@
 # Tala native Android
 
-The native app includes the Day 3 shell, Day 4 shared form controls, the Day 5 Room storage layer and the Day 6 household/member editing slice. Open a household, then **Try a practice interview**. The practice form supports text, notes, phone, integer, date, date/time, choice, dropdown and multi-select controls, including conditional questions and inline errors. Switch **Answering for** between the household and its members to keep separate session drafts.
+The native app includes the Day 3 shell, Day 4 shared form controls, the Day 5 Room storage layer, the Day 6 household/member editing slice, and the Day 8 questionnaire slice: all 18 sections defined in `QuestionnaireSections` (generated from the browser prototype), a full **Continue questionnaire** workspace with per-section drafts, auto-save, member scoping and a completion review. **Try a practice interview** still demonstrates every shared control with conditional questions and inline errors.
 
-Household add/edit and member add/edit screens save through `RoomHouseholdRepository` into the app-private Room database (version 2). Saving, saved and failed states are explicit and a failed write is never reported as saved; drafts and generated UUID identities survive process death through `SavedStateHandle`. Fictional fixtures (`HH-00452`–`HH-00454`) seed once per installed database, are skipped when already present, and never overwrite user edits. **Check answers** validates the visible practice questions and scrolls/focuses the first error. It does not save an interview: session drafts survive activity recreation and navigation in the running app, but closing the process clears them. Photos and signatures are later cards.
+Household add/edit and member add/edit screens save through `RoomHouseholdRepository` into the app-private Room database (version 2). Saving, saved and failed states are explicit and a failed write is never reported as saved; drafts and generated UUID identities survive process death through `SavedStateHandle`. The interview workspace saves each section through `saveDraftSection` with a compare-with-base check, so a stale screen cannot overwrite answers saved by another view, and `reviewInterview` grants the Reviewed status only after every section, member form and consent question passes validation. Fictional fixtures (`HH-00452`–`HH-00454`) seed once per installed database, are skipped when already present, and never overwrite user edits. Archived households leave active counts and return through the **Archived** filter. Photos and signatures are later cards (the household photo field renders an explicit placeholder).
 
 ## Build and run
 
@@ -26,7 +26,7 @@ Gradle's connected-test runner may uninstall the test apps afterward, removing t
 ## State ownership
 
 - `domain/model`: typed household/member identities, immutable record and questionnaire models.
-- `data/HouseholdRepository`: observable read contract plus `RoomHouseholdRepository` — one mutex-serialised write stream over full-snapshot `RecordStore` saves, UUID identities with unique `HH-#####` display labels, reversible archiving and explicit optional fictional fixtures.
+- `data/HouseholdRepository`: observable read contract plus `RoomHouseholdRepository` — one mutex-serialised write stream over full-snapshot `RecordStore` saves, UUID identities with unique `HH-#####` display labels, reversible archiving, section draft saves with optimistic base comparison, visit-result status derivation, interview review gating and explicit optional fictional fixtures.
 - `ui/households`: `HouseholdEditViewModel`/`MemberEditViewModel` with `SavedStateHandle` drafts and generated identities, plus `HouseholdEditScreen`/`MemberEditScreen` with explicit `Idle/Saving/Saved/Failed` states and archive/remove confirmations.
 - `data/local`: Room entities with UUID identities and foreign keys, `RegistryDao`, `RegistryDatabase` (schema export to `app/schemas/`, no destructive migration) and `RoomRecordStore`, which saves a whole record snapshot in one transaction and reports `Saved` or `Failed` without leaking database details.
 - `ui/RegistryViewModel`: household list/search/filter state. Small UI inputs use `SavedStateHandle`.
@@ -37,19 +37,23 @@ Gradle's connected-test runner may uninstall the test apps afterward, removing t
 - `domain/form/PracticeSection`: representative fields copied from the prototype specification, combined for control acceptance rather than presented as an official section.
 - `ui/form/SectionForm`: reusable stateless renderer and date/time pickers; only a deliberate Check action requests first-error focus.
 - `ui/form/FormSessionViewModel`: separate immutable drafts keyed by household/member identity; validation state is also scoped by section.
+- `domain/form/QuestionnaireSections`: all 18 sections generated from `browser/forms.js` by `tools/port-native-questionnaire.cjs`; demo labels and scope are retained, and member-scoped sections are flagged so answers key to one member.
+- `domain/form/InterviewRules`: reads one section's answers from a stored record, cleans hidden dependents to a fixed point, and computes review issues across household and member scopes (consent is required for Reviewed).
+- `ui/interview/InterviewWorkspaceViewModel`: the questionnaire workspace — one section/member scope at a time, debounced auto-save, save-before-switch, explicit save and review, and conflict reporting when the stored section changed elsewhere.
 
-Navigation restores the back stack after activity/system recreation; saved state restores search, filters and interview tab. A deliberate force-stop/fresh launch starts at Home. This is UI-state restoration, not durable interview storage. Demo data is reconstructed from bundled fixtures after process death.
+Navigation restores the back stack after activity/system recreation; saved state restores search, filters and interview tab. Practice-form drafts remain session-only, but questionnaire sections save to Room per edit (debounced) and on demand, so reopening a household resumes its saved answers. The Reviewed status can only be granted by completing the interview review.
 
 Missing records show an explicit unavailable state. Screens pass IDs to repositories rather than sharing record objects or relying on list indices. No fake save action or completed-questionnaire percentage is shown.
 
 ## Checks and evidence
 
-- JVM: filtering, restored inputs, repository updates, typed-ID validation, identity across reorder/removal, required/optional inputs, numeric/date/phone limits, conditional clearing, exclusive answers, household/member draft isolation, create/update/archive/remove flows, stable generated identities, failed-write reporting and idempotent fixture seeding.
+- JVM: filtering, restored inputs, repository updates, typed-ID validation, identity across reorder/removal, required/optional inputs, numeric/date/phone limits, conditional clearing, exclusive answers, household/member draft isolation, create/update/archive/remove flows, stable generated identities, failed-write reporting, idempotent fixture seeding, questionnaire section port, draft-section merge with conflict refusal, review gating, archived-count exclusion and saved-ack clearing.
 - Device: navigation, keyboard visibility/resize, Android Back, activity recreation, selected household/tab, empty-state recovery, system bars, absence of Internet permission, all shared form controls, first-error focus, pickers, draft isolation across scope changes, household/member add/edit saves, member removal, archive/restore round trip and editing persistence across reopen.
 - Device storage: snapshot save and reopen, per-member answer scoping, cleared-answer replacement, transaction rollback, failed-write reporting, export/migration validation (v1→v2 with `archivedAt`) and force-stop/reboot durability.
 - [Day 3 acceptance record](../planning/03-evidence/D03.md).
 - [Day 4 acceptance record](../planning/03-evidence/D04.md).
 - [Day 5 acceptance record](../planning/03-evidence/D05.md).
 - [Day 6 acceptance record](../planning/03-evidence/D06.md).
+- [Day 8 acceptance record](../planning/03-evidence/D08.md) carries a 12 October audit correction banner; the questionnaire slice is tracked as In progress on the board.
 
 Implementation follows Android's [saved-state guidance](https://developer.android.com/develop/ui/compose/state-saving) and [edge-to-edge setup](https://developer.android.com/develop/ui/compose/system/setup-e2e).

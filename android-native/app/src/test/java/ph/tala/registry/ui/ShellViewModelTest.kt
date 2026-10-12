@@ -21,10 +21,12 @@ import ph.tala.registry.data.local.StoredRecord
 import ph.tala.registry.data.local.WriteResult
 import ph.tala.registry.domain.edit.HouseholdDraft
 import ph.tala.registry.domain.edit.MemberDraft
+import ph.tala.registry.domain.model.AnswerState
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.HouseholdStatus
 import ph.tala.registry.domain.model.MemberId
+import ph.tala.registry.domain.model.SectionSpec
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ShellViewModelTest {
@@ -42,6 +44,8 @@ class ShellViewModelTest {
         override suspend fun createHousehold(id: HouseholdId, draft: HouseholdDraft) = WriteResult.Failed(READ_ONLY)
         override suspend fun updateHousehold(id: HouseholdId, draft: HouseholdDraft) = WriteResult.Failed(READ_ONLY)
         override suspend fun setArchived(id: HouseholdId, archived: Boolean) = WriteResult.Failed(READ_ONLY)
+        override suspend fun householdSectionAnswers(householdId: HouseholdId): AnswerState = emptyMap()
+        override suspend fun saveSectionAnswers(householdId: HouseholdId, section: SectionSpec, answers: AnswerState) = WriteResult.Failed(READ_ONLY)
         override suspend fun saveMember(householdId: HouseholdId, memberId: MemberId, draft: MemberDraft) = WriteResult.Failed(READ_ONLY)
         override suspend fun removeMember(householdId: HouseholdId, memberId: MemberId) = WriteResult.Failed(READ_ONLY)
         override suspend fun seedMissing(records: List<StoredRecord>) = WriteResult.Saved

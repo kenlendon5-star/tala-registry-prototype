@@ -70,8 +70,9 @@ fun SectionForm(
     }
 }
 
+/** Shared per-field renderer, also embedded by the durable registration section cards. */
 @Composable
-private fun SharedField(field: FieldSpec, state: SectionFormState, firstInvalid: Boolean, onAnswer: (String, AnswerValue) -> Unit) {
+fun SharedField(field: FieldSpec, state: SectionFormState, firstInvalid: Boolean, onAnswer: (String, AnswerValue) -> Unit) {
     val focus = remember { FocusRequester() }
     val bringIntoView = remember { BringIntoViewRequester() }
     val message = state.errors[field.key]

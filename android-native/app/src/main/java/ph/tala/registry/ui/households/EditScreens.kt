@@ -72,14 +72,14 @@ fun HouseholdEditScreen(
                 modifier = Modifier.testTag("edit-record-id"),
             )
             OutlinedTextField(
-                value = state.headName, onValueChange = onHeadName,
+                value = state.headName, onValueChange = onHeadName, enabled = !state.saving,
                 label = { Text("Household head") }, singleLine = true,
                 isError = state.headNameError != null,
                 supportingText = { state.headNameError?.let { Text(it, Modifier.testTag("hint-headName")) } },
                 modifier = Modifier.fillMaxWidth().testTag("field-headName"),
             )
             OutlinedTextField(
-                value = state.address, onValueChange = onAddress,
+                value = state.address, onValueChange = onAddress, enabled = !state.saving,
                 label = { Text("Address / purok") }, minLines = 2,
                 isError = state.addressError != null,
                 supportingText = { state.addressError?.let { Text(it, Modifier.testTag("hint-address")) } },
@@ -87,10 +87,10 @@ fun HouseholdEditScreen(
             )
             Text("Visit status", style = MaterialTheme.typography.titleSmall)
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                HouseholdStatus.entries.forEach { option ->
+                HouseholdStatus.entries.filterNot { it == HouseholdStatus.Reviewed }.forEach { option ->
                     Row(
                         Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("status-${option.name}")
-                            .selectable(selected = state.status == option, onClick = { onStatus(option) }),
+                            .selectable(selected = state.status == option, enabled = !state.saving, onClick = { onStatus(option) }),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(selected = state.status == option, onClick = null)
@@ -167,7 +167,7 @@ fun MemberEditScreen(
             )
             Text(state.householdLabel, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             OutlinedTextField(
-                value = state.displayName, onValueChange = onDisplayName,
+                value = state.displayName, onValueChange = onDisplayName, enabled = !state.saving,
                 label = { Text("Full name") }, singleLine = true,
                 isError = state.displayNameError != null,
                 supportingText = { state.displayNameError?.let { Text(it, Modifier.testTag("hint-displayName")) } },

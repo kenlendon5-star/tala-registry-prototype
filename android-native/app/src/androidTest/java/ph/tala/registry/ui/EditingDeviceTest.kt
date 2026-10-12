@@ -49,6 +49,16 @@ class EditingDeviceTest {
         )
     }
 
+    private fun waitUntilStatusContains(substring: String) {
+        compose.waitUntil(5_000) {
+            val config = compose.onNodeWithTag("save-status").fetchSemanticsNode().config
+            val texts = config.getOrNull(SemanticsProperties.Text)?.map { it.text }.orEmpty()
+            texts.any { it.contains(substring) }
+        }
+    }
+
+    private fun waitUntilSaved() = waitUntilStatusContains("Saved")
+
     @Test fun newHouseholdReportsSavedAndReloadsAfterRecreation() {
         awaitSeededFixtures()
         compose.onNodeWithTag("nav-Households").performClick()
@@ -56,7 +66,7 @@ class EditingDeviceTest {
         compose.onNodeWithTag("field-headName").performTextInput("Luna Reyes")
         compose.onNodeWithTag("field-address").performTextInput("5 Sampaguita Street")
         compose.onNodeWithTag("save-household").performClick()
-        assertNodeContainsText("save-status", "Saved")
+        waitUntilSaved()
         // The new record keeps its generated identity and receives the next display code.
         val code = recordCode()
         assertTrue("Expected a generated HH-##### display code, got $code", Regex("^HH-\\d{5}$").matches(code))
@@ -68,7 +78,7 @@ class EditingDeviceTest {
         // Editing updates the same record instead of creating a second household.
         compose.onNodeWithTag("field-headName").performScrollTo().performTextReplacement("Luna Dizon Reyes")
         compose.onNodeWithTag("save-household").performClick()
-        assertNodeContainsText("save-status", "Saved")
+        waitUntilSaved()
         assertEquals(code, recordCode())
 
         compose.onNodeWithText("Back", useUnmergedTree = true).performClick()
@@ -82,11 +92,17 @@ class EditingDeviceTest {
         compose.onNodeWithTag("home-screen").performScrollToNode(hasTestTag("household-HH-00452"))
         compose.onNodeWithTag("household-HH-00452").performClick()
         compose.onNodeWithTag("tab-Members").performClick()
+        compose.waitForIdle()
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("add-member"))
-        compose.onNodeWithTag("add-member").performClick()
-        compose.onNodeWithTag("field-displayName").performTextInput("Pedrito Santos")
+        compose.onNodeWithTag("add-member", useUnmergedTree = true).assertIsDisplayed().performClick()
+        // The member screen opens through a navigation transition and loads its record
+        // asynchronously; wait for the screen itself before touching the name field.
+        compose.waitUntil(5_000) {
+            compose.onAllNodesWithTag("member-edit-screen", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithTag("field-displayName", useUnmergedTree = true).performScrollTo().performTextInput("Pedrito Santos")
         compose.onNodeWithTag("save-member").performClick()
-        assertNodeContainsText("save-status", "Saved")
+        waitUntilSaved()
 
         compose.onNodeWithText("Back", useUnmergedTree = true).performClick()
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasText("Pedrito Santos"))
@@ -97,12 +113,12 @@ class EditingDeviceTest {
         compose.onNodeWithTag("edit-household").performClick()
         compose.onNodeWithTag("archive-household").performScrollTo().performClick()
         compose.onNodeWithText("Confirm archive", useUnmergedTree = true).performClick()
-        assertNodeContainsText("save-status", "Archived")
+        waitUntilStatusContains("Archived")
 
         // Archiving is reversible and keeps the same record identity.
         compose.onNodeWithTag("archive-household").performScrollTo().performClick()
         compose.onNodeWithText("Confirm restore", useUnmergedTree = true).performClick()
-        assertNodeContainsText("save-status", "Restored")
+        waitUntilStatusContains("Restored")
         assertEquals("HH-00452", recordCode())
     }
 }

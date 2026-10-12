@@ -47,11 +47,13 @@ class HouseholdRepositoryTest {
         assertEquals(listOf("Maria Santos", "Ramon Reyes"), households.map { it.headName })
         assertNotEquals(households[0].id, households[1].id)
 
-        assertEquals(WriteResult.Saved, repository.updateHousehold(id("0a1"), draft("Maria Santos-Reyes", status = HouseholdStatus.Reviewed)))
+        // The editor no longer grants Reviewed directly; the interview review path owns that status.
+        assertTrue(repository.updateHousehold(id("0a1"), draft("Maria Santos-Reyes", status = HouseholdStatus.Reviewed)) is WriteResult.Failed)
+        assertEquals(WriteResult.Saved, repository.updateHousehold(id("0a1"), draft("Maria Santos-Reyes")))
         val after = repository.households.first()
         val updated = after.first { it.id == id("0a1") }
         assertEquals("Maria Santos-Reyes", updated.headName)
-        assertEquals(HouseholdStatus.Reviewed, updated.status)
+        assertEquals(HouseholdStatus.InProgress, updated.status)
         // The second household keeps its own head name, address and status.
         assertEquals(draft("Ramon Reyes", "8 Rizal Street", HouseholdStatus.Callback).headName, after.first { it.id == id("0a2") }.headName)
         assertEquals("8 Rizal Street", after.first { it.id == id("0a2") }.address)

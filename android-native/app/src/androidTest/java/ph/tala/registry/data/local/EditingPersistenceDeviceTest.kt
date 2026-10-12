@@ -65,7 +65,9 @@ class EditingPersistenceDeviceTest {
         assertEquals("Luna Reyes Jr", households.first { it.id == one }.members.single().displayName)
         assertEquals(emptyList<Member>(), households.first { it.id == two }.members)
 
-        assertEquals(WriteResult.Saved, repository.updateHousehold(one, HouseholdDraft("Luna Dizon Reyes", "5 Sampaguita Street", HouseholdStatus.Reviewed)))
+        // The editor no longer grants Reviewed directly; the interview review path owns that status.
+        assertTrue(repository.updateHousehold(one, HouseholdDraft("Luna Dizon Reyes", "5 Sampaguita Street", HouseholdStatus.Reviewed)) is WriteResult.Failed)
+        assertEquals(WriteResult.Saved, repository.updateHousehold(one, HouseholdDraft("Luna Dizon Reyes", "5 Sampaguita Street", HouseholdStatus.InProgress)))
         assertEquals(WriteResult.Saved, repository.saveMember(one, member, MemberDraft("Luna Reyes Jr")))
         reopen()
         val after = repository.households.first()

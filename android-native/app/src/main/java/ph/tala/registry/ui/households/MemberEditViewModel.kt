@@ -39,14 +39,17 @@ data class MemberEditUiState(
  */
 class MemberEditViewModel(
     private val householdId: HouseholdId,
-    memberId: MemberId?,
+    existingMemberId: MemberId?,
     private val repository: HouseholdRepository,
     private val savedState: SavedStateHandle,
     private val newId: () -> MemberId = { MemberId(UUID.randomUUID().toString()) },
 ) : ViewModel() {
     val id: MemberId = MemberId(
-        (savedState[ID] as String?) ?: (memberId?.value ?: newId().value).also { savedState[ID] = it },
+        (savedState[ID] as String?) ?: (existingMemberId?.value ?: newId().value).also { savedState[ID] = it },
     )
+
+    /** Add screens show the form before the member row exists; only edits can go missing. */
+    private val editing = existingMemberId != null
 
     private val name = MutableStateFlow(savedState[NAME] as String?)
     private val saveStatus = MutableStateFlow(SaveStatus())
@@ -64,7 +67,7 @@ class MemberEditViewModel(
         MemberEditUiState(
             loading = false,
             creating = member == null && !removed,
-            missing = household == null || (member == null && !removed),
+            missing = household == null || (editing && member == null && !removed),
             householdLabel = household?.let { "${it.displayCode} · ${it.headName}" }.orEmpty(),
             displayName = nameValue,
             displayNameError = EditRules.displayName(nameValue).takeIf { attempted },
@@ -72,9 +75,14 @@ class MemberEditViewModel(
             message = saving.message,
             removed = removed,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MemberEditUiState(creating = memberId == null))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MemberEditUiState(creating = existingMemberId == null))
 
-    fun setDisplayName(value: String) { savedState[NAME] = value; name.value = value }
+    fun setDisplayName(value: String) {
+        if (saveStatus.value.phase == SavePhase.Saving) return
+        if (saveStatus.value.phase == SavePhase.Saved) saveStatus.value = SaveStatus()
+        savedState[NAME] = value
+        name.value = value
+    }
 
     fun save() {
         if (saveStatus.value.phase == SavePhase.Saving) return

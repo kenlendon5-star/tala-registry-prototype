@@ -14,12 +14,15 @@ import ph.tala.registry.domain.model.HouseholdStatus
 enum class HouseholdFilter(val label: String, val status: HouseholdStatus? = null) {
     All("All"), InProgress("In progress", HouseholdStatus.InProgress),
     Callback("Callback", HouseholdStatus.Callback), Reviewed("Reviewed", HouseholdStatus.Reviewed),
+    Archived("Archived"),
 }
 
 data class RegistryUiState(
     val loading: Boolean = true,
+    /** Active households only, so home counts never include archived records. */
     val households: List<Household> = emptyList(),
     val visibleHouseholds: List<Household> = emptyList(),
+    val archivedCount: Int = 0,
     val query: String = "",
     val filter: HouseholdFilter = HouseholdFilter.All,
 ) {
@@ -39,13 +42,23 @@ class RegistryViewModel(
     ) { records, query, filterName ->
         val filter = HouseholdFilter.entries.find { it.name == filterName } ?: HouseholdFilter.All
         val needle = query.trim()
-        RegistryUiState(
-            loading = false,
-            households = records,
-            visibleHouseholds = records.filter {
+        val active = records.filterNot { it.archived }
+        val visible = when (filter) {
+            // The Archived filter is the recovery path: same identity and answers return.
+            HouseholdFilter.Archived -> records.filter { it.archived }
+            else -> active.filter {
                 (filter.status == null || it.status == filter.status) &&
                     listOf(it.headName, it.displayCode, it.id.value, it.address).any { text -> text.contains(needle, ignoreCase = true) }
-            },
+            }
+        }.filter { household ->
+            listOf(household.headName, household.displayCode, household.id.value, household.address)
+                .any { it.contains(needle, ignoreCase = true) }
+        }
+        RegistryUiState(
+            loading = false,
+            households = active,
+            visibleHouseholds = visible,
+            archivedCount = records.size - active.size,
             query = query,
             filter = filter,
         )

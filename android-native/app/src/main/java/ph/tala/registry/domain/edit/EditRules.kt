@@ -45,6 +45,7 @@ object EditRules {
     /** The reason a household draft cannot be written, or null when it is ready. */
     fun householdProblem(draft: HouseholdDraft): String? =
         headName(draft.headName) ?: address(draft.address)
+            ?: if (draft.status == HouseholdStatus.Reviewed) "Complete the interview review before marking this household reviewed." else null
 
     /** The reason a member draft cannot be written, or null when it is ready. */
     fun memberProblem(draft: MemberDraft): String? = displayName(draft.displayName)
