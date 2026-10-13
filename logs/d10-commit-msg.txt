@@ -1,0 +1,24 @@
+D10: Education & Employment - field specs, branching, member isolation tests
+
+QuestionnaireSections.kt already defines Education and Employment with correct
+field types, conditional visibility (attending -> school/track, worked ->
+occupation/industry/employmentType/hours, worked=No -> looking/notWorkingReason,
+looking=Yes -> available), hours range 0-168, and scopedToMember=true.
+
+JVM test suites created:
+- EducationEmploymentValidationTest.kt: field existence, required/optional,
+  conditional visibility, invalid option rejection
+- EmploymentValidationTest.kt: hours range 0-168, worked/looking/available
+  required/conditional, invalid option rejection
+- EducationEmploymentBranchingTest.kt: attending Yes/No clears school/track/reason;
+  worked Yes/No clears occupation/industry/employmentType/hours vs
+  looking/notWorkingReason/available; looking Yes/No clears available (preserves
+  notWorkingReason); hours validation respects visibility
+- EducationEmploymentMemberIsolationTest.kt: two members (Maria/Juan) with
+  distinct education (attending Yes/No branches) and employment (worked
+  Yes/No branches) answers; changing one member never affects the other
+
+Build compiles; Gradle test runner timing out in this environment (daemon
+issues). Device test EducationEmploymentPersistenceTest.kt to be added.
+
+Checkpoint commit for D10 In progress [true, true, false].

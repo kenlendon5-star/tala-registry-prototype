@@ -1,0 +1,25 @@
+D09: Complete member identity — Demographics, Other demographics, Migration
+
+Implementation:
+- All three identity sections use QuestionnaireSections, FormRules, shared Compose renderer and real interview workspace (scopedToMember = true)
+- Disability branch: No -> clears registeredPwd, pwdId, disabilityDetail
+- Registered PWD branch: No -> clears pwdId only (disabilityDetail preserved)
+- Migration branch: No -> clears previousResidence, moveYear
+- Voter registration and overseas are required Yes/No with no dependent questions
+- Solo-parent ID optional; migration year 1900-2026 range enforced
+- Member pictures separated into own attachment kind; enumerator photos stay in DataStore/profile workflow
+- Repaired malformed strings, incomplete photo interfaces, non-compiling test doubles; removed mutex-deadlock photo copy attempt
+
+Verification (OPPO CPH2529 / Android 15 / API 35, app 0.5.0):
+- 64 JVM unit tests pass (including 3 new D09 test suites)
+- 28 device tests pass across 5 suites:
+  * Room reopen persistence
+  * UI write-through questionnaire (validation negatives, branch clearing)
+  * Force-stop recovery (answers survive process death)
+  * Storage/media/migration regression (15 tests)
+  * Shell/form/editing UI regression (10 tests)
+- Final build BUILD SUCCESSFUL (9m28s); lint 0 errors / 14 warnings
+- Board verification passes (9 Done cards); documentation checks pass
+- Evidence retained in planning/03-evidence/day09/ with logs, screenshots, JVM XML, device-build.txt, normal-apk.json, tested-source-sha256.json
+
+Evidence: planning/03-evidence/D09.md, planning/03-evidence/day09/

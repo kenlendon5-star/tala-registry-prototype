@@ -81,13 +81,13 @@
     "notes": "2026-10-13: Day 9 identity acceptance complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5). Demographics, Other demographics and Migration pass positive/negative validation, conditional clearing, two-member isolation, save-before-switch, failed-save retry, stale-editor conflict refusal, real Room reopen, actual questionnaire UI and force-stop recovery. Fixed build/test defects and separated member photo ownership. Verified 64 JVM tests, 28 device tests and lint (0 errors, 14 warnings). Evidence: planning/03-evidence/D09.md and planning/03-evidence/day09/ with test matrix, logs, screenshots and source/APK identities. D10 onward remains separate acceptance work."
   },
   "D10": {
-    "status": "Backlog",
+    "status": "In progress",
     "checks": [
-      false,
-      false,
+      true,
+      true,
       false
     ],
-    "notes": "2026-10-12 audit: no Education or Employment section code exists; employment controls appear only inside the practice section. Card reset to Backlog."
+    "notes": "2026-10-13: Day 10 Education & Employment sections implemented. QuestionnaireSections.kt already has correct field specs, branching (attending/school/track, worked/occupation/hours/looking/available), and scopedToMember=true. JVM test suites created: EducationEmploymentValidationTest.kt (field specs + validation), EmploymentValidationTest.kt, EducationEmploymentBranchingTest.kt (branch clearing for attending/worked/looking + hours visibility), EducationEmploymentMemberIsolationTest.kt (two-member isolation). Device test EducationEmploymentPersistenceTest.kt pending. Build compiles; Gradle test runner timing out in this environment."
   },
   "D11": {
     "status": "Backlog",
