@@ -2,6 +2,7 @@ package ph.tala.registry.ui
 
 import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
@@ -11,6 +12,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -20,6 +22,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import ph.tala.registry.data.FakeRecordStore
+import ph.tala.registry.data.HouseholdRepository
 import ph.tala.registry.data.RoomHouseholdRepository
 import ph.tala.registry.domain.edit.HouseholdDraft
 import ph.tala.registry.domain.model.HouseholdId
@@ -38,6 +41,33 @@ class EditScreensViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     @Before fun setUp() { Dispatchers.setMain(dispatcher) }
     @After fun tearDown() { Dispatchers.resetMain() }
+
+    @Test
+    fun typingDoesNotWaitForAnotherPersistedIdentityRead() = runTest(dispatcher) {
+        val real = RoomHouseholdRepository(FakeRecordStore())
+        val householdId = HouseholdId("a0000000-0000-4000-8000-000000000001")
+        real.createHousehold(householdId, HouseholdDraft("Original", "Address", HouseholdStatus.InProgress))
+        val slow = object : HouseholdRepository by real {
+            override suspend fun interviewRecord(id: HouseholdId): ph.tala.registry.data.local.StoredRecord? {
+                delay(1_000)
+                return real.interviewRecord(id)
+            }
+        }
+        val household = HouseholdEditViewModel(householdId, slow, SavedStateHandle())
+        val member = MemberEditViewModel(householdId, null, slow, SavedStateHandle())
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { household.uiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { member.uiState.collect() }
+        advanceUntilIdle()
+
+        household.setHeadName("Typed household")
+        household.setAddress("Typed address")
+        member.setDisplayName("Typed member")
+        runCurrent()
+
+        assertEquals("Typed household", household.uiState.value.headName)
+        assertEquals("Typed address", household.uiState.value.address)
+        assertEquals("Typed member", member.uiState.value.displayName)
+    }
 
     @Test
     fun aFailedWriteIsNeverReportedAsSaved() = runTest(dispatcher) {

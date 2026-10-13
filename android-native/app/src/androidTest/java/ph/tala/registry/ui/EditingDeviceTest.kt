@@ -18,6 +18,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import java.util.UUID
 import ph.tala.registry.MainActivity
 
 /**
@@ -88,6 +89,7 @@ class EditingDeviceTest {
     }
 
     @Test fun memberAddEditAndArchiveRestoreRoundTrip() {
+        val memberName = "Pedrito Santos ${UUID.randomUUID()}"
         awaitSeededFixtures()
         compose.onNodeWithTag("home-screen").performScrollToNode(hasTestTag("household-HH-00452"))
         compose.onNodeWithTag("household-HH-00452").performClick()
@@ -100,14 +102,28 @@ class EditingDeviceTest {
         compose.waitUntil(5_000) {
             compose.onAllNodesWithTag("member-edit-screen", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onNodeWithTag("field-displayName", useUnmergedTree = true).performScrollTo().performTextInput("Pedrito Santos")
+        compose.onNodeWithTag("field-displayName", useUnmergedTree = true).performScrollTo().performTextInput(memberName)
         compose.onNodeWithTag("save-member").performClick()
         waitUntilSaved()
 
         compose.onNodeWithText("Back", useUnmergedTree = true).performClick()
-        compose.onNodeWithTag("interview-screen").performScrollToNode(hasText("Pedrito Santos"))
-        compose.onNodeWithText("Pedrito Santos").assertIsDisplayed()
+        compose.onNodeWithTag("interview-screen").performScrollToNode(hasText(memberName))
+        compose.onNodeWithText(memberName).assertIsDisplayed().performClick()
+        compose.waitUntil(5_000) {
+            compose.onAllNodesWithTag("member-edit-screen").fetchSemanticsNodes().isNotEmpty()
+        }
+        val editedName = "Edited $memberName"
+        compose.onNodeWithTag("field-displayName").performTextReplacement(editedName)
+        compose.onNodeWithTag("save-member").performClick()
+        waitUntilSaved()
+        compose.onNodeWithTag("remove-member").performScrollTo().performClick()
+        compose.onNodeWithTag("confirm-remove").performClick()
+        compose.waitUntil(5_000) {
+            compose.onAllNodesWithTag("interview-screen").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText(editedName).assertDoesNotExist()
 
+        compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("tab-Overview"))
         compose.onNodeWithTag("tab-Overview").performClick()
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("edit-household"))
         compose.onNodeWithTag("edit-household").performClick()

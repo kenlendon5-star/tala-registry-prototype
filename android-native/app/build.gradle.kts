@@ -15,12 +15,15 @@ android {
         applicationId = "ph.tala.registry"
         minSdk = 26
         targetSdk = 37
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.5.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            if (providers.gradleProperty("isolatedTestApp").orNull == "true") applicationIdSuffix = ".d08test"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -51,6 +54,7 @@ room { schemaDirectory("$projectDir/schemas") }
 dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.datastore.preferences)
     ksp(libs.androidx.room.compiler)
     androidTestImplementation(libs.androidx.room.testing)
     // Aligns serialization with Room 2.8.5 so schema helpers can decode exported schemas.

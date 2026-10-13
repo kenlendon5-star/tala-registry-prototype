@@ -1,8 +1,8 @@
 # Tala native Android
 
-The native app includes the Day 3 shell, Day 4 shared form controls, the Day 5 Room storage layer, the Day 6 household/member editing slice, and the Day 8 questionnaire slice: all 18 sections defined in `QuestionnaireSections` (generated from the browser prototype), a full **Continue questionnaire** workspace with per-section drafts, auto-save, member scoping and a completion review. **Try a practice interview** still demonstrates every shared control with conditional questions and inline errors.
+The native app includes the Day 3 shell, Day 4 shared form controls, the Day 5 Room storage layer, the Day 6 household/member editing slice, and Day 8 registration: structured household/member names, a **Continue questionnaire** workspace, household and enumerator pictures, an editable enumerator profile, and live household/member/sex counts. All 18 section definitions are present in `QuestionnaireSections`; Day 9 identity acceptance is complete; the later section-specific gates remain on D10–D14. **Try a practice interview** demonstrates the shared controls with conditional questions and inline errors.
 
-Household add/edit and member add/edit screens save through `RoomHouseholdRepository` into the app-private Room database (version 2). Saving, saved and failed states are explicit and a failed write is never reported as saved; drafts and generated UUID identities survive process death through `SavedStateHandle`. The interview workspace saves each section through `saveDraftSection` with a compare-with-base check, so a stale screen cannot overwrite answers saved by another view, and `reviewInterview` grants the Reviewed status only after every section, member form and consent question passes validation. Fictional fixtures (`HH-00452`–`HH-00454`) seed once per installed database, are skipped when already present, and never overwrite user edits. Archived households leave active counts and return through the **Archived** filter. Photos and signatures are later cards (the household photo field renders an explicit placeholder).
+Household add/edit and member add/edit screens save through `RoomHouseholdRepository` into the app-private Room database (version 2). Saving, saved and failed states are explicit and a failed write is never reported as saved; editor drafts and generated UUID identities survive process death through `SavedStateHandle`. The interview workspace saves each section through `saveDraftSection` with a compare-with-base check, so a stale screen cannot overwrite answers saved by another view, and `reviewInterview` grants the Reviewed status only after every section, member form and consent question passes validation. Fictional fixtures (`HH-00452`–`HH-00454`) seed once per installed database, are skipped when already present, and never overwrite user edits. Archived households leave active counts and return through the **Archived** filter. Household/enumerator pictures use Android Photo Picker and app-private normalized JPEG copies; profile settings use DataStore, and new households retain the profile attribution captured at creation. Signature acceptance remains a later card.
 
 ## Build and run
 
@@ -30,6 +30,8 @@ Gradle's connected-test runner may uninstall the test apps afterward, removing t
 - `ui/households`: `HouseholdEditViewModel`/`MemberEditViewModel` with `SavedStateHandle` drafts and generated identities, plus `HouseholdEditScreen`/`MemberEditScreen` with explicit `Idle/Saving/Saved/Failed` states and archive/remove confirmations.
 - `data/local`: Room entities with UUID identities and foreign keys, `RegistryDao`, `RegistryDatabase` (schema export to `app/schemas/`, no destructive migration) and `RoomRecordStore`, which saves a whole record snapshot in one transaction and reports `Saved` or `Failed` without leaking database details.
 - `ui/RegistryViewModel`: household list/search/filter state. Small UI inputs use `SavedStateHandle`.
+- `data/PhotoStore`: bounded image decoding/normalization on the IO dispatcher, reference-first replacement/removal, staged-file failure cleanup and orphan recovery; saved copies have previews.
+- `data/DataStoreEnumeratorProfileStore` and `ui/profile`: durable profile name/barangay/picture, explicit write results and saved acknowledgements cleared after editing.
 - `ui/InterviewViewModel`: observes one typed household ID, with a separately saved interview tab per navigation entry.
 - `ui/Routes`: typed destinations and a `NavType` that stores only the household ID string in the navigation Bundle.
 - `ui/TalaApp`: Compose navigation and screens; lifecycle-aware state collection and system/keyboard insets.
@@ -37,7 +39,7 @@ Gradle's connected-test runner may uninstall the test apps afterward, removing t
 - `domain/form/PracticeSection`: representative fields copied from the prototype specification, combined for control acceptance rather than presented as an official section.
 - `ui/form/SectionForm`: reusable stateless renderer and date/time pickers; only a deliberate Check action requests first-error focus.
 - `ui/form/FormSessionViewModel`: separate immutable drafts keyed by household/member identity; validation state is also scoped by section.
-- `domain/form/QuestionnaireSections`: all 18 sections generated from `browser/forms.js` by `tools/port-native-questionnaire.cjs`; demo labels and scope are retained, and member-scoped sections are flagged so answers key to one member.
+- `domain/form/QuestionnaireSections`: all 18 sections generated from `../planning/docs/schemas/questionnaire-current.json` by `tools/port-native-questionnaire.cjs`; demo labels and scope are retained, and member-scoped sections are flagged so answers key to one member.
 - `domain/form/InterviewRules`: reads one section's answers from a stored record, cleans hidden dependents to a fixed point, and computes review issues across household and member scopes (consent is required for Reviewed).
 - `ui/interview/InterviewWorkspaceViewModel`: the questionnaire workspace — one section/member scope at a time, debounced auto-save, save-before-switch, explicit save and review, and conflict reporting when the stored section changed elsewhere.
 
@@ -54,6 +56,16 @@ Missing records show an explicit unavailable state. Screens pass IDs to reposito
 - [Day 4 acceptance record](../planning/03-evidence/D04.md).
 - [Day 5 acceptance record](../planning/03-evidence/D05.md).
 - [Day 6 acceptance record](../planning/03-evidence/D06.md).
-- [Day 8 acceptance record](../planning/03-evidence/D08.md) carries a 12 October audit correction banner; the questionnaire slice is tracked as In progress on the board.
+- [Day 8 acceptance record](../planning/03-evidence/D08.md) records registration, media/profile persistence, counts and the current acceptance status.
+
+Day 8 device acceptance uses a separate application ID to preserve the normal app's saved records and media:
+
+```powershell
+rtk proxy ./gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest -PisolatedTestApp=true
+```
+
+Then, from the repository root, run `rtk proxy powershell -NoProfile -File tools/verify-d08-device.ps1`. Results are retained under `planning/03-evidence/day08/`. Build again without `-PisolatedTestApp=true` to produce the normal `ph.tala.registry` APK.
 
 Implementation follows Android's [saved-state guidance](https://developer.android.com/develop/ui/compose/state-saving) and [edge-to-edge setup](https://developer.android.com/develop/ui/compose/system/setup-e2e).
+
+- [Day 9 acceptance record](../planning/03-evidence/D09.md): member identity validation, branch clearing, per-member Room saves and actual questionnaire recovery after force-stop. Run `rtk proxy powershell -NoProfile -File tools/verify-d09-device.ps1` from the root after building with `-PisolatedTestApp=true`.

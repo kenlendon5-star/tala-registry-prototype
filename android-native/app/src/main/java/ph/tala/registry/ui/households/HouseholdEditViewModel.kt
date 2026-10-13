@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ph.tala.registry.data.HouseholdRepository
@@ -17,6 +18,9 @@ import ph.tala.registry.domain.edit.HouseholdDraft
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.HouseholdStatus
 import java.util.UUID
+import ph.tala.registry.domain.form.InterviewRules
+import ph.tala.registry.domain.form.QuestionnaireSections
+import ph.tala.registry.domain.model.scalar
 
 /** Progress of the one write the screen is waiting on. [SavePhase.Saved] appears only after a saved write. */
 enum class SavePhase { Idle, Saving, Saved, Failed }
@@ -40,6 +44,7 @@ data class HouseholdEditUiState(
     val phase: SavePhase = SavePhase.Idle,
     val message: String? = null,
     val archived: Boolean = false,
+    val structuredName: Boolean = false,
 ) {
     val saving: Boolean get() = phase == SavePhase.Saving
 }
@@ -65,14 +70,22 @@ class HouseholdEditViewModel(
     private val status = MutableStateFlow(savedState[STATUS] as String?)
     private val saveStatus = MutableStateFlow(SaveStatus())
 
+    // Read persisted identity only when records change. Typing must not wait for a Room
+    // transaction before the new text is returned to the text field.
+    private val recordState = repository.observeHousehold(id).map { record ->
+        val answers = repository.interviewRecord(id)?.let { InterviewRules.answers(it, QuestionnaireSections.household) }.orEmpty()
+        record to (answers.scalar("firstName").isNotBlank() && answers.scalar("lastName").isNotBlank())
+    }
+
     val uiState: StateFlow<HouseholdEditUiState> = combine(
-        repository.observeHousehold(id),
+        recordState,
         head,
         address,
         status,
         saveStatus,
-    ) { record, headDraft, addressDraft, statusDraft, saving ->
-        val headValue = headDraft ?: record?.headName.orEmpty()
+    ) { persisted, headDraft, addressDraft, statusDraft, saving ->
+        val (record, structured) = persisted
+        val headValue = if (structured) record?.headName.orEmpty() else headDraft ?: record?.headName.orEmpty()
         val addressValue = addressDraft ?: record?.address.orEmpty()
         val statusValue = statusDraft?.let { saved -> HouseholdStatus.entries.find { it.name == saved } }
             ?: record?.status ?: HouseholdStatus.InProgress
@@ -90,6 +103,7 @@ class HouseholdEditViewModel(
             phase = saving.phase,
             message = saving.message,
             archived = record?.archived == true,
+            structuredName = structured,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HouseholdEditUiState(creating = householdId == null))
 
@@ -100,12 +114,14 @@ class HouseholdEditViewModel(
     fun setAddress(value: String) { if (saveStatus.value.phase == SavePhase.Saving) return; dropSavedAck(); savedState[ADDRESS] = value; address.value = value }
     fun setStatus(value: HouseholdStatus) { if (saveStatus.value.phase == SavePhase.Saving) return; dropSavedAck(); savedState[STATUS] = value.name; status.value = value.name }
 
-    fun save() {
+    fun save() = persist {}
+    fun openNameDetails(onOpen: () -> Unit) = persist(onOpen)
+    private fun persist(onSaved: () -> Unit) {
         if (saveStatus.value.phase == SavePhase.Saving) return
         viewModelScope.launch {
             val record = repository.observeHousehold(id).first()
             val draft = HouseholdDraft(
-                headName = head.value ?: record?.headName.orEmpty(),
+                headName = if (uiState.value.structuredName) record?.headName.orEmpty() else head.value ?: record?.headName.orEmpty(),
                 address = address.value ?: record?.address.orEmpty(),
                 status = status.value?.let { saved -> HouseholdStatus.entries.find { it.name == saved } }
                     ?: record?.status ?: HouseholdStatus.InProgress,
@@ -117,7 +133,12 @@ class HouseholdEditViewModel(
             }
             saveStatus.value = SaveStatus(SavePhase.Saving)
             val result = if (record == null) repository.createHousehold(id, draft) else repository.updateHousehold(id, draft)
+            if (result is WriteResult.Saved) {
+                head.value = null; address.value = null; status.value = null
+                savedState.remove<String>(HEAD); savedState.remove<String>(ADDRESS); savedState.remove<String>(STATUS)
+            }
             saveStatus.value = result.toStatus()
+            if (result is WriteResult.Saved) onSaved()
         }
     }
 

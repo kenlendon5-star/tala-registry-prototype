@@ -1,0 +1,27 @@
+Performing Streamed Install
+Success
+Performing Streamed Install
+Success
+INSTRUMENTATION_RESULT: stream=
+
+Time: 5.428
+
+OK (4 tests)
+
+
+INSTRUMENTATION_CODE: -1
+	at ph.tala.registry.ui.RegistrationUiDeviceTest.saved(RegistrationUiDeviceTest.kt:25)
+	at ph.tala.registry.ui.RegistrationUiDeviceTest.registrationNameDetailsPicturesAndProfileSurviveActivityRecreation(RegistrationUiDeviceTest.kt:38)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1
+Device verification failed; inspect day08-device-ui.log
+At C:\Users\kenle\Documents\ChatGPT\Capstone\tools\verify-d08-device.ps1:20 char:9
++         throw "Device verification failed; inspect $Log"
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Device verifica...8-device-ui.log:String) [], RuntimeException
+    + FullyQualifiedErrorId : Device verification failed; inspect day08-device-ui.log
+ 

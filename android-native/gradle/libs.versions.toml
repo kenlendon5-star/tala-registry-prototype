@@ -12,6 +12,7 @@ androidxTestJunit = "1.1.5"
 espresso = "3.5.1"
 room = "2.8.5"
 ksp = "2.3.6"
+datastore = "1.1.1"
 # Room 2.8.5 needs serialization 1.8.x; androidx.lifecycle would otherwise resolve core to 1.7.3
 # while json stays at 1.8.1, and MigrationTestHelper then fails with AbstractMethodError.
 kotlinxSerialization = "1.8.1"
@@ -21,6 +22,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

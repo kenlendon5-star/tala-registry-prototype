@@ -3,11 +3,13 @@ package ph.tala.registry.data
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import ph.tala.registry.data.local.AnswerCodec
 import ph.tala.registry.data.local.HouseholdRow
 import ph.tala.registry.data.local.HouseholdWithMembers
 import ph.tala.registry.data.local.RecordStore
 import ph.tala.registry.data.local.StoredRecord
 import ph.tala.registry.data.local.WriteResult
+import ph.tala.registry.domain.model.AnswerValue
 
 /**
  * In-memory [RecordStore] that mirrors the guarantees the Room store enforces —
@@ -26,6 +28,15 @@ class FakeRecordStore(seed: List<StoredRecord> = emptyList()) : RecordStore {
     override val records: Flow<List<HouseholdWithMembers>> =
         state.map { records ->
             records.values.map { HouseholdWithMembers(it.household, it.members) }.sortedBy { it.household.displayCode }
+        }
+
+    override val memberSex: Flow<Map<String, String>> =
+        state.map { records ->
+            records.values.flatMap { it.memberAnswers }
+                .filter { it.section == "demographics" && it.field == "sex" }
+                .associate { row ->
+                    row.memberId to ((AnswerCodec.decode(row.kind, row.value) as? AnswerValue.Scalar)?.text.orEmpty())
+                }
         }
 
     override suspend fun load(id: String): StoredRecord? = state.value[id]

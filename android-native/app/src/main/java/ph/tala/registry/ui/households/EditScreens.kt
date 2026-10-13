@@ -46,6 +46,7 @@ fun HouseholdEditScreen(
     onStatus: (HouseholdStatus) -> Unit,
     onSave: () -> Unit,
     onArchive: (Boolean) -> Unit,
+    onNameDetails: () -> Unit = {},
 ) {
     var confirmArchive by remember { mutableStateOf(false) }
     if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
@@ -72,12 +73,16 @@ fun HouseholdEditScreen(
                 modifier = Modifier.testTag("edit-record-id"),
             )
             OutlinedTextField(
-                value = state.headName, onValueChange = onHeadName, enabled = !state.saving,
+                value = state.headName, onValueChange = onHeadName, enabled = !state.saving, readOnly = state.structuredName,
                 label = { Text("Household head") }, singleLine = true,
                 isError = state.headNameError != null,
                 supportingText = { state.headNameError?.let { Text(it, Modifier.testTag("hint-headName")) } },
                 modifier = Modifier.fillMaxWidth().testTag("field-headName"),
             )
+            if (!state.creating) {
+                if (state.structuredName) Text("The full name is built from the saved name details.")
+                OutlinedButton(onClick = onNameDetails, enabled = !state.saving, modifier = Modifier.testTag("edit-name-details")) { Text("Name details") }
+            }
             OutlinedTextField(
                 value = state.address, onValueChange = onAddress, enabled = !state.saving,
                 label = { Text("Address / purok") }, minLines = 2,
@@ -146,6 +151,7 @@ fun MemberEditScreen(
     onDisplayName: (String) -> Unit,
     onSave: () -> Unit,
     onRemove: () -> Unit,
+    onNameDetails: () -> Unit = {},
 ) {
     var confirmRemove by remember { mutableStateOf(false) }
     if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
@@ -167,12 +173,16 @@ fun MemberEditScreen(
             )
             Text(state.householdLabel, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             OutlinedTextField(
-                value = state.displayName, onValueChange = onDisplayName, enabled = !state.saving,
+                value = state.displayName, onValueChange = onDisplayName, enabled = !state.saving, readOnly = state.structuredName,
                 label = { Text("Full name") }, singleLine = true,
                 isError = state.displayNameError != null,
                 supportingText = { state.displayNameError?.let { Text(it, Modifier.testTag("hint-displayName")) } },
                 modifier = Modifier.fillMaxWidth().testTag("field-displayName"),
             )
+            if (!state.creating) {
+                if (state.structuredName) Text("The full name is built from the saved name details.")
+                OutlinedButton(onClick = onNameDetails, enabled = !state.saving, modifier = Modifier.testTag("edit-name-details")) { Text("Name details") }
+            }
             if (!state.creating) {
                 OutlinedButton(
                     onClick = { confirmRemove = true },

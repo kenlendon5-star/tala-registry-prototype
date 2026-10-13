@@ -2,17 +2,17 @@
 
 Tala is an offline-first household enumeration capstone. The primary release target is the native Kotlin/Jetpack Compose app. The browser prototype is the working behavior reference; the Expo project is a retained starter. Use fictional data during development.
 
-**Start here:** [Documentation index](docs/README.md) · [Product requirements](docs/specifications/01-product-requirements.md) · [Wireframes](docs/design/wireframes.html) · [Project folder map](docs/project-structure.md).
+**Start here:** [Documentation index](planning/docs/README.md) · [Product requirements](planning/docs/specifications/01-product-requirements.md) · [Wireframes](planning/docs/design/wireframes.html) · [Project folder map](planning/docs/project-structure.md).
 
 ## Project areas
 
 | Folder | Purpose / current status |
 |---|---|
 | [android-native](android-native/README.md) | Compose shell, practice forms, Room storage and household/member editing |
-| [browser](browser/README.md) | Working 18-section browser prototype; localStorage only |
+| [browser](planning/prototype as web app/README.md) | Working 18-section browser prototype; localStorage only |
 | mobile/ | Earlier Expo starter; no Tala workflows; outside the active native build |
 | [supabase](supabase/README.md) | Development tooling and placeholder migrations; no app backend connected |
-| [docs](docs/README.md) | Six specifications, schemas, wireframes, traceability and reviews |
+| [docs](planning/docs/README.md) | Six specifications, schemas, wireframes, traceability and reviews |
 | [planning](planning/README.md) | Delivery board, progress source, acceptance and device evidence |
 | [tools](tools/README.md) | Documentation/reference generation and consistency checks |
 | [logs](logs/README.md) | Local ignored build logs |
@@ -27,7 +27,7 @@ From this repository root:
 rtk npm --prefix browser start
 ```
 
-Open [http://localhost:5173](http://localhost:5173). The preview server binds to loopback. Records, images and signatures save in that browser, with known limitations recorded in the [system review](docs/reviews/SYSTEM-ANALYSIS.md).
+Open [http://localhost:5173](http://localhost:5173). The preview server binds to loopback. Records, images and signatures save in that browser, with known limitations recorded in the [system review](planning/docs/reviews/SYSTEM-ANALYSIS.md).
 
 ```powershell
 rtk npm --prefix browser run check
@@ -56,4 +56,4 @@ rtk proxy node tools/build-wireframes.cjs
 rtk proxy node tools/check-docs.cjs
 ```
 
-See [traceability](docs/traceability.md) for requirement-to-code/test coverage. Specifications distinguish current implementation, target release behavior, and future cloud work. No hosted service, schema migration, app installation, or production deployment is implied by the documents.
+See [traceability](planning/docs/traceability.md) for requirement-to-code/test coverage. Specifications distinguish current implementation, target release behavior, and future cloud work. No hosted service, schema migration, app installation, or production deployment is implied by the documents.

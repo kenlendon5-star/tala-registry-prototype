@@ -23,11 +23,16 @@ data class RegistryUiState(
     val households: List<Household> = emptyList(),
     val visibleHouseholds: List<Household> = emptyList(),
     val archivedCount: Int = 0,
+    /** Member id -> stored demographics sex answer; missing keys are unrecorded. */
+    val memberSex: Map<String, String> = emptyMap(),
     val query: String = "",
     val filter: HouseholdFilter = HouseholdFilter.All,
 ) {
     val memberCount: Int get() = households.sumOf { it.members.size }
     val callbackCount: Int get() = households.count { it.status == HouseholdStatus.Callback }
+    val maleCount: Int get() = households.sumOf { household -> household.members.count { memberSex[it.id.value] == "Male" } }
+    val femaleCount: Int get() = households.sumOf { household -> household.members.count { memberSex[it.id.value] == "Female" } }
+    val unrecordedSexCount: Int get() = memberCount - maleCount - femaleCount
 }
 
 /** Only small UI inputs go into saved state; records belong to the repository. */
@@ -37,9 +42,10 @@ class RegistryViewModel(
 ) : ViewModel() {
     val uiState: StateFlow<RegistryUiState> = combine(
         repository.households,
+        repository.memberSex,
         savedState.getStateFlow(QUERY, ""),
         savedState.getStateFlow(FILTER, HouseholdFilter.All.name),
-    ) { records, query, filterName ->
+    ) { records, sex, query, filterName ->
         val filter = HouseholdFilter.entries.find { it.name == filterName } ?: HouseholdFilter.All
         val needle = query.trim()
         val active = records.filterNot { it.archived }
@@ -50,15 +56,13 @@ class RegistryViewModel(
                 (filter.status == null || it.status == filter.status) &&
                     listOf(it.headName, it.displayCode, it.id.value, it.address).any { text -> text.contains(needle, ignoreCase = true) }
             }
-        }.filter { household ->
-            listOf(household.headName, household.displayCode, household.id.value, household.address)
-                .any { it.contains(needle, ignoreCase = true) }
         }
         RegistryUiState(
             loading = false,
             households = active,
             visibleHouseholds = visible,
             archivedCount = records.size - active.size,
+            memberSex = sex,
             query = query,
             filter = filter,
         )

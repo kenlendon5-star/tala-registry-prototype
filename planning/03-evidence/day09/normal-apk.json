@@ -1,0 +1,8 @@
+﻿{
+    "verifiedUtc":  "2026-10-13T06:29:51.5223188Z",
+    "applicationId":  "ph.tala.registry",
+    "versionName":  "0.5.0",
+    "versionCode":  5,
+    "apkSha256":  "14D854AA15CD3EA7C7594C19B46D6274A76EAEB9FD6BA12D66C9C346824766DC",
+    "note":  "Normal ph.tala.registry debug APK built from the same Day 9 source; acceptance ran in the isolated ph.tala.registry.d08test package (hashes in device-build.txt)."
+}

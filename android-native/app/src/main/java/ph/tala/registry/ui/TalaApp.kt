@@ -1,5 +1,9 @@
 package ph.tala.registry.ui
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import ph.tala.registry.ui.interview.InterviewWorkspaceScreen
 import ph.tala.registry.ui.interview.InterviewWorkspaceViewModel
@@ -10,19 +14,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,33 +37,34 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ph.tala.registry.data.EnumeratorProfileStore
 import ph.tala.registry.data.HouseholdRepository
-import ph.tala.registry.domain.form.RegistrySections
-import ph.tala.registry.domain.model.AnswerValue
+import ph.tala.registry.data.PhotoStore
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.MemberId
-import ph.tala.registry.domain.model.SectionSpec
 import ph.tala.registry.ui.form.FormSessionViewModel
 import ph.tala.registry.ui.form.PracticeFormScreen
-import ph.tala.registry.ui.form.SectionFormState
-import ph.tala.registry.ui.form.SharedField
 import ph.tala.registry.ui.households.HouseholdEditScreen
 import ph.tala.registry.ui.households.HouseholdEditViewModel
 import ph.tala.registry.ui.households.MemberEditScreen
 import ph.tala.registry.ui.households.MemberEditViewModel
-import ph.tala.registry.ui.households.SavePhase
-import ph.tala.registry.ui.households.SaveStatus
-import ph.tala.registry.ui.interview.InterviewSectionsUiState
-import ph.tala.registry.ui.interview.InterviewSectionsViewModel
+import ph.tala.registry.ui.households.SaveStatusLine
+import ph.tala.registry.ui.profile.EnumeratorProfileUiState
+import ph.tala.registry.ui.profile.EnumeratorProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TalaApp(repository: HouseholdRepository) {
+fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: EnumeratorProfileStore) {
     val registry: RegistryViewModel = viewModel(factory = viewModelFactory {
         initializer { RegistryViewModel(repository, createSavedStateHandle()) }
     })
     val state by registry.uiState.collectAsStateWithLifecycle()
+    val profile: EnumeratorProfileViewModel = viewModel(factory = viewModelFactory {
+        initializer { EnumeratorProfileViewModel(profiles, photos) }
+    })
+    val profileState by profile.uiState.collectAsStateWithLifecycle()
+    val savedProfile by profiles.profile.collectAsStateWithLifecycle(initialValue = ph.tala.registry.domain.model.EnumeratorProfile("", ""))
     val forms: FormSessionViewModel = viewModel()
     val formState by forms.state.collectAsStateWithLifecycle()
     val nav = rememberNavController()
@@ -72,7 +74,7 @@ fun TalaApp(repository: HouseholdRepository) {
     // mis-tap cannot abandon an unfinished edit.
     val isFullScreen = route == Destination.Questionnaire.PATTERN || route == Destination.Interview.PATTERN || route == Destination.Practice.PATTERN ||
         route == Destination.HouseholdAdd.route || route == Destination.HouseholdEdit.PATTERN ||
-        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN
+        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN || route == Destination.Profile.route
     val openHousehold: (HouseholdId) -> Unit = { nav.navigate(Destination.Interview(it).route) { launchSingleTop = true } }
 
     Scaffold(
@@ -82,7 +84,7 @@ fun TalaApp(repository: HouseholdRepository) {
                 title = {
                     Column {
                         Text("Tala", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
-                        Text("BARANGAY COGON", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                        Text(savedProfile.barangay, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     }
                 },
                 navigationIcon = {
@@ -112,15 +114,35 @@ fun TalaApp(repository: HouseholdRepository) {
     ) { padding ->
         Box(Modifier.padding(padding).consumeWindowInsets(padding).fillMaxSize()) {
             NavHost(navController = nav, startDestination = Destination.Home.route) {
-                composable(Destination.Questionnaire.PATTERN, arguments = listOf(navArgument("householdId") { type = HouseholdIdNavType })) { backStack ->
+                composable(Destination.Questionnaire.PATTERN, arguments = listOf(
+                    navArgument("householdId") { type = HouseholdIdNavType },
+                    navArgument("section") { defaultValue = "setup" },
+                    navArgument("member") { type = androidx.navigation.NavType.StringType; nullable = true; defaultValue = null },
+                )) { backStack ->
                     val id = requireNotNull(HouseholdIdNavType.get(requireNotNull(backStack.arguments), "householdId"))
                     val workspace: InterviewWorkspaceViewModel = viewModel(factory = viewModelFactory {
-                        initializer { InterviewWorkspaceViewModel(id, repository) }
+                        initializer { InterviewWorkspaceViewModel(id, repository, photos, profiles,
+                            backStack.arguments?.getString("section") ?: "setup", backStack.arguments?.getString("member")) }
                     })
                     InterviewWorkspaceScreen(workspace) { nav.popBackStack() }
                 }
                 composable(Destination.Home.route) {
-                    HomeScreen(state, onBrowse = { nav.navigate(Destination.Households.route) { launchSingleTop = true } }, onOpen = openHousehold)
+                    HomeScreen(
+                        state, profileState.copy(name = savedProfile.name, barangay = savedProfile.barangay),
+                        onBrowse = { nav.navigate(Destination.Households.route) { launchSingleTop = true } },
+                        onOpen = openHousehold,
+                        onProfile = { nav.navigate(Destination.Profile.route) { launchSingleTop = true } },
+                    )
+                }
+                composable(Destination.Profile.route) {
+                    ProfileScreen(
+                        profileState,
+                        onName = profile::setName,
+                        onBarangay = profile::setBarangay,
+                        onSave = profile::save,
+                        onPickPhoto = profile::savePhoto,
+                        onRemovePhoto = profile::removePhoto,
+                    )
                 }
                 composable(Destination.Households.route) {
                     HouseholdsScreen(state, registry::setQuery, registry::setFilter, registry::clearSearch, openHousehold) {
@@ -132,7 +154,9 @@ fun TalaApp(repository: HouseholdRepository) {
                         initializer { HouseholdEditViewModel(null, repository, createSavedStateHandle()) }
                     })
                     val editState by edit.uiState.collectAsStateWithLifecycle()
-                    HouseholdEditScreen(editState, edit::setHeadName, edit::setAddress, edit::setStatus, edit::save, edit::setArchived)
+                    HouseholdEditScreen(editState, edit::setHeadName, edit::setAddress, edit::setStatus, edit::save, edit::setArchived) {
+                        edit.openNameDetails { nav.navigate(Destination.Questionnaire(edit.id, "household").route) }
+                    }
                 }
                 composable(
                     Destination.HouseholdEdit.PATTERN,
@@ -143,7 +167,9 @@ fun TalaApp(repository: HouseholdRepository) {
                         initializer { HouseholdEditViewModel(id, repository, createSavedStateHandle()) }
                     })
                     val editState by edit.uiState.collectAsStateWithLifecycle()
-                    HouseholdEditScreen(editState, edit::setHeadName, edit::setAddress, edit::setStatus, edit::save, edit::setArchived)
+                    HouseholdEditScreen(editState, edit::setHeadName, edit::setAddress, edit::setStatus, edit::save, edit::setArchived) {
+                        edit.openNameDetails { nav.navigate(Destination.Questionnaire(edit.id, "household").route) }
+                    }
                 }
                 composable(
                     Destination.MemberAdd.PATTERN,
@@ -155,7 +181,9 @@ fun TalaApp(repository: HouseholdRepository) {
                     })
                     val editState by edit.uiState.collectAsStateWithLifecycle()
                     if (editState.removed) LaunchedEffect(editState.removed) { nav.popBackStack() }
-                    MemberEditScreen(editState, edit::setDisplayName, edit::save, edit::remove)
+                    MemberEditScreen(editState, edit::setDisplayName, edit::save, edit::remove) {
+                        edit.openNameDetails { nav.navigate(Destination.Questionnaire(householdId, "demographics", edit.id).route) }
+                    }
                 }
                 composable(
                     Destination.MemberEdit.PATTERN,
@@ -172,7 +200,9 @@ fun TalaApp(repository: HouseholdRepository) {
                     })
                     val editState by edit.uiState.collectAsStateWithLifecycle()
                     if (editState.removed) LaunchedEffect(editState.removed) { nav.popBackStack() }
-                    MemberEditScreen(editState, edit::setDisplayName, edit::save, edit::remove)
+                    MemberEditScreen(editState, edit::setDisplayName, edit::save, edit::remove) {
+                        edit.openNameDetails { nav.navigate(Destination.Questionnaire(householdId, "demographics", edit.id).route) }
+                    }
                 }
                 composable(
                     Destination.Interview.PATTERN,
@@ -183,22 +213,14 @@ fun TalaApp(repository: HouseholdRepository) {
                         initializer { InterviewViewModel(id, repository, createSavedStateHandle()) }
                     })
                     val interviewState by interview.uiState.collectAsStateWithLifecycle()
-                    val sections: InterviewSectionsViewModel = viewModel(factory = viewModelFactory {
-                        initializer { InterviewSectionsViewModel(id, repository) }
-                    })
-                    val sectionsState by sections.uiState.collectAsStateWithLifecycle()
                     InterviewScreen(
                         interviewState,
-                        sectionsState,
                         interview::selectTab,
                         onBack = { nav.popBackStack() },
                         onPractice = { nav.navigate(Destination.Practice(id).route) { launchSingleTop = true } },
                         onEditHousehold = { nav.navigate(Destination.HouseholdEdit(id).route) { launchSingleTop = true } },
                         onAddMember = { nav.navigate(Destination.MemberAdd(id).route) { launchSingleTop = true } },
                         onEditMember = { memberId -> nav.navigate(Destination.MemberEdit(id, memberId).route) { launchSingleTop = true } },
-                        onSectionAnswer = sections::answer,
-                        onSectionCheck = sections::check,
-                        onSectionSave = sections::save,
                         onQuestionnaire = { nav.navigate(Destination.Questionnaire(id).route) },
                     )
                 }
@@ -214,15 +236,16 @@ fun TalaApp(repository: HouseholdRepository) {
 }
 
 @Composable
-private fun HomeScreen(state: RegistryUiState, onBrowse: () -> Unit, onOpen: (HouseholdId) -> Unit) {
+private fun HomeScreen(state: RegistryUiState, profile: EnumeratorProfileUiState, onBrowse: () -> Unit, onOpen: (HouseholdId) -> Unit, onProfile: () -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().testTag("home-screen"),
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         item {
-            Text("Magandang araw, Jamie.", style = MaterialTheme.typography.titleMedium)
-            Text("Your fieldwork workspace", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Magandang araw, ${profile.name}.", style = MaterialTheme.typography.titleMedium)
+            Text("Your fieldwork workspace · ${profile.barangay}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            OutlinedButton(onClick = onProfile, modifier = Modifier.heightIn(min = 48.dp).testTag("open-profile")) { Text("Edit enumerator profile") }
         }
         item {
             Surface(color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(24.dp)) {
@@ -240,6 +263,13 @@ private fun HomeScreen(state: RegistryUiState, onBrowse: () -> Unit, onOpen: (Ho
                     Metric("Households", state.households.size, Modifier.weight(1f))
                     Metric("Members", state.memberCount, Modifier.weight(1f))
                     Metric("Callbacks", state.callbackCount, Modifier.weight(1f))
+                }
+            }
+            item {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Metric("Male", state.maleCount, Modifier.weight(1f))
+                    Metric("Female", state.femaleCount, Modifier.weight(1f))
+                    Metric("Sex not recorded", state.unrecordedSexCount, Modifier.weight(1f))
                 }
             }
             item { Button(onClick = onBrowse, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text("Browse households") } }
@@ -309,16 +339,12 @@ private fun HouseholdsScreen(
 @Composable
 private fun InterviewScreen(
     state: InterviewUiState,
-    sections: InterviewSectionsUiState,
     onTab: (InterviewTab) -> Unit,
     onBack: () -> Unit,
     onPractice: () -> Unit,
     onEditHousehold: () -> Unit,
     onAddMember: () -> Unit,
     onEditMember: (MemberId) -> Unit,
-    onSectionAnswer: (SectionSpec, String, AnswerValue) -> Unit,
-    onSectionCheck: (SectionSpec) -> Unit,
-    onSectionSave: (SectionSpec) -> Unit,
     onQuestionnaire: () -> Unit,
 ) {
     val household = state.household
@@ -359,7 +385,7 @@ private fun InterviewScreen(
                             Text("Household overview", style = MaterialTheme.typography.titleLarge)
                             Text("Status · ${household.status.label}")
                             Text("${household.members.size} household members")
-                            Text("Enumerator · Jamie Dela Cruz")
+                            Text("Enumerator · ${state.enumeratorName ?: "Not recorded yet"}")
                         }
                     }
                 }
@@ -397,21 +423,16 @@ private fun InterviewScreen(
             InterviewTab.Sections -> {
                 item {
                     Text("Interview sections", style = MaterialTheme.typography.titleLarge)
-                    Text("Registration sections save on this device. Try the practice interview to check the shared controls.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Answer every section in the questionnaire workspace. Try the practice interview to check the shared controls.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("open-practice")) { Text("Try a practice interview") }
-                }
-                if (sections.loading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
-                else items(RegistrySections.registration, key = { "section-card-" + it.route }) { section ->
-                    val form = sections.sections[section.route] ?: SectionFormState()
-                    val status = sections.statuses[section.route] ?: SaveStatus()
-                    RegistrationSectionCard(section, form, status, onSectionAnswer, onSectionCheck, onSectionSave)
+                    Button(onClick = onQuestionnaire, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open-questionnaire-sections")) { Text("Continue questionnaire") }
                 }
                 item {
-                    Text("Remaining questionnaire sections arrive with later cards:", style = MaterialTheme.typography.titleMedium)
+                    Text("The questionnaire covers all 18 sections:", style = MaterialTheme.typography.titleMedium)
                 }
-                items(SectionTitles.drop(RegistrySections.registration.size).withIndex().toList(), key = { "title-" + it.index }) { (offset, title) ->
+                items(SectionTitles.withIndex().toList(), key = { "title-" + it.index }) { (index, title) ->
                     Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text((offset + RegistrySections.registration.size + 1).toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
+                        Text((index + 1).toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
                         Text(title, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
                     }
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -447,69 +468,68 @@ private fun HouseholdCard(household: Household, onOpen: (HouseholdId) -> Unit) {
 @Composable
 private fun Metric(label: String, value: Int, modifier: Modifier = Modifier) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(value.toString(), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text(value.toString(), modifier = Modifier.testTag("metric-$label"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 @Composable
 private fun DemoNotice() {
-    Text("Fictional sample records · Saves stay on this device.\nRegistration answers save here; member sections and pictures arrive in later builds.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text("Fictional sample records · Saves stay on this device.\nQuestionnaire answers, pictures and the enumerator profile save here; signatures arrive in a later build.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
-/** One durable questionnaire section: rendered fields, explicit validation and an explicit save. */
+/** Editable enumerator profile (plan card D08): name, barangay and an app-private profile picture. */
 @Composable
-private fun RegistrationSectionCard(
-    section: SectionSpec,
-    form: SectionFormState,
-    status: SaveStatus,
-    onAnswer: (SectionSpec, String, AnswerValue) -> Unit,
-    onCheck: (SectionSpec) -> Unit,
-    onSave: (SectionSpec) -> Unit,
+private fun ProfileScreen(
+    state: EnumeratorProfileUiState,
+    onName: (String) -> Unit,
+    onBarangay: (String) -> Unit,
+    onSave: () -> Unit,
+    onPickPhoto: (Uri) -> Unit,
+    onRemovePhoto: () -> Unit,
 ) {
-    val visible = section.visibleFields(form.answers)
-    val firstInvalid = visible.firstOrNull { it.key in form.errors }?.key
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth().testTag("section-card-${section.route}"),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(18.dp),
+    if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> uri?.let(onPickPhoto) }
+    Column(
+        Modifier.fillMaxSize().testTag("profile-screen").verticalScroll(rememberScrollState()).padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(section.title, style = MaterialTheme.typography.titleLarge)
-            visible.forEach { field ->
-                key(field.key) {
-                    SharedField(field, form, field.key == firstInvalid) { key, value -> onAnswer(section, key, value) }
-                }
-            }
-            if (form.validationAttempt > 0) {
-                Text(
-                    if (form.checkedAndValid) "Answers are valid for this section."
-                    else "${form.errors.size} answers need attention.",
-                    modifier = Modifier.testTag("form-result-${section.route}").semantics { liveRegion = LiveRegionMode.Polite },
-                    color = if (form.checkedAndValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            val saveTag = "save-status-${section.route}"
-            val saveMessage = Modifier.testTag(saveTag).semantics { liveRegion = LiveRegionMode.Polite }
-            when (status.phase) {
-                SavePhase.Saving -> Text("Saving…", saveMessage, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-                SavePhase.Saved -> Text(status.message ?: "Saved on this device.", saveMessage, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall)
-                SavePhase.Failed -> Text(status.message ?: "Could not save on this device.", saveMessage, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-                SavePhase.Idle -> {}
-            }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedButton(
-                    onClick = { onCheck(section) },
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("check-${section.route}"),
-                ) { Text("Check answers") }
-                Button(
-                    onClick = { onSave(section) },
-                    enabled = status.phase != SavePhase.Saving,
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("save-${section.route}"),
-                ) { Text(if (status.phase == SavePhase.Saving) "Saving…" else "Save section") }
-            }
+        Text("Enumerator profile", style = MaterialTheme.typography.titleLarge)
+        Text("Changes stamp new interviews; saved records keep their own attribution.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        OutlinedTextField(
+            value = state.name, onValueChange = onName, enabled = !state.saving,
+            label = { Text("Enumerator name") }, singleLine = true,
+            modifier = Modifier.fillMaxWidth().testTag("field-profileName"),
+        )
+        OutlinedTextField(
+            value = state.barangay, onValueChange = onBarangay, enabled = !state.saving,
+            label = { Text("Barangay") }, singleLine = true,
+            modifier = Modifier.fillMaxWidth().testTag("field-profileBarangay"),
+        )
+        PhotoPreview(state.photoPath, "Saved enumerator picture")
+        Text("JPEG, PNG or WebP · up to 5 MiB", style = MaterialTheme.typography.bodySmall)
+        Text(
+            if (state.photoSaved) "A profile picture is saved on this device." else "No profile picture yet.",
+            modifier = Modifier.testTag("profile-photo-status"),
+            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(
+                onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                enabled = !state.saving,
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("profile-photo-choose"),
+            ) { Text(if (state.photoSaved) "Replace picture" else "Choose picture") }
+            OutlinedButton(
+                onClick = onRemovePhoto, enabled = state.photoSaved && !state.saving,
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("profile-photo-remove"),
+            ) { Text("Remove picture") }
         }
+        if (state.phase == ph.tala.registry.ui.households.SavePhase.Idle && state.message.isNotBlank()) Text(state.message)
+        SaveStatusLine(state.phase, state.message)
+        Button(
+            onClick = onSave, enabled = !state.saving,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("save-profile"),
+        ) { Text(if (state.saving) "Saving…" else "Save profile") }
     }
 }
 

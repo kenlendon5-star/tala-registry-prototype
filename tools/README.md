@@ -1,4 +1,4 @@
-# Documentation tools
+# Documentation and verification tools
 
 Run from the repository root with the RTK prefix.
 
@@ -9,5 +9,6 @@ Run from the repository root with the RTK prefix.
 | build-wireframes.cjs | Generates the local 12-screen wireframe gallery |
 | check-docs.cjs | Checks local Markdown links, JSON files, spec presence, source/generated counts and wireframe anchors |
 | verify-artifacts.cjs | Validates the backup example and SQLite DDL and checks wireframe layout/navigation using available development tools |
+| verify-d08-device.ps1 | Requires the isolated Day-8 APKs, runs registration/media/editing and force-stop/dashboard acceptance on the target phone, preserves evidence and restores the previous USB stay-awake setting |
 
-These tools generate documentation, not application migrations. The authoritative native schema remains android-native/app/schemas/. Browser tests stay in browser/tests/ and the board generator stays in planning/02-progress/.
+Documentation generators do not apply application migrations. The authoritative native schema remains android-native/app/schemas/. The Day-8 runner uses a separate application ID and stores results in planning/03-evidence/day08/. The board generator stays in planning/02-progress/.

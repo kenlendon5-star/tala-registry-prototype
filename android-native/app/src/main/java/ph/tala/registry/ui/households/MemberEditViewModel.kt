@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ph.tala.registry.data.HouseholdRepository
@@ -17,6 +18,9 @@ import ph.tala.registry.domain.edit.MemberDraft
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.MemberId
 import java.util.UUID
+import ph.tala.registry.domain.form.InterviewRules
+import ph.tala.registry.domain.form.QuestionnaireSections
+import ph.tala.registry.domain.model.scalar
 
 data class MemberEditUiState(
     val loading: Boolean = true,
@@ -28,6 +32,7 @@ data class MemberEditUiState(
     val phase: SavePhase = SavePhase.Idle,
     val message: String? = null,
     val removed: Boolean = false,
+    val structuredName: Boolean = false,
 ) {
     val saving: Boolean get() = phase == SavePhase.Saving
 }
@@ -55,14 +60,20 @@ class MemberEditViewModel(
     private val saveStatus = MutableStateFlow(SaveStatus())
     private val removedFlag = MutableStateFlow(false)
 
+    private val recordState = repository.observeHousehold(householdId).map { household ->
+        val answers = repository.interviewRecord(householdId)?.let { InterviewRules.answers(it, QuestionnaireSections.demographics, id.value) }.orEmpty()
+        household to (answers.scalar("firstName").isNotBlank() && answers.scalar("lastName").isNotBlank())
+    }
+
     val uiState: StateFlow<MemberEditUiState> = combine(
-        repository.observeHousehold(householdId),
+        recordState,
         name,
         saveStatus,
         removedFlag,
-    ) { household, nameDraft, saving, removed ->
+    ) { persisted, nameDraft, saving, removed ->
+        val (household, structured) = persisted
         val member = household?.members?.find { it.id == id }
-        val nameValue = nameDraft ?: member?.displayName.orEmpty()
+        val nameValue = if (structured) member?.displayName.orEmpty() else nameDraft ?: member?.displayName.orEmpty()
         val attempted = saving.attempted || saving.phase == SavePhase.Failed
         MemberEditUiState(
             loading = false,
@@ -74,6 +85,7 @@ class MemberEditViewModel(
             phase = saving.phase,
             message = saving.message,
             removed = removed,
+            structuredName = structured,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MemberEditUiState(creating = existingMemberId == null))
 
@@ -84,18 +96,24 @@ class MemberEditViewModel(
         name.value = value
     }
 
-    fun save() {
+    fun save() = persist {}
+    fun openNameDetails(onOpen: () -> Unit) = persist(onOpen)
+    private fun persist(onSaved: () -> Unit) {
         if (saveStatus.value.phase == SavePhase.Saving) return
         viewModelScope.launch {
             val household = repository.observeHousehold(householdId).first()
-            val draft = MemberDraft(name.value ?: household?.members?.find { it.id == id }?.displayName.orEmpty())
+            val draft = MemberDraft(if (uiState.value.structuredName) household?.members?.find { it.id == id }?.displayName.orEmpty()
+                else name.value ?: household?.members?.find { it.id == id }?.displayName.orEmpty())
             val problem = EditRules.memberProblem(draft)
             if (problem != null) {
                 saveStatus.value = SaveStatus(SavePhase.Failed, problem, attempted = true)
                 return@launch
             }
             saveStatus.value = SaveStatus(SavePhase.Saving)
-            saveStatus.value = repository.saveMember(householdId, id, draft).toStatus()
+            val result = repository.saveMember(householdId, id, draft)
+            if (result is WriteResult.Saved) { name.value = null; savedState.remove<String>(NAME) }
+            saveStatus.value = result.toStatus()
+            if (result is WriteResult.Saved) onSaved()
         }
     }
 

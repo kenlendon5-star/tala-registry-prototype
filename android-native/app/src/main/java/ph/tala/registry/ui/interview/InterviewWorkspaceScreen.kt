@@ -1,12 +1,16 @@
 package ph.tala.registry.ui.interview
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -17,6 +21,8 @@ import ph.tala.registry.ui.form.SectionFormState
 import ph.tala.registry.ui.form.SharedField
 import ph.tala.registry.ui.households.SavePhase
 import ph.tala.registry.ui.households.SaveStatusLine
+import ph.tala.registry.ui.PhotoPreview
+import ph.tala.registry.data.HouseholdRepository
 
 @Composable
 fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> Unit) {
@@ -31,13 +37,13 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
         if (state.record == null) { Text(state.message, Modifier.padding(20.dp)); return }
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             QuestionnaireSections.all.filter { it.route != "members" }.forEach { section ->
-                FilterChip(selected = !state.showingReview && state.route == section.route, onClick = { model.select(section.route) }, label = { Text(section.title) })
+                FilterChip(modifier = Modifier.testTag("section-${section.route}"), selected = !state.showingReview && state.route == section.route, onClick = { model.select(section.route) }, label = { Text(section.title) })
             }
         }
         if (!state.showingReview && state.section.scopedToMember) {
             Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 state.record!!.members.forEach { member ->
-                    FilterChip(selected = state.memberId == member.id, onClick = { model.select(state.route, member.id) }, label = { Text(member.displayName) })
+                    FilterChip(modifier = Modifier.testTag("member-${member.id}"), selected = state.memberId == member.id, onClick = { model.select(state.route, member.id) }, label = { Text(member.displayName) })
                 }
             }
         }
@@ -61,7 +67,19 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
                     val visible = state.section.visibleFields(state.answers)
                     val firstError = visible.firstOrNull { it.key in state.errors }?.key
                     visible.forEach { field ->
-                        key(field.key) { SharedField(field, form, field.key == firstError) { key, value -> model.answer(key, value) } }
+                        key(field.key) {
+                            if (field.type == FieldType.Photo) {
+                                if (state.route == "household") {
+                                    HouseholdPhotoSlot(model)
+                                } else if (state.section.scopedToMember) {
+                                    MemberPhotoSlot(model)
+                                } else {
+                                    SharedField(field, form, field.key == firstError) { key, value -> model.answer(key, value) }
+                                }
+                            } else {
+                                SharedField(field, form, field.key == firstError) { key, value -> model.answer(key, value) }
+                            }
+                        }
                     }
                 }
             }
@@ -76,6 +94,71 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
                     Button(onClick = model::save, enabled = state.phase != SavePhase.Saving) { Text("Save draft") }
                 }
             }
+        }
+    }
+}
+
+/** The household picture slot (plan card D08): pick, replace and remove through app-private storage. */
+@Composable
+private fun HouseholdPhotoSlot(model: InterviewWorkspaceViewModel) {
+    val state by model.state.collectAsStateWithLifecycle()
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> uri?.let(model::savePhoto) }
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Household Profile Picture (Optional)", style = MaterialTheme.typography.titleSmall)
+        PhotoPreview(state.record?.attachments?.find { it.kind == HouseholdRepository.HOUSEHOLD_PHOTO }?.relativePath, "Saved household picture")
+        Text("JPEG, PNG or WebP · up to 5 MiB", style = MaterialTheme.typography.bodySmall)
+        Text(
+            if (model.hasHouseholdPhoto) "A picture is saved on this device." else "No picture saved yet.",
+            modifier = Modifier.testTag("photo-status"),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(
+                onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                enabled = state.phase != SavePhase.Saving,
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("photo-choose"),
+            ) { Text(if (model.hasHouseholdPhoto) "Replace picture" else "Choose picture") }
+            OutlinedButton(
+                onClick = model::removePhoto,
+                enabled = model.hasHouseholdPhoto && state.phase != SavePhase.Saving,
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("photo-remove"),
+            ) { Text("Remove picture") }
+        }
+    }
+}
+
+/** The member picture slot (plan card D08): pick, replace and remove through app-private storage. */
+@Composable
+private fun MemberPhotoSlot(model: InterviewWorkspaceViewModel) {
+    val state by model.state.collectAsStateWithLifecycle()
+    var pickerMember by rememberSaveable { mutableStateOf<String?>(null) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        val member = pickerMember
+        pickerMember = null
+        if (uri != null && member != null) model.saveMemberPhoto(uri, ph.tala.registry.domain.model.MemberId(member))
+    }
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Member Profile Picture (Optional)", style = MaterialTheme.typography.titleSmall)
+        PhotoPreview(state.record?.attachments?.find { it.kind == HouseholdRepository.MEMBER_PHOTO && it.memberId == state.memberId }?.relativePath, "Saved member picture")
+        Text("JPEG, PNG or WebP · up to 5 MiB", style = MaterialTheme.typography.bodySmall)
+        Text(
+            if (model.hasMemberPhoto) "A picture is saved on this device." else "No picture saved yet.",
+            modifier = Modifier.testTag("member-photo-status"),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(
+                onClick = { pickerMember = state.memberId; picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                enabled = state.phase != SavePhase.Saving,
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("member-photo-choose"),
+            ) { Text(if (model.hasMemberPhoto) "Replace picture" else "Choose picture") }
+            OutlinedButton(
+                onClick = model::removeMemberPhoto,
+                enabled = model.hasMemberPhoto && state.phase != SavePhase.Saving,
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("member-photo-remove"),
+            ) { Text("Remove picture") }
         }
     }
 }

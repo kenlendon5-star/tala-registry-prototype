@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.ui.FormSessionViewModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-12T14:26:37.874Z" hostname="KEN" time="0.037">
+  <properties/>
+  <testcase name="memberFormCannotWriteIntoHouseholdScope" classname="ph.tala.registry.ui.FormSessionViewModelTest" time="0.026"/>
+  <testcase name="validationAndBranchClearingStayOnTheOriginalMember" classname="ph.tala.registry.ui.FormSessionViewModelTest" time="0.007"/>
+  <testcase name="householdTwoMembersAndAnotherHouseholdNeverShareAnswers" classname="ph.tala.registry.ui.FormSessionViewModelTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

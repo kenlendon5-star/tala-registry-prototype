@@ -46,6 +46,7 @@ object QuestionnaireSections {
         FieldSpec("dob", "Date of birth", FieldType.Date, mustBePast = true),
         FieldSpec("birth", "Birth registered with the civil registry?", FieldType.Choice, options = listOf("Yes", "No", "Don't know")),
         FieldSpec("civilStatus", "Civil status", FieldType.Select, options = listOf("Single", "Married", "Widowed", "Separated", "Other", "Prefer not to answer")),
+        FieldSpec("photo", "Member Profile Picture (Optional)", FieldType.Photo, optional = true),
     ), scopedToMember = true)
     val other = SectionSpec("other", "Other demographics", listOf(
         FieldSpec("nationalId", "Has a National ID?", FieldType.Choice, options = listOf("Yes", "No")),

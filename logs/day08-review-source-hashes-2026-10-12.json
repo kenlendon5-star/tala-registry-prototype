@@ -1,0 +1,202 @@
+[
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\data\\RegistrationDeviceTest.kt",
+        "Hash":  "7AC0FC15AC6B0127686FCEE13C9A1661FD44EA43B88F02003983C75A554EE222"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\data\\local\\DurableSaveTest.kt",
+        "Hash":  "004545E5091136D108102D53D7E30992BC942AB3EFDAB2754BA9ABB3363DBC91"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\data\\local\\EditingPersistenceDeviceTest.kt",
+        "Hash":  "DE897DF0E5EA3A34A7F893EE74CA3CF1D0AE9C71D0557A52C9E573CFC2FD13C1"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\data\\local\\RecordStoreDeviceTest.kt",
+        "Hash":  "98A6F1101ABB9570FC69100AFAA3D9440E3A9323324AE062B0F79FA77CC06755"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\data\\local\\SampleRecords.kt",
+        "Hash":  "073C28478903E487A69ECFFCC0A485AE2CF400B652B9D1CB1500C3887C987019"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\data\\local\\SchemaMigrationTest.kt",
+        "Hash":  "9BAF1FFB97E3558E77C45E57D28529C38D1CF93FB7CCA3655B18E4A69833EB56"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\ui\\EditingDeviceTest.kt",
+        "Hash":  "CF6D2A2A4668350D6CDC1A37530863117E962A3DD2B0FB2B0C74C7340C4868BD"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\ui\\FormDeviceTest.kt",
+        "Hash":  "30C6CB0207E84B9952CE72AD9016757696787918F160B907E035F81676E963DA"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\ui\\ShellDeviceTest.kt",
+        "Hash":  "79FBDFC17839EB10EE990FBC9491A786D247277A8E2A04C948B6A65211D5B35D"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\MainActivity.kt",
+        "Hash":  "BC5A2BC1969E287910C0997187748641CE5EE44E466FE4278EB08DE114BFC41A"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\DataStoreEnumeratorProfileStore.kt",
+        "Hash":  "1C8648E08DA3CB867802EE0B602C616F437AB13B2A911EC941F678BD482097BC"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\DemoFixtures.kt",
+        "Hash":  "FA11C7BBAF0CD4FFF28AD7A231B8EDD19FBA5CD28BEC3406489A47B4045C4C47"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\HouseholdRepository.kt",
+        "Hash":  "6744588491EAE8E66BE3004E3A10DCAE9D0C4876FF146A4932E3972109E4E38D"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\PhotoStore.kt",
+        "Hash":  "6AF5E897845AAAC5368390EDD7646E27ABE12A707941D295DC615A28B9C32B38"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\local\\Entities.kt",
+        "Hash":  "B9DDDCF65F93306892BE3AE5FB23F34354D18B9D3996265261B5502C661467F0"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\local\\RecordStore.kt",
+        "Hash":  "2688795854D62B5DC242B8FD58184E02932052CF9E9C1AB3172DA0C1190EED4E"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\local\\RegistryDao.kt",
+        "Hash":  "651696F80A7EFB8B460C20D92ADA596FE43BAC87F89DB8ECEA14B3437AA939BA"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\local\\RegistryDatabase.kt",
+        "Hash":  "A7267F190DA4927F868186CE1752418D20762A9B7F5FFFF69BAE84BCB63A3F70"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\edit\\EditRules.kt",
+        "Hash":  "1F68730A60798336339E396AAA67DE1085CFF1298B5D06B7170C771539BCE9B3"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\form\\FormRules.kt",
+        "Hash":  "08409FE7922DACFB6B38E0B429C77B0CB8F447C345F6DD9CC53CDCB2E9DC3B9A"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\form\\InterviewRules.kt",
+        "Hash":  "A5247777F59ED8E2814E8512710DA96F84580EADA2B3C0072B12F42E383072B5"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\form\\PracticeSection.kt",
+        "Hash":  "08C73415799189ACAC2D9017D7EAB112394A2F0CA1FC64042D8E2DC0FF7720A4"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\form\\QuestionnaireSections.kt",
+        "Hash":  "F94E3536E6C9378408A7D4BEF020406D32B089A81D12F15BBA7307F8BA590202"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\model\\Answers.kt",
+        "Hash":  "85F31E1942D063089636602592DEA0CA7E97BCD0C8E0537BC25CC184AA8B315C"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\model\\FieldSpec.kt",
+        "Hash":  "08CAFE88BCD332EB30D3873924836EBCE72A81E18C4847580D47ABE8F67DE044"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\model\\RecordIds.kt",
+        "Hash":  "3414B8B91A66C164042A48F9550A77861D99A3136BEF479D5A6B05419E27D33B"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\domain\\model\\Records.kt",
+        "Hash":  "4462A9C8345CC9BBF589578EC36FA6112A928D6E6A533E482AE69D45503AE5DA"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\InterviewViewModel.kt",
+        "Hash":  "F28074C94834273FD357EC13A7D7BE9D770184EA032EE9651CAF4F86F85540AF"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\RegistryViewModel.kt",
+        "Hash":  "EB39ACD9C468321AC974038554A253EC0FC959DBD985B349F841DE3FB80F047D"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\Routes.kt",
+        "Hash":  "C761E5EAEA1BB358946A7A698463DFDC0947510D8A5C7BE6CFF467E866D87FDB"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\TalaApp.kt",
+        "Hash":  "CB664C1FB51DD5FF24BCFBFCF100F7E6E0143D26F7BC6BB7BE22EC34F178ED6F"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\form\\FormSessionViewModel.kt",
+        "Hash":  "4F1723A38EE0E922D08A5F689D7A7C267746DA133A934E80EDF5AA249A34BFF6"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\form\\PracticeFormScreen.kt",
+        "Hash":  "21A733B2F04421A0E20F6D40D16F2E5AEB6BE0CE9BEAF3CCACFE65403E6F1E35"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\form\\SectionForm.kt",
+        "Hash":  "2DA6BD8CAB69920C8EB25E3476942F0A6AC79087F6AC6F1F39D951B1FF0EE115"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\households\\EditScreens.kt",
+        "Hash":  "5A8D4C5F91FBD4404773D2443AA4FC0F4E95D987082C62F3C102392BBB90CEC6"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\households\\HouseholdEditViewModel.kt",
+        "Hash":  "7A90AA03CDC802EEA70D2F28504F12D55EB3D2907A2D0E8D595E4B6B43BD11A6"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\households\\MemberEditViewModel.kt",
+        "Hash":  "8397DE7CE1DAD62542C12BEECB2041EF08AD43E9A7376BE16393C5F93B39F75A"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\interview\\InterviewWorkspaceScreen.kt",
+        "Hash":  "FD5C683DDEA140DADC6BC8829D22E5E1239E8BAB9AAF63E0D79C41919A2947CE"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\interview\\InterviewWorkspaceViewModel.kt",
+        "Hash":  "2617FF7D2AA57773DDDB0C553480FC476AE85D5494000EC6490DD3E1C85B82D4"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\profile\\EnumeratorProfileUiState.kt",
+        "Hash":  "B6A426FF5294EDBBBB2215AEB9515871BDE746474BC3268AB28F9DBC82BF81A9"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\profile\\EnumeratorProfileViewModel.kt",
+        "Hash":  "B4802003AEB96B17954FE8642C729DBF3E36A4596BE6AFB644748E13E2892303"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\theme\\Theme.kt",
+        "Hash":  "88B616AB42180A277E1ED14B906345762CC9E057A9E1DB138A56B23A1B435A55"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\audit\\SprintAcceptanceRegressionTest.kt",
+        "Hash":  "E1919A959F0C7C18D1D83FE4EC43D702773455C254E24BC97A2BB78BB0EDF79A"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\data\\FakeRecordStore.kt",
+        "Hash":  "7A8693615D05D646A6B33BC9FA2C8CA44D75AA240DD6E9AAEDD50320C202F795"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\data\\HouseholdRepositoryTest.kt",
+        "Hash":  "C1CBC03DDCCF20712E76DB9782D130B3B05C33D13BE1A5842664D80D6B70050E"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\domain\\form\\FormRulesTest.kt",
+        "Hash":  "0ED6BC7E958917DCE6378AB322299F8D98FA829FE2935958D2CC5B488912AC27"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\domain\\form\\QuestionnaireSectionsTest.kt",
+        "Hash":  "74234E98AFE7498FB5DAF1F36AC2D78ACC339464F950703B8C019892F982B90B"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\ui\\EditScreensViewModelTest.kt",
+        "Hash":  "959AAF545A4F9A04AA8D9F9533C7DE4E7A6008F79877F341A9E21AC326E13B3A"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\ui\\FormSessionViewModelTest.kt",
+        "Hash":  "EDEB8E376A5E6D3234DF72B24006647F544E78F290352AB8AB3D58D714104A5E"
+    },
+    {
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\src\\test\\java\\ph\\tala\\registry\\ui\\ShellViewModelTest.kt",
+        "Hash":  "3874229F1CACE4DEF13BCC3A946933E0538046C54371A170F94F6D956EFF6CED"
+    }
+]

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ph.tala.registry.data.local.AnswerCodec
+import ph.tala.registry.data.local.AttachmentRow
 import ph.tala.registry.data.local.HouseholdAnswerRow
 import ph.tala.registry.data.local.HouseholdRow
 import ph.tala.registry.data.local.HouseholdWithMembers
@@ -31,6 +32,7 @@ import ph.tala.registry.domain.model.MemberId
 import ph.tala.registry.domain.model.SectionSpec
 import ph.tala.registry.domain.model.isAnswered
 import java.util.UUID
+import ph.tala.registry.data.HouseholdRepository.Companion.HOUSEHOLD_PHOTO
 
 /**
  * Read and write contract for the editing slice. Reads are reactive; every write takes
@@ -52,16 +54,24 @@ interface HouseholdRepository {
     /** Archiving is reversible: it only sets or clears the archive marker. */
     suspend fun setArchived(id: HouseholdId, archived: Boolean): WriteResult
 
-    /** Every stored household-scoped answer, keyed by field key. Registration field keys are unique across sections. */
-    suspend fun householdSectionAnswers(householdId: HouseholdId): AnswerState
-
-    /** Replaces one household-scoped section's stored answers and keeps every other section's answers. */
-    suspend fun saveSectionAnswers(householdId: HouseholdId, section: SectionSpec, answers: AnswerState): WriteResult
-
     suspend fun interviewRecord(id: HouseholdId): StoredRecord? = null
     suspend fun saveDraftSection(id: HouseholdId, route: String, memberId: MemberId?, answers: AnswerState, expected: AnswerState): WriteResult =
         WriteResult.Failed("Interview editing is unavailable.")
     suspend fun reviewInterview(id: HouseholdId): WriteResult = WriteResult.Failed("Interview review is unavailable.")
+
+    /** Member id -> stored demographics sex answer ('' while unrecorded); feeds the home summary counts. */
+    val memberSex: Flow<Map<String, String>>
+
+    /** Saves the household picture as the record's photo attachment, replacing any previous one. */
+    suspend fun saveHouseholdPhotoAttachment(householdId: HouseholdId, relativePath: String, mimeType: String): WriteResult
+
+    /** Removes the household picture attachment row; the copied file is deleted by the PhotoStore caller. */
+    suspend fun removeHouseholdPhotoAttachment(householdId: HouseholdId): WriteResult
+
+    suspend fun saveMemberPhotoAttachment(householdId: HouseholdId, memberId: MemberId, relativePath: String, mimeType: String): WriteResult =
+        WriteResult.Failed("Member pictures are unavailable.")
+    suspend fun removeMemberPhotoAttachment(householdId: HouseholdId, memberId: MemberId): WriteResult =
+        WriteResult.Failed("Member pictures are unavailable.")
 
     /** Adds a member when [memberId] is new, otherwise renames the existing member. */
     suspend fun saveMember(householdId: HouseholdId, memberId: MemberId, draft: MemberDraft): WriteResult
@@ -71,6 +81,12 @@ interface HouseholdRepository {
 
     /** Seeds explicit fictional fixtures, skipping records that already exist. Optional and idempotent. */
     suspend fun seedMissing(records: List<StoredRecord>): WriteResult
+
+    companion object {
+        /** Attachment kind used for the single household profile picture. */
+        const val HOUSEHOLD_PHOTO = "household-photo"
+        const val MEMBER_PHOTO = "member-photo"
+    }
 }
 
 /**
@@ -81,6 +97,7 @@ class RoomHouseholdRepository(
     private val store: RecordStore,
     private val newId: () -> String = { UUID.randomUUID().toString() },
     private val clock: () -> Long = System::currentTimeMillis,
+    private val profiles: EnumeratorProfileStore? = null,
 ) : HouseholdRepository {
     private val writes = Mutex()
 
@@ -131,11 +148,18 @@ class RoomHouseholdRepository(
         // A retried create keeps the identity the screen already showed the user.
         val existing = store.load(id.value)
         if (existing != null) return@withLock replace(existing, draft)
+        val interview = InterviewRow(newId(), id.value, QuestionnaireSections.VERSION)
+        val profile = try { profiles?.profile?.first() } catch (_: java.io.IOException) {
+            return@withLock WriteResult.Failed("Could not read the enumerator profile. Retry before registering this household.")
+        }
+        val setup = profile?.let { mapOf("enumerator" to it.name, "barangay" to it.barangay) }.orEmpty()
         store.save(
             StoredRecord(
                 household = HouseholdRow(id.value, nextDisplayCode(), draft.headName.trim(), draft.address.trim(), draft.status.name),
                 members = emptyList(),
-                interview = InterviewRow(newId(), id.value),
+                interview = interview,
+                householdAnswers = (setup.map { (key, value) -> scalarRow(interview.id, "setup", key, value) }
+                    + scalarRow(interview.id, "household", "address", draft.address.trim())),
             ),
         )
     }
@@ -151,27 +175,31 @@ class RoomHouseholdRepository(
         store.save(record.copy(household = record.household.copy(archivedAt = if (archived) clock() else null)))
     }
 
-    override suspend fun householdSectionAnswers(householdId: HouseholdId): AnswerState = writes.withLock {
-        val record = store.load(householdId.value) ?: return@withLock emptyMap()
-        record.householdAnswers.associate { it.field to AnswerCodec.decode(it.kind, it.value) }
+    override val memberSex: Flow<Map<String, String>> = store.memberSex
+
+    override suspend fun saveHouseholdPhotoAttachment(householdId: HouseholdId, relativePath: String, mimeType: String): WriteResult = writes.withLock {
+        val record = store.load(householdId.value) ?: return@withLock WriteResult.Failed(MISSING)
+        val kept = record.attachments.filterNot { it.kind == HOUSEHOLD_PHOTO }
+        val row = AttachmentRow(UUID.randomUUID().toString(), householdId.value, null, HOUSEHOLD_PHOTO, relativePath, mimeType)
+        store.save(record.copy(attachments = kept + row))
     }
 
-    override suspend fun saveSectionAnswers(householdId: HouseholdId, section: SectionSpec, answers: AnswerState): WriteResult = writes.withLock {
+    override suspend fun removeHouseholdPhotoAttachment(householdId: HouseholdId): WriteResult = writes.withLock {
         val record = store.load(householdId.value) ?: return@withLock WriteResult.Failed(MISSING)
-        // Replace only this section's rows; every other section keeps its stored answers.
-        val kept = record.householdAnswers.filterNot { it.section == section.route }
-        val replaced = section.fields.filter { answers.isAnswered(it.key) }.map { field ->
-            val (kind, value) = AnswerCodec.encode(requireNotNull(answers[field.key]))
-            HouseholdAnswerRow(record.interview.id, section.route, field.key, kind, value)
-        }
-        // A saved visit result is the household's working status, so home counts stay truthful.
-        val household = if (section.route == VISIT_SECTION) {
-            val result = (answers[VISIT_RESULT] as? AnswerValue.Scalar)?.text?.trim().orEmpty()
-            if (result.isEmpty()) record.household else record.household.copy(status = statusForVisit(result).name)
-        } else {
-            record.household
-        }
-        store.save(record.copy(household = household, householdAnswers = kept + replaced))
+        store.save(record.copy(attachments = record.attachments.filterNot { it.kind == HOUSEHOLD_PHOTO }))
+    }
+
+    override suspend fun saveMemberPhotoAttachment(householdId: HouseholdId, memberId: MemberId, relativePath: String, mimeType: String): WriteResult = writes.withLock {
+        val record = store.load(householdId.value) ?: return@withLock WriteResult.Failed(MISSING)
+        if (record.members.none { it.id == memberId.value }) return@withLock WriteResult.Failed(MISSING)
+        val kept = record.attachments.filterNot { it.kind == HouseholdRepository.MEMBER_PHOTO && it.memberId == memberId.value }
+        val row = AttachmentRow(UUID.randomUUID().toString(), householdId.value, memberId.value, HouseholdRepository.MEMBER_PHOTO, relativePath, mimeType)
+        store.save(record.copy(attachments = kept + row))
+    }
+
+    override suspend fun removeMemberPhotoAttachment(householdId: HouseholdId, memberId: MemberId): WriteResult = writes.withLock {
+        val record = store.load(householdId.value) ?: return@withLock WriteResult.Failed(MISSING)
+        store.save(record.copy(attachments = record.attachments.filterNot { it.kind == HouseholdRepository.MEMBER_PHOTO && it.memberId == memberId.value }))
     }
 
     /** Only an appointment keeps the Callback badge; every other outcome leaves the record open. */
@@ -184,12 +212,15 @@ class RoomHouseholdRepository(
         invalid(draft)?.let { return@withLock WriteResult.Failed(it) }
         val record = store.load(householdId.value) ?: return@withLock WriteResult.Failed(MISSING)
         val name = draft.displayName.trim()
+        val identity = InterviewRules.answers(record, QuestionnaireSections.demographics, memberId.value)
+        if (hasStructuredName(identity) && name != record.members.find { it.id == memberId.value }?.displayName)
+            return@withLock WriteResult.Failed("Edit First Name and Last Name in Name details to keep this member's identity consistent.")
         val members = if (record.members.any { it.id == memberId.value }) {
             record.members.map { if (it.id == memberId.value) it.copy(displayName = name) else it }
         } else {
             record.members + MemberRow(memberId.value, householdId.value, name)
         }
-        store.save(record.copy(members = members))
+        store.save(record.copy(members = members, household = record.household.copy(status = if (record.household.status == "Reviewed") "InProgress" else record.household.status)))
     }
 
     override suspend fun removeMember(householdId: HouseholdId, memberId: MemberId): WriteResult = writes.withLock {
@@ -197,6 +228,7 @@ class RoomHouseholdRepository(
         store.save(
             record.copy(
                 members = record.members.filterNot { it.id == memberId.value },
+                household = record.household.copy(status = if (record.household.status == "Reviewed") "InProgress" else record.household.status),
                 memberAnswers = record.memberAnswers.filterNot { it.memberId == memberId.value },
                 attachments = record.attachments.filterNot { it.memberId == memberId.value },
             ),
@@ -211,16 +243,29 @@ class RoomHouseholdRepository(
         outcome
     }
 
-    private suspend fun replace(record: StoredRecord, draft: HouseholdDraft): WriteResult =
-        store.save(
+    private suspend fun replace(record: StoredRecord, draft: HouseholdDraft): WriteResult {
+        val identity = InterviewRules.answers(record, QuestionnaireSections.household)
+        if (hasStructuredName(identity) && draft.headName.trim() != record.household.headName)
+            return WriteResult.Failed("Edit First Name and Last Name in Name details to keep the household identity consistent.")
+        return store.save(
             record.copy(
                 household = record.household.copy(
                     headName = draft.headName.trim(),
                     address = draft.address.trim(),
                     status = draft.status.name,
                 ),
+                householdAnswers = record.householdAnswers.filterNot { it.section == "household" && it.field == "address" } +
+                    scalarRow(record.interview.id, "household", "address", draft.address.trim()),
             ),
         )
+    }
+
+    private fun scalarRow(interview: String, section: String, key: String, text: String): HouseholdAnswerRow {
+        val encoded = AnswerCodec.encode(AnswerValue.Scalar(text))
+        return HouseholdAnswerRow(interview, section, key, encoded.first, encoded.second)
+    }
+
+    private fun hasStructuredName(answers: AnswerState) = answers.scalar("firstName").isNotBlank() && answers.scalar("lastName").isNotBlank()
 
     /** Next free `HH-00001`-style label, computed inside the write lock so codes never repeat. */
     private suspend fun nextDisplayCode(): String {
@@ -247,10 +292,6 @@ class RoomHouseholdRepository(
 
     private companion object {
         val DISPLAY_CODE = Regex("^HH-(\\d+)$")
-
-        /** The visit section whose result drives the household's working status. */
-        const val VISIT_SECTION = "visit"
-        const val VISIT_RESULT = "visitResult"
 
         /** Safe, stable wording: never expose paths, SQL or answer content. */
         const val INVALID = "Some fields are not valid yet. Check the highlighted answers and save again."

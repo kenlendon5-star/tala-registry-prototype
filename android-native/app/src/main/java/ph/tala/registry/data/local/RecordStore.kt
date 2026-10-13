@@ -3,6 +3,7 @@ package ph.tala.registry.data.local
 import androidx.room.withTransaction
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
@@ -18,6 +19,8 @@ interface RecordStore {
     val households: Flow<List<HouseholdRow>>
     /** Households with their members, ordered by display code; used by the editing screens. */
     val records: Flow<List<HouseholdWithMembers>>
+    /** Member id -> stored demographics sex answer ('' while unrecorded); feeds the home summary counts. */
+    val memberSex: Flow<Map<String, String>>
     suspend fun load(id: String): StoredRecord?
     suspend fun save(record: StoredRecord): WriteResult
 }
@@ -27,6 +30,9 @@ class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
     private val dao = database.records()
     override val households = dao.observeHouseholds()
     override val records = dao.observeRecords()
+    override val memberSex = dao.observeSexAnswers().map { rows ->
+        rows.associate { row -> row.memberId to ((AnswerCodec.decode(row.kind, row.value) as? AnswerValue.Scalar)?.text.orEmpty()) }
+    }
 
     override suspend fun load(id: String): StoredRecord? = database.withTransaction {
         val household = dao.household(id) ?: return@withTransaction null

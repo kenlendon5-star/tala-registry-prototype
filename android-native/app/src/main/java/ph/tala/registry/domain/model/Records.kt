@@ -44,4 +44,6 @@ enum class HouseholdStatus(val label: String) {
 data class EnumeratorProfile(
     val name: String,
     val barangay: String,
+    /** App-private relative path under filesDir while a profile picture exists; null otherwise. */
+    val photoRelativePath: String? = null,
 )

@@ -46,8 +46,8 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D05: Done. [Implementation evidence](../03-evidence/D05.md).
 - D06: Done. [Implementation evidence](../03-evidence/D06.md).
 - D07: Done. [Implementation evidence](../03-evidence/D07.md).
-- D08: In progress. [Implementation evidence](../03-evidence/D08.md).
-- D09: Backlog. [Implementation evidence](../03-evidence/D09.md).
+- D08: Done. [Implementation evidence](../03-evidence/D08.md).
+- D09: Done. [Implementation evidence](../03-evidence/D09.md).
 - D10: Backlog. [Implementation evidence](../03-evidence/D10.md).
 - D11: Backlog. [Implementation evidence](../03-evidence/D11.md).
 - D12: Backlog. [Implementation evidence](../03-evidence/D12.md).
@@ -194,37 +194,37 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Carry the revised household workflow into the APK.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** In progress
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D07
 
 - [x] Implement the full native setup, visit, household and member-list sections, including structured names, optional contact fields, previous city and house-safety reason.
-- [ ] Implement enumerator and household pictures with Android Photo Picker, app-private copies, size limits, replace/remove behavior and failure cleanup.
-- [ ] Build the home summary and enumerator profile; test member editing, household counts and total/male/female/unrecorded-sex counts after restart.
+- [x] Implement enumerator and household pictures with Android Photo Picker, app-private copies, size limits, replace/remove behavior and failure cleanup.
+- [x] Build the home summary and enumerator profile; test member editing, household counts and total/male/female/unrecorded-sex counts after restart.
 
 **Done when:** A household with multiple members and pictures can be created, edited and resumed with correct live counts.
 
 **Evidence/deliverable:** Registration test evidence
 
-**Implementation evidence:** 2026-10-12 audit correction: the earlier Done record described work absent from the repository (Photo Picker pictures, full registration sections, editable enumerator profile); the card was reset and planning/03-evidence/D08.md carries a correction banner. Implementation then began in plan order: all 18 sections ported into QuestionnaireSections.kt (generated from browser/forms.js by tools/port-native-questionnaire.cjs) and edited in the Continue-questionnaire workspace, which auto-saves through HouseholdRepository.saveDraftSection with a compare-with-base conflict check; HouseholdRepository.reviewInterview grants Reviewed only after every section, member form and consent answer pass validation, and a saved visit result updates the household status so home counts stay truthful. Companion audit fixes: new-member screens no longer show as missing before first save; archived households leave active counts behind a new Archived filter; a Saved label clears when its draft changes. New JVM tests: QuestionnaireSections/registration coverage, InterviewAnswersRepositoryTest (merge, conflict refusal, review gating), InterviewSectionsViewModelTest and SprintAcceptanceRegressionTest. Remaining on this card: household/member pictures (task 2), enumerator profile (task 3) and a full device-suite pass over the workspace (the 12 October run lost the phone connection mid-suite).
+**Implementation evidence:** 2026-10-12: Day 8 registration acceptance complete on OPPO CPH2529 / Android 15 / API 35. Native setup/visit/household/member workflow, structured identity consistency, optional contact/previous city/house-safety fields, Android Photo Picker household/enumerator pictures, bounded app-private normalized copies with replace/remove/failure cleanup, durable DataStore profile and creation-time attribution, and live household/member/Male/Female/unrecorded counts are implemented. Fixed database reads on every keystroke, photo retry gating and draft preservation during writes. Final verification: 48 JVM tests and 12 isolated-device tests pass, including member add/edit/remove, picture selection/replace/remove/cancel, profile/picture persistence, force-stop recovery and the displayed dashboard counts after restart; lint 0 errors / 14 version notices. Evidence: planning/03-evidence/D08.md and planning/03-evidence/day08/ (logs, APK/device identity, source fingerprints, JVM XML and lint). All 18 definitions exist, but D09–D14 section-specific acceptance is not inferred from this registration gate.
 
 ### D09 · 2026-10-07 · Complete member identity
 
 **Goal:** Preserve per-person answers and conditional identity fields.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D08
 
-- [ ] Implement Demographics, Other demographics and Migration using the Kotlin field definitions and shared Compose renderer; use two members with distinct answers.
-- [ ] Test birth date, voter registration, solo-parent ID, disability → registered PWD → PWD ID, migration and overseas branches.
-- [ ] Extract/test branching and validation logic; confirm hidden dependent answers clear and member switching never leaks values.
+- [x] Implement Demographics, Other demographics and Migration using the Kotlin field definitions and shared Compose renderer; use two members with distinct answers.
+- [x] Test birth date, voter registration, solo-parent ID, disability → registered PWD → PWD ID, migration and overseas branches.
+- [x] Extract/test branching and validation logic; confirm hidden dependent answers clear and member switching never leaks values.
 
 **Done when:** Each identity branch passes positive/negative tests and stored answers remain attached to the correct member.
 
 **Evidence/deliverable:** Member identity test matrix
 
-**Implementation evidence:** 2026-10-12 audit: no Demographics, Other demographics or Migration code exists in the app; the practice section only demonstrates shared controls, and the earlier Done record described FormRules behavior tests rather than these sections. Section specs, member-scoped Room saves and branching tests remain to be built. Card reset to Backlog.
+**Implementation evidence:** 2026-10-13: Day 9 identity acceptance complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5). Demographics, Other demographics and Migration pass positive/negative validation, conditional clearing, two-member isolation, save-before-switch, failed-save retry, stale-editor conflict refusal, real Room reopen, actual questionnaire UI and force-stop recovery. Fixed build/test defects and separated member photo ownership. Verified 64 JVM tests, 28 device tests and lint (0 errors, 14 warnings). Evidence: planning/03-evidence/D09.md and planning/03-evidence/day09/ with test matrix, logs, screenshots and source/APK identities. D10 onward remains separate acceptance work.
 
 ### D10 · 2026-10-08 · Complete education and employment
 

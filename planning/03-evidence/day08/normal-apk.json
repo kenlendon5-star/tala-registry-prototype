@@ -1,0 +1,11 @@
+{
+  "recordedAtUtc": "2026-10-12T15:04:34.158Z",
+  "applicationId": "ph.tala.registry",
+  "versionName": "0.4.0",
+  "versionCode": 4,
+  "apk": "android-native/app/build/outputs/apk/debug/app-debug.apk",
+  "sha256": "3f39c7d0c440904958dd858bc7399aa608bac612be2455fabe3dd803a018cd78",
+  "installedOnDevice": "e7d5dc18",
+  "installationCommand": "rtk proxy adb -s e7d5dc18 install -r android-native/app/build/outputs/apk/debug/app-debug.apk",
+  "installationResult": "Success"
+}

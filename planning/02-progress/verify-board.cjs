@@ -1,6 +1,8 @@
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 const path=require('node:path');
+const baseline=require('./implementation-progress.json');
+const nextCard=Object.keys(baseline).find(id=>baseline[id].status==='Backlog');
 const {pathToFileURL}=require('node:url');
 (async()=>{
  const browser=await chromium.launch({headless:true,channel:'msedge'});
@@ -9,12 +11,12 @@ const {pathToFileURL}=require('node:url');
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(pathToFileURL(path.join(__dirname,'../01-boards/ANDROID-KANBAN.html')).href);
   assert.equal(await page.locator('.card').count(),30);
-  // Repository baseline: D01–D07 are Done and D08 is In progress after the 12 October audit reset.
+  // Check every rendered status against the repository evidence baseline.
   const initialDoneCount=await page.locator('.column[data-status="Done"] .card').count();
-  assert.equal(initialDoneCount,7);
+  assert.equal(initialDoneCount,Object.values(baseline).filter(card=>card.status==='Done').length);
   assert.equal(await page.locator('.column[data-status="Ready"] .card').count(),0);
-  assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),1);
-  assert.equal(await page.getByLabel('Status for D08').inputValue(),'In progress');
+  assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),Object.values(baseline).filter(card=>card.status==='In progress').length);
+  for(const [id,card] of Object.entries(baseline))assert.equal(await page.getByLabel(`Status for ${id}`).inputValue(),card.status);
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
   // Free the single WIP slot in this isolated test profile before exercising cards.
   for(const status of await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').all()) {
@@ -27,9 +29,9 @@ const {pathToFileURL}=require('node:url');
   // The refusal reason is shown on the card, not only in the notice bar at the top.
   assert.match(await page.locator('[data-id="D22"] .gate').textContent(),/waiting for D21/);
   // Done gate: every checklist item and evidence note are required first; D08 still has unchecked tasks.
-  await page.getByLabel('Status for D08').selectOption('Done');
-  assert.equal(await page.getByLabel('Status for D08').inputValue(),'Backlog');
-  assert.match(await page.locator('[data-id="D08"] .gate').textContent(),/Check every task/);
+  await page.getByLabel(`Status for ${nextCard}`).selectOption('Done');
+  assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),'Backlog');
+  assert.match(await page.locator(`[data-id="${nextCard}"] .gate`).textContent(),/(?:Check|Tick) every task/);
   // WIP gate: one card building at a time. D03's dependency (D02) stays Done while D01 builds.
   await page.getByLabel('Status for D01').selectOption('In progress');
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'In progress');
@@ -40,16 +42,18 @@ const {pathToFileURL}=require('node:url');
   await page.getByLabel('Status for D01').selectOption('Done');
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
   // Completing D08's checklist and evidence lets it reach Done (its dependency D07 is Done) and clears the refusal reason.
-  await page.locator('[data-id="D08"] summary').click();
-  for(const check of await page.locator('[data-id="D08"] input[type=checkbox]').all())await check.check();
-  await page.getByLabel('Evidence or blocker notes for D08').fill('Board verification fixture: gates exercised in an isolated profile.');
-  await page.getByLabel('Status for D08').selectOption('Done');
+  const nextDetails=page.locator(`[data-id="${nextCard}"] details`);
+  // A refused Done transition can already expand the checklist for the user.
+  if(!await nextDetails.evaluate(el=>el.open))await page.locator(`[data-id="${nextCard}"] summary`).click();
+  for(const check of await page.locator(`[data-id="${nextCard}"] input[type=checkbox]`).all())await check.check();
+  await page.getByLabel(`Evidence or blocker notes for ${nextCard}`).fill('Board verification fixture: gates exercised in an isolated profile.');
+  await page.getByLabel(`Status for ${nextCard}`).selectOption('Done');
   assert.equal(await page.locator('.column[data-status="Done"] .card').count(),initialDoneCount+1);
-  assert.equal(await page.locator('[data-id="D08"] .gate').count(),0);
+  assert.equal(await page.locator(`[data-id="${nextCard}"] .gate`).count(),0);
   await page.reload();
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
-  assert.equal(await page.getByLabel('Status for D08').inputValue(),'Done');
+  assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),'Done');
   assert.equal(await page.getByLabel('Status for D22').inputValue(),'Backlog');
   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress'}).click();
   assert.equal((await download).suggestedFilename(),'tala-native-android-progress.json');
@@ -77,6 +81,6 @@ const {pathToFileURL}=require('node:url');
   await page.setViewportSize({width:320,height:800});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.deepEqual(errors,[]);
-  console.log('Board passed: 30 cards, audited baseline D01–D07 Done with D08 In progress, dependency/Done/WIP gates with inline reasons, progress persistence, export/import, date shifting, sprint filter, mobile widths and no script errors.');
+  console.log(`Board passed: 30 cards matching the repository baseline (${initialDoneCount} Done), dependency/Done/WIP gates, progress persistence, export/import, date shifting, sprint filter, mobile widths and no script errors.`);
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
