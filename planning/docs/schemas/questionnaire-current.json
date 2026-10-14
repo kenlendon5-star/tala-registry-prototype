@@ -1,6 +1,6 @@
 {
   "description": "Current browser field inventory; conditional expressions are documentation, not an executable portable rules format.",
-  "source": "browser/forms.js",
+  "source": "planning/prototype as web app/forms.js",
   "generatedFor": "2026-10-11",
   "sections": [
     {

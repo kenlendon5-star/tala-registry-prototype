@@ -18,9 +18,18 @@ const {pathToFileURL}=require('node:url');
   assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),Object.values(baseline).filter(card=>card.status==='In progress').length);
   for(const [id,card] of Object.entries(baseline))assert.equal(await page.getByLabel(`Status for ${id}`).inputValue(),card.status);
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
-  // Free the single WIP slot in this isolated test profile before exercising cards.
-  for(const status of await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').all()) {
-   await status.selectOption('Backlog');
+  // Complete the in-progress card (if any) in this isolated profile so its dependents can
+  // exercise their dependency gates. Baseline files stay untouched; localStorage is cleared below.
+  let earlyCompleted=0;
+  while(await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').count()){
+   const status=page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').first();
+   const id=(await status.getAttribute('aria-label')).replace('Status for ','');
+   const details=page.locator(`[data-id="${id}"] details`);
+   if(!await details.evaluate(el=>el.open))await page.locator(`[data-id="${id}"] summary`).click();
+   for(const check of await page.locator(`[data-id="${id}"] input[type=checkbox]`).all())await check.check();
+   await page.getByLabel(`Evidence or blocker notes for ${id}`).fill('Board verification fixture: in-progress card completed so dependent gates can be exercised.');
+   await status.selectOption('Done');
+   earlyCompleted++;
   }
   assert.match(await page.locator('#endDate').textContent(),/28 Oct 2026/);
   // Dependency gate: D22 waits for D21, which is in Backlog rather than Done.
@@ -48,7 +57,7 @@ const {pathToFileURL}=require('node:url');
   for(const check of await page.locator(`[data-id="${nextCard}"] input[type=checkbox]`).all())await check.check();
   await page.getByLabel(`Evidence or blocker notes for ${nextCard}`).fill('Board verification fixture: gates exercised in an isolated profile.');
   await page.getByLabel(`Status for ${nextCard}`).selectOption('Done');
-  assert.equal(await page.locator('.column[data-status="Done"] .card').count(),initialDoneCount+1);
+  assert.equal(await page.locator('.column[data-status="Done"] .card').count(),initialDoneCount+1+earlyCompleted);
   assert.equal(await page.locator(`[data-id="${nextCard}"] .gate`).count(),0);
   await page.reload();
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');

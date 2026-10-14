@@ -1,6 +1,6 @@
 # Current questionnaire field dictionary
 
-Generated from browser/forms.js by tools/generate-reference.cjs. This is an implementation inventory, not an official questionnaire or approval of current defects. Date-dependent maxima follow the generation environment. Sections 4 and 18 are bespoke roster/consent workflows outside the field array.
+Generated from planning/prototype as web app/forms.js by tools/generate-reference.cjs. This is an implementation inventory, not an official questionnaire or approval of current defects. Date-dependent maxima follow the generation environment. Sections 4 and 18 are bespoke roster/consent workflows outside the field array.
 
 ## 1. Survey setup — household
 

@@ -30,7 +30,7 @@ data class SectionFormState(
     val checkedAndValid: Boolean get() = validationAttempt > 0 && errors.isEmpty()
 }
 
-/** Session-only drafts. Day 5/6 will connect durable saves; this model never reports a save. */
+/** Session-only drafts for the practice-interview route. Durable saves live in InterviewWorkspaceViewModel. */
 class FormSessionViewModel : ViewModel() {
     private val mutableState = MutableStateFlow(FormSessionState())
     val state = mutableState.asStateFlow()

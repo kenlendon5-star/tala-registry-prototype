@@ -7,12 +7,14 @@ import java.time.LocalDate
 
 /**
  * Tests for the Education section's field specifications and validation rules.
+ * Conditional fields need their parent answers in the state to be visible.
  */
 class EducationEmploymentValidationTest {
 
     private val today = LocalDate.of(2026, 10, 5)
     private fun value(text: String) = AnswerValue.Scalar(text)
-    private fun error(field: FieldSpec, text: String) = FormRules.error(field, mapOf(field.key to value(text)), today)
+    private fun error(field: FieldSpec, text: String, vararg parents: Pair<String, String>) =
+        FormRules.error(field, parents.associate { it.first to AnswerValue.Scalar(it.second) } + (field.key to value(text)), today)
 
     @Test fun `education section field specifications and validation`() {
         val education = QuestionnaireSections.education
@@ -24,6 +26,8 @@ class EducationEmploymentValidationTest {
         )
         val actualFields = education.fields.map { it.key }
         assertTrue("Missing fields in education section", expectedFields.all { actualFields.contains(it) })
+        assertTrue("Education section must be member-scoped", education.scopedToMember)
+        assertEquals("Field keys must be unique", education.fields.size, actualFields.distinct().size)
 
         // Test conditional visibility and validation
         val attendingField = education.fields.first { it.key == "attending" }
@@ -32,35 +36,25 @@ class EducationEmploymentValidationTest {
         val trackField = education.fields.first { it.key == "track" }
 
         // When attending = Yes, school and track should be visible
-        val stateAttendingYes = mapOf(
-            "attending" to value("Yes"),
-            "school" to value("Public"),
-            "track" to value("STEM")
-        )
         assertNull(error(attendingField, "Yes"))
-        assertNull(error(schoolField, "Public"))
-        assertNull(error(trackField, "STEM"))
+        assertNull(error(schoolField, "Public", "attending" to "Yes"))
+        assertNull(error(trackField, "STEM", "attending" to "Yes"))
         // reason should be hidden when attending = Yes
-        assertNull(error(reasonField, ""))
+        assertNull(error(reasonField, "", "attending" to "Yes"))
 
         // When attending = No, reason should be visible
-        val stateAttendingNo = mapOf(
-            "attending" to value("No"),
-            "reason" to value("Financial concerns")
-        )
         assertNull(error(attendingField, "No"))
-        assertNull(error(reasonField, "Financial concerns"))
+        assertNull(error(reasonField, "Financial concerns", "attending" to "No"))
         // school and track should be hidden when attending = No
-        assertNull(error(schoolField, ""))
-        assertNull(error(trackField, ""))
+        assertNull(error(schoolField, "", "attending" to "No"))
+        assertNull(error(trackField, "", "attending" to "No"))
 
         // Test required vs optional fields
         assertNotNull(error(attendingField, "")) // Required
-        val stateSchoolVisible = mapOf("attending" to value("Yes"))
-        assertNotNull(error(schoolField, "")) // Required when visible
-        assertNull(error(schoolField, "Public"))
-        assertNull(error(trackField, "")) // Optional
-        assertNull(error(trackField, "Custom Track"))
+        assertNotNull(error(schoolField, "", "attending" to "Yes")) // Required when visible
+        assertNull(error(schoolField, "Public", "attending" to "Yes"))
+        assertNull(error(trackField, "", "attending" to "Yes")) // Optional when visible
+        assertNull(error(trackField, "Custom Track", "attending" to "Yes"))
 
         // Test grade field (always visible, Select, required)
         val gradeField = education.fields.first { it.key == "grade" }
@@ -75,8 +69,9 @@ class EducationEmploymentValidationTest {
         assertNull(error(eduAssistField, "No"))
 
         // Test invalid option rejection for Select/Choice fields
-        assertNotNull(error(schoolField, "Invalid School"))
-        assertNotNull(error(reasonField, "Invalid Reason"))
+        assertNotNull(error(schoolField, "Invalid School", "attending" to "Yes"))
+        assertNotNull(error(reasonField, "Invalid Reason", "attending" to "No"))
         assertNotNull(error(gradeField, "Invalid Grade"))
         assertNotNull(error(eduAssistField, "Maybe"))
     }
+}

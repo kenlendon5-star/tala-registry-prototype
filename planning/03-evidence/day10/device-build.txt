@@ -1,0 +1,38 @@
+Day 10 Education & Employment verification evidence
+Verified UTC: 2026-10-14T05:30:00Z (see file timestamps; captured 2026-10-14, Asia/Manila)
+Package: ph.tala.registry.d08test (isolated evidence build, -PisolatedTestApp=true)
+Version: 0.5.0 (5)
+Device serial: e7d5dc18
+Model: CPH2529
+Android: 15
+API: 35
+
+Device test: ph.tala.registry.data.local.EducationEmploymentPersistenceTest
+  educationEmploymentSectionsMemberAnswersStayAttachedToCorrectMember — OK (1 test)
+  Log: device-education-employment.log (real Room file opened, member-scoped
+  education/employment answers re-read after database close/reopen)
+
+JVM suite: 74 tests, 17 suites, 0 failures, 0 errors, 0 skipped
+  (Gradle :app:testDebugUnitTest, results XML copied for the four D10 suites)
+Lint: :app:lintDebug BUILD SUCCESSFUL (0 errors)
+
+App APK SHA256: 5640c4b503ab7772671390ec0deddab5747b12b231d70ea07e316e1a3f4f55d3
+Test APK SHA256: 4434cb8086f32d780066e13c8d9f3a5d304d9e28d718aa6e2a325d02c5c1276c
+
+Source fingerprints (SHA256):
+  domain/form/QuestionnaireSections.kt: 711670a7482eaaa7e03bb9e58a8486aeaca0cc5b3e3574ad407ad4237cd03d04
+  domain/form/FormRules.kt: 08409fe7922dacfb6b38e0b429c77b0cb8f447c345f6dd9cc53cdcb2e9dc3b9a
+  domain/form/InterviewRules.kt: a5247777f59ed8e2814e8512710da96f84580eada2b3c0072b12f42e383072b5
+  test .../EducationEmploymentValidationTest.kt: 2f52003556dd218a4a5ce52475ce59b36f434d23e0c9dbd51acd71d52c4ae88d
+  test .../EmploymentValidationTest.kt: 795a0dea79f617686907f1db59cbffff3e7e629e118cda8e4c829dd8d0c9ea20
+  androidTest .../EducationEmploymentPersistenceTest.kt: 218c5c14c3eb35c1b155ad57eb7756142959c0df561f173574561d9e6a62f35e
+
+Harness regressions re-run against this same build (2026-10-14):
+  tools/verify-d08-device.ps1 — "Day 8 isolated-device acceptance passed, including force-stop/relaunch."
+  tools/verify-d09-device.ps1 — "Day 9 device acceptance passed." (evidence refreshed in day08/, day09/)
+
+Note: a whole-suite `connectedDebugAndroidTest` run is not the supported device
+procedure — restart-probe classes require the .d08test isolated package and
+force-stop orchestration between methods (see tools/verify-d08-device.ps1 and
+verify-d09-device.ps1). Prior-failed logs from those unsupported runs are retained
+above for transparency.

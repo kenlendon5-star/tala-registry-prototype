@@ -20,4 +20,4 @@ Edit card definitions in build-board.cjs, repository defaults in implementation-
 
 Browser progress remains local and can differ from repository defaults. Export progress creates a portable JSON backup; Import progress replaces the browser's progress after confirmation. Existing browser status is not silently reset when repository defaults change. Keep one card building and one verifying; Done requires checks and evidence.
 
-The board preserves the historical offline-native scope. The [current specifications](docs/README.md) add explicit requirement IDs and a [traceability matrix](docs/traceability.md). D01–D09 are complete; D10 is the next work package. This does not mean the whole application is ready. See [Day 9 acceptance](03-evidence/D09.md).
+The board preserves the historical offline-native scope. The [current specifications](docs/README.md) add explicit requirement IDs and a [traceability matrix](docs/traceability.md). D01–D10 are complete; D11 is the next work package. This does not mean the whole application is ready. See [Day 9 acceptance](03-evidence/D09.md) and [Day 10 acceptance](03-evidence/D10.md).

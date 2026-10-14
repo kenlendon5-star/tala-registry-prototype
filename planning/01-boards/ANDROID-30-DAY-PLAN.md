@@ -48,7 +48,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D07: Done. [Implementation evidence](../03-evidence/D07.md).
 - D08: Done. [Implementation evidence](../03-evidence/D08.md).
 - D09: Done. [Implementation evidence](../03-evidence/D09.md).
-- D10: Backlog. [Implementation evidence](../03-evidence/D10.md).
+- D10: Done. [Implementation evidence](../03-evidence/D10.md).
 - D11: Backlog. [Implementation evidence](../03-evidence/D11.md).
 - D12: Backlog. [Implementation evidence](../03-evidence/D12.md).
 - D13: Backlog. [Implementation evidence](../03-evidence/D13.md).
@@ -230,19 +230,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Keep school and work questions accurate on mobile.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D09
 
-- [ ] Implement Education with attendance branches, highest grade, SNED/SPED choices and educational assistance.
-- [ ] Implement Employment with the seven-day pay/profit question, work details, hours limits, job-seeking and availability branches.
-- [ ] Test no/yes transitions, optional fields, empty required fields, phone formatting and error focus without losing edits.
+- [x] Implement Education with attendance branches, highest grade, SNED/SPED choices and educational assistance.
+- [x] Implement Employment with the seven-day pay/profit question, work details, hours limits, job-seeking and availability branches.
+- [x] Test no/yes transitions, optional fields, empty required fields, phone formatting and error focus without losing edits.
 
 **Done when:** Both sections pass on two different members, including branch reversal and restart recovery.
 
 **Evidence/deliverable:** Education/employment evidence
 
-**Implementation evidence:** 2026-10-12 audit: no Education or Employment section code exists; employment controls appear only inside the practice section. Card reset to Backlog.
+**Implementation evidence:** 2026-10-14: Day 10 Education & Employment sections complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Attendance and employment branching with hidden-answer clearing, weekly-hours bounds 0-168, member-scoped answers verified against a real Room reopen. Fixed syntax errors in EducationEmploymentValidationTest.kt and EmploymentValidationTest.kt and string interpolation bug in EducationEmploymentPersistenceTest.kt. Verified 74 JVM tests across 17 suites (0 failures), lint 0 errors, EducationEmploymentPersistenceTest OK on device, port-native-questionnaire --check in sync, and same-build D08/D09 harness regressions passed. Evidence: planning/03-evidence/D10.md and planning/03-evidence/day10/ (logs, JVM XML, APK/source SHA-256). D11 onward remains separate acceptance work.
 
 ### D11 · 2026-10-09 · Complete household services
 
