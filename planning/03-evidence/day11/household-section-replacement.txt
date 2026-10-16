@@ -1,0 +1,6 @@
+Full-snapshot re-save replaced the stored rows exactly
+Household answers after re-save and reopen: 4 rows (expected 4)
+health.healthAccess = Scalar(text=Yes)
+health.illness = Scalar(text=No)
+housing.electricity = Scalar(text=No)
+housing.roof = Scalar(text=Metal roofing sheets)

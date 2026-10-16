@@ -18,11 +18,11 @@ const {pathToFileURL}=require('node:url');
   assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),Object.values(baseline).filter(card=>card.status==='In progress').length);
   for(const [id,card] of Object.entries(baseline))assert.equal(await page.getByLabel(`Status for ${id}`).inputValue(),card.status);
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
-  // Complete the in-progress card (if any) in this isolated profile so its dependents can
+  // Complete the in-progress or verifying card (if any) in this isolated profile so its dependents can
   // exercise their dependency gates. Baseline files stay untouched; localStorage is cleared below.
   let earlyCompleted=0;
-  while(await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').count()){
-   const status=page.locator('.column[data-status="In progress"] select[aria-label^="Status for"]').first();
+  while(await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"], .column[data-status="Verify"] select[aria-label^="Status for"]').count()){
+   const status=page.locator('.column[data-status="In progress"] select[aria-label^="Status for"], .column[data-status="Verify"] select[aria-label^="Status for"]').first();
    const id=(await status.getAttribute('aria-label')).replace('Status for ','');
    const details=page.locator(`[data-id="${id}"] details`);
    if(!await details.evaluate(el=>el.open))await page.locator(`[data-id="${id}"] summary`).click();

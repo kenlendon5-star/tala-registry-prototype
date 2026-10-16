@@ -49,7 +49,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D08: Done. [Implementation evidence](../03-evidence/D08.md).
 - D09: Done. [Implementation evidence](../03-evidence/D09.md).
 - D10: Done. [Implementation evidence](../03-evidence/D10.md).
-- D11: Backlog. [Implementation evidence](../03-evidence/D11.md).
+- D11: Done. [Implementation evidence](../03-evidence/D11.md).
 - D12: Backlog. [Implementation evidence](../03-evidence/D12.md).
 - D13: Backlog. [Implementation evidence](../03-evidence/D13.md).
 - D14: Backlog. [Implementation evidence](../03-evidence/D14.md).
@@ -248,19 +248,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Finish six household-level questionnaire sections.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D10
 
-- [ ] Implement Health, Food security and Transport/financial accounts with the shared renderer, including conditions and multi-select behavior.
-- [ ] Implement Internet/safety, Water/sanitation and Housing, including numeric limits and exclusive None choices where specified.
-- [ ] Add representative validation cases and compare saved/reloaded answers with the requirements matrix.
+- [x] Implement Health, Food security and Transport/financial accounts with the shared renderer, including conditions and multi-select behavior.
+- [x] Implement Internet/safety, Water/sanitation and Housing, including numeric limits and exclusive None choices where specified.
+- [x] Add representative validation cases and compare saved/reloaded answers with the requirements matrix.
 
 **Done when:** All six sections save, reload and validate correctly; household fields do not become member-scoped.
 
 **Evidence/deliverable:** Household services evidence
 
-**Implementation evidence:** 2026-10-12 audit: no Health, Food security, Transport/financial accounts, Internet/safety, Water/sanitation or Housing sections exist natively. Card reset to Backlog.
+**Implementation evidence:** 2026-10-16: Day 11 household services complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Health, Food security, Transport & finance, Internet & safety, Water & sanitation and Housing verified for conditional branching (illness/treatment, internet/connection) with fixed-point hidden-answer clearing, multi-select exclusivity (accounts None / Prefer not to answer), numeric limits (housing rooms 0-50) and household-level scoping (member scopes refused; single household draft bucket). Verified 95 JVM tests across 20 suites (0 failures), lint 0 errors, port-native-questionnaire --check in sync, and HouseholdServicesPersistenceTest OK on device: 20 household rows survive a real Room close/reopen, member_answers stays empty, full-snapshot re-save replaces exactly the new rows, plus same-build D08-D10 harness regressions. Evidence: planning/03-evidence/D11.md and planning/03-evidence/day11/ (logs, JVM XML, reopen summaries, APK SHA-256). D12 onward remains separate acceptance work.
 
 ### D12 · 2026-10-10 · Complete disaster and protection
 

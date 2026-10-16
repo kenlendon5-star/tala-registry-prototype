@@ -90,13 +90,13 @@
     "notes": "2026-10-14: Day 10 Education & Employment sections complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Attendance and employment branching with hidden-answer clearing, weekly-hours bounds 0-168, member-scoped answers verified against a real Room reopen. Fixed syntax errors in EducationEmploymentValidationTest.kt and EmploymentValidationTest.kt and string interpolation bug in EducationEmploymentPersistenceTest.kt. Verified 74 JVM tests across 17 suites (0 failures), lint 0 errors, EducationEmploymentPersistenceTest OK on device, port-native-questionnaire --check in sync, and same-build D08/D09 harness regressions passed. Evidence: planning/03-evidence/D10.md and planning/03-evidence/day10/ (logs, JVM XML, APK/source SHA-256). D11 onward remains separate acceptance work."
   },
   "D11": {
-    "status": "Backlog",
+    "status": "Done",
     "checks": [
-      false,
-      false,
-      false
+      true,
+      true,
+      true
     ],
-    "notes": "2026-10-12 audit: no Health, Food security, Transport/financial accounts, Internet/safety, Water/sanitation or Housing sections exist natively. Card reset to Backlog."
+    "notes": "2026-10-16: Day 11 household services complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Health, Food security, Transport & finance, Internet & safety, Water & sanitation and Housing verified for conditional branching (illness/treatment, internet/connection) with fixed-point hidden-answer clearing, multi-select exclusivity (accounts None / Prefer not to answer), numeric limits (housing rooms 0-50) and household-level scoping (member scopes refused; single household draft bucket). Verified 95 JVM tests across 20 suites (0 failures), lint 0 errors, port-native-questionnaire --check in sync, and HouseholdServicesPersistenceTest OK on device: 20 household rows survive a real Room close/reopen, member_answers stays empty, full-snapshot re-save replaces exactly the new rows, plus same-build D08-D10 harness regressions. Evidence: planning/03-evidence/D11.md and planning/03-evidence/day11/ (logs, JVM XML, reopen summaries, APK SHA-256). D12 onward remains separate acceptance work."
   },
   "D12": {
     "status": "Backlog",

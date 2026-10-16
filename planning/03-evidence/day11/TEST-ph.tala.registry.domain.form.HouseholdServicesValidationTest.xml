@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.HouseholdServicesValidationTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-16T03:21:04.427Z" hostname="KEN" time="0.003">
+  <properties/>
+  <testcase name="internet validation and conditional connection" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.001"/>
+  <testcase name="water sanitation validation" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.0"/>
+  <testcase name="validate reports only visible household fields" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.0"/>
+  <testcase name="all six sections are household scoped with unique field keys" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.001"/>
+  <testcase name="food security validation" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.0"/>
+  <testcase name="housing validation with numeric room limits" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.0"/>
+  <testcase name="health validation and conditional treatment" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.001"/>
+  <testcase name="transport multi select validation and exclusivity" classname="ph.tala.registry.domain.form.HouseholdServicesValidationTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -24,6 +24,8 @@
 
 13 October 2026: D09 identity acceptance is complete. Demographics, Other demographics and Migration now have a passing positive/negative member-identity matrix, real Room persistence, two-member questionnaire UI and force-stop recovery evidence. See [D09 acceptance](../03-evidence/D09.md). D10–D20 remain Backlog; the dated October 12 snapshot above is historical.
 
+16 October 2026: D10 education/employment acceptance and D11 household services are complete. D10 was re-verified 14 October 2026 (see [D10 evidence](../03-evidence/D10.md)). D11's six household-level service sections (Health, Food security, Transport & finance, Internet & public safety, Water & sanitation, Housing) pass branching, validation, multi-select exclusivity, numeric-limit and household-scoping tests; 95 JVM tests across 20 suites and lint pass, and the real-Room reopen device run confirms 20 household rows reload with `member_answers` empty. See [D11 evidence](../03-evidence/D11.md). D12–D20 remain separate acceptance work.
+
 ## Current review defect backlog
 
 | ID | Finding | Status after documentation/organization |

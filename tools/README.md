@@ -10,5 +10,7 @@ Run from the repository root with the RTK prefix.
 | check-docs.cjs | Checks local Markdown links, JSON files, spec presence, source/generated counts and wireframe anchors |
 | verify-artifacts.cjs | Validates the backup example and SQLite DDL and checks wireframe layout/navigation using available development tools |
 | verify-d08-device.ps1 | Requires the isolated Day-8 APKs, runs registration/media/editing and force-stop/dashboard acceptance on the target phone, preserves evidence and restores the previous USB stay-awake setting |
+| verify-d09-device.ps1 | Requires the isolated APKs, runs member-identity persistence and identity force-stop acceptance plus storage/UI regression on the target phone; evidence in planning/03-evidence/day09/ |
+| verify-d11-device.ps1 | Requires the isolated APKs, runs household-services persistence (six household-level sections) plus education/demographics/storage and UI regression on the target phone; evidence in planning/03-evidence/day11/ |
 
 Documentation generators do not apply application migrations. The authoritative native schema remains android-native/app/schemas/. The Day-8 runner uses a separate application ID and stores results in planning/03-evidence/day08/. The board generator stays in planning/02-progress/.
