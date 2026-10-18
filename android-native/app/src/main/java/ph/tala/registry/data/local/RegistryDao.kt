@@ -10,7 +10,7 @@ interface RegistryDao {
     @Query("SELECT * FROM households WHERE id = :id") suspend fun household(id: String): HouseholdRow?
     @Query("SELECT * FROM members WHERE householdId = :id ORDER BY id") suspend fun members(id: String): List<MemberRow>
     @Query("SELECT * FROM interviews WHERE householdId = :id") suspend fun interview(id: String): InterviewRow?
-    @Query("SELECT * FROM visits WHERE interviewId = :id ORDER BY id") suspend fun visits(id: String): List<VisitRow>
+    @Query("SELECT * FROM visits WHERE interviewId = :id ORDER BY recordedAt, id") suspend fun visits(id: String): List<VisitRow>
     @Query("SELECT * FROM household_answers WHERE interviewId = :id ORDER BY section, field") suspend fun householdAnswers(id: String): List<HouseholdAnswerRow>
     @Query("SELECT * FROM member_answers WHERE interviewId = :id ORDER BY memberId, section, field") suspend fun memberAnswers(id: String): List<MemberAnswerRow>
     @Query("SELECT * FROM member_answers WHERE section = 'demographics' AND field = 'sex'") fun observeSexAnswers(): Flow<List<MemberAnswerRow>>

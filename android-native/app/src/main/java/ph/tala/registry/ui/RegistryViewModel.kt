@@ -53,9 +53,11 @@ class RegistryViewModel(
             // The Archived filter is the recovery path: same identity and answers return.
             HouseholdFilter.Archived -> records.filter { it.archived }
             else -> active.filter {
-                (filter.status == null || it.status == filter.status) &&
-                    listOf(it.headName, it.displayCode, it.id.value, it.address).any { text -> text.contains(needle, ignoreCase = true) }
+                filter.status == null || it.status == filter.status
             }
+        }.filter { record ->
+            listOf(record.headName, record.displayCode, record.id.value, record.address)
+                .any { text -> text.contains(needle, ignoreCase = true) }
         }
         RegistryUiState(
             loading = false,

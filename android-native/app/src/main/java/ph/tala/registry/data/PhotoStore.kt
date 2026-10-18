@@ -29,6 +29,9 @@ interface PhotoRepository {
     suspend fun removeHouseholdPhoto(householdId: HouseholdId, repository: HouseholdRepository): WriteResult
     suspend fun saveProfilePhoto(source: Uri, profile: EnumeratorProfile, profiles: EnumeratorProfileStore): WriteResult
     suspend fun removeProfilePhoto(profile: EnumeratorProfile, profiles: EnumeratorProfileStore): WriteResult
+    /** Saves the consent signature pad's rendered mark; the UI owns the bounded encoding. */
+    suspend fun saveSignature(bytes: ByteArray, householdId: HouseholdId, repository: HouseholdRepository): WriteResult = WriteResult.Failed("Signatures are unavailable.")
+    suspend fun removeSignature(householdId: HouseholdId, repository: HouseholdRepository): WriteResult = WriteResult.Failed("Signatures are unavailable.")
 }
 
 /** One app-scoped instance serializes media changes. A durable reference is committed before
@@ -67,6 +70,18 @@ class PhotoStore(context: Context, private val root: File = context.filesDir) : 
         replace(source, "attachments", old) { path -> repository.saveMemberPhotoAttachment(householdId, memberId, path, "image/jpeg") }
     }
 
+    override suspend fun saveSignature(bytes: ByteArray, householdId: HouseholdId, repository: HouseholdRepository) = operation {
+        if (bytes.isEmpty() || bytes.size > maxBytes) throw InvalidPhoto("The drawn signature is too large to save.")
+        val old = repository.interviewRecord(householdId)?.attachments?.find { it.kind == HouseholdRepository.SIGNATURE }?.relativePath
+        stage("attachments", old, bytes, extension = "png") { path -> repository.saveSignatureAttachment(householdId, path, "image/png") }
+    }
+
+    override suspend fun removeSignature(householdId: HouseholdId, repository: HouseholdRepository) = operation {
+        val old = repository.interviewRecord(householdId)?.attachments?.find { it.kind == HouseholdRepository.SIGNATURE }?.relativePath
+        val result = repository.removeSignatureAttachment(householdId)
+        if (result is WriteResult.Saved) removeOld(old) else result
+    }
+
     override suspend fun removeMemberPhoto(householdId: HouseholdId, memberId: MemberId, repository: HouseholdRepository) = operation {
         val old = repository.interviewRecord(householdId)?.attachments?.find { it.kind == HouseholdRepository.MEMBER_PHOTO && it.memberId == memberId.value }?.relativePath
         val result = repository.removeMemberPhotoAttachment(householdId, memberId)
@@ -84,9 +99,14 @@ class PhotoStore(context: Context, private val root: File = context.filesDir) : 
 
     private suspend fun replace(source: Uri, directory: String, old: String?, commit: suspend (String) -> WriteResult): WriteResult {
         val bytes = normalize(source)
+        return stage(directory, old, bytes, commit = commit)
+    }
+
+    /** Stages the encoded copy, commits the durable reference, then removes the old file. */
+    private suspend fun stage(directory: String, old: String?, bytes: ByteArray, extension: String = "jpg", commit: suspend (String) -> WriteResult): WriteResult {
         val folder = File(root, directory)
         if (!folder.isDirectory && !folder.mkdirs()) throw IOException("Media directory unavailable")
-        val relative = "$directory/${UUID.randomUUID()}.jpg"
+        val relative = "$directory/${UUID.randomUUID()}.$extension"
         val target = resolve(relative)
         try {
             target.outputStream().use { stream -> stream.write(bytes); stream.fd.sync() }
@@ -122,7 +142,7 @@ class PhotoStore(context: Context, private val root: File = context.filesDir) : 
         val live = references()
         var failed = false
         for (directory in listOf("profile", "attachments")) {
-            File(root, directory).listFiles()?.filter { Regex("[0-9a-f-]{36}\\.jpg").matches(it.name) }?.forEach { file ->
+            File(root, directory).listFiles()?.filter { Regex("[0-9a-f-]{36}\\.(jpg|png)").matches(it.name) }?.forEach { file ->
                 if ("$directory/${file.name}" !in live && !file.delete()) failed = true
             }
         }

@@ -122,7 +122,7 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                     val id = requireNotNull(HouseholdIdNavType.get(requireNotNull(backStack.arguments), "householdId"))
                     val workspace: InterviewWorkspaceViewModel = viewModel(factory = viewModelFactory {
                         initializer { InterviewWorkspaceViewModel(id, repository, photos, profiles,
-                            backStack.arguments?.getString("section") ?: "setup", backStack.arguments?.getString("member")) }
+                            backStack.arguments?.getString("section") ?: "setup", backStack.arguments?.getString("member"), createSavedStateHandle()) }
                     })
                     InterviewWorkspaceScreen(workspace) { nav.popBackStack() }
                 }
@@ -475,7 +475,7 @@ private fun Metric(label: String, value: Int, modifier: Modifier = Modifier) {
 
 @Composable
 private fun DemoNotice() {
-    Text("Fictional sample records · Saves stay on this device.\nQuestionnaire answers, pictures and the enumerator profile save here; signatures arrive in a later build.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text("Fictional sample records · Saves stay on this device.\nQuestionnaire answers, pictures, signatures and the enumerator profile save here.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 /** Editable enumerator profile (plan card D08): name, barangay and an app-private profile picture. */

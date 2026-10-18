@@ -1,0 +1,5 @@
+Database: tala-registry-interview-lifecycle-test.db closed and reopened
+Signature attachments after reopen: 1 (kind=signature, mime=image/png)
+Consent issues after reopen: 0 (drawn signature accepted without a typed name)
+PNG bytes match; decoded 600x240 image retains the drawn black mark
+Ready sections after reopen: 2 of 18

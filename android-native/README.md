@@ -1,8 +1,8 @@
 # Tala native Android
 
-The native app includes the Day 3 shell, Day 4 shared form controls, the Day 5 Room storage layer, the Day 6 household/member editing slice, and Day 8 registration: structured household/member names, a **Continue questionnaire** workspace, household and enumerator pictures, an editable enumerator profile, and live household/member/sex counts. All 18 section definitions are present in `QuestionnaireSections`; Day 9 identity acceptance is complete; the later section-specific gates remain on D10–D14. **Try a practice interview** demonstrates the shared controls with conditional questions and inline errors.
+The native app includes the shell, shared form controls, Room storage, household/member editing, structured registration, profile/pictures and live counts. All 18 section definitions are generated in `QuestionnaireSections`. D09 identity, D10 education/employment and D11 household services have recorded acceptance; D12 disaster/protection and the foundation audit fixes are verified separately in [D12 evidence](../planning/03-evidence/D12.md). D13 adds dated visit history, callbacks, refusal, local interview review and drawn/typed signatures; its current verification status is in [D13 evidence](../planning/03-evidence/D13.md). Peer acceptance remains the D14 gate. **Try a practice interview** remains a separate session-only demonstration.
 
-Household add/edit and member add/edit screens save through `RoomHouseholdRepository` into the app-private Room database (version 2). Saving, saved and failed states are explicit and a failed write is never reported as saved; editor drafts and generated UUID identities survive process death through `SavedStateHandle`. The interview workspace saves each section through `saveDraftSection` with a compare-with-base check, so a stale screen cannot overwrite answers saved by another view, and `reviewInterview` grants the Reviewed status only after every section, member form and consent question passes validation. Fictional fixtures (`HH-00452`–`HH-00454`) seed once per installed database, are skipped when already present, and never overwrite user edits. Archived households leave active counts and return through the **Archived** filter. Household/enumerator pictures use Android Photo Picker and app-private normalized JPEG copies; profile settings use DataStore, and new households retain the profile attribution captured at creation. Signature acceptance remains a later card.
+Household add/edit and member add/edit screens save through `RoomHouseholdRepository` into the app-private Room database (version 3). Saving, saved and failed states are explicit and a failed write is never reported as saved; editor drafts and generated UUID identities survive process death through `SavedStateHandle`. The interview workspace saves each section through `saveDraftSection` with a compare-with-base check, so a stale screen cannot overwrite answers saved by another view, and `reviewInterview` grants the Reviewed status only after every section, member form and consent question passes validation. Fictional fixtures (`HH-00452`–`HH-00454`) seed once per installed database, are skipped when already present, and never overwrite user edits. Archived households leave active counts and return through the **Archived** filter. Household/enumerator pictures use Android Photo Picker and app-private normalized JPEG copies; profile settings use DataStore, and new households retain the profile attribution captured at creation. Signatures use app-private PNG attachments; refusal removes the mark and blocks Reviewed. The explicit Record visit result action appends a dated history entry; draft autosaves do not add visits. Migrations 1→2→3 preserve existing records, with unknown legacy visit dates left blank.
 
 ## Build and run
 
@@ -15,13 +15,12 @@ From this directory in PowerShell:
 ```powershell
 rtk proxy ./gradlew.bat :app:assembleDebug
 rtk proxy ./gradlew.bat :app:testDebugUnitTest :app:lintDebug
-rtk proxy ./gradlew.bat :app:connectedDebugAndroidTest
 rtk proxy adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The first build needs network access to download dependencies. The installed app has no Internet permission and needs neither a development server nor an internet connection. Device tests require an unlocked, authorized Android device with a working software keyboard. They use fictional fixtures and write screenshots into the app's external files directory under `day03/` and `day04/`.
+The first build needs network access to download dependencies. The installed app has no Internet permission and needs neither a development server nor an internet connection. Device tests require an unlocked, authorized Android device with a working software keyboard. Use the isolated harness below: some restart probes must run in separate instrumentation invocations with a force-stop between them, so a blanket connected-test run is not the acceptance procedure.
 
-Gradle's connected-test runner may uninstall the test apps afterward, removing their screenshots. For evidence collection, install both APKs, run `rtk proxy adb shell am instrument -w -r -e class ph.tala.registry.ui.FormDeviceTest ph.tala.registry.test/androidx.test.runner.AndroidJUnitRunner`, then pull `/sdcard/Android/data/ph.tala.registry/files/day04` before uninstalling. The test APK is `app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk`.
+The harness installs the separate `ph.tala.registry.d08test` package and test APK, runs focused classes, and pulls evidence before uninstalling. It preserves normal-app records and media. The test APK is `app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk`.
 
 ## State ownership
 
@@ -43,7 +42,7 @@ Gradle's connected-test runner may uninstall the test apps afterward, removing t
 - `domain/form/InterviewRules`: reads one section's answers from a stored record, cleans hidden dependents to a fixed point, and computes review issues across household and member scopes (consent is required for Reviewed).
 - `ui/interview/InterviewWorkspaceViewModel`: the questionnaire workspace — one section/member scope at a time, debounced auto-save, save-before-switch, explicit save and review, and conflict reporting when the stored section changed elsewhere.
 
-Navigation restores the back stack after activity/system recreation; saved state restores search, filters and interview tab. Practice-form drafts remain session-only, but questionnaire sections save to Room per edit (debounced) and on demand, so reopening a household resumes its saved answers. The Reviewed status can only be granted by completing the interview review.
+Navigation restores the back stack after activity/system recreation; saved state restores search, filters, interview tab and workspace section/member selection. The workspace saves its pending answers and original comparison base as Bundle-compatible values, so a restored unsaved draft remains retryable and cannot bypass conflict refusal. Switching scope or leaving drains edits that arrive during an awaited write. Questionnaire sections save to Room after a 500 ms debounce and on demand; the practice form remains session-only. Reviewed status is granted only through review; changing reviewed household details reopens the record for review.
 
 Missing records show an explicit unavailable state. Screens pass IDs to repositories rather than sharing record objects or relying on list indices. No fake save action or completed-questionnaire percentage is shown.
 
@@ -69,3 +68,17 @@ Then, from the repository root, run `rtk proxy powershell -NoProfile -File tools
 Implementation follows Android's [saved-state guidance](https://developer.android.com/develop/ui/compose/state-saving) and [edge-to-edge setup](https://developer.android.com/develop/ui/compose/system/setup-e2e).
 
 - [Day 9 acceptance record](../planning/03-evidence/D09.md): member identity validation, branch clearing, per-member Room saves and actual questionnaire recovery after force-stop. Run `rtk proxy powershell -NoProfile -File tools/verify-d09-device.ps1` from the root after building with `-PisolatedTestApp=true`.
+
+Current foundation/questionnaire regression (D01–D12), from this directory:
+
+```powershell
+rtk proxy ./gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest -PisolatedTestApp=true
+```
+
+Then from the repository root, substituting the serial from `rtk proxy adb devices -l`:
+
+```powershell
+rtk proxy powershell -NoProfile -File tools/verify-d12-device.ps1 -DeviceSerial emulator-5554
+```
+
+The [D12 evidence](../planning/03-evidence/D12.md) includes APK/source hashes, the controlled Bundle/Parcel workspace-restoration test, native education/employment/disaster/protection branch checks, confirmed-save force-stop recovery and baseline storage/media/UI regression. Build again without `-PisolatedTestApp=true` to produce the normal application APK.

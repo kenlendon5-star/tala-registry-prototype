@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ph.tala.registry.domain.form.QuestionnaireSections
 import ph.tala.registry.domain.model.FieldType
+import ph.tala.registry.domain.model.scalar
 import ph.tala.registry.ui.form.SectionFormState
 import ph.tala.registry.ui.form.SharedField
 import ph.tala.registry.ui.households.SavePhase
@@ -51,7 +52,11 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 if (state.showingReview) {
                     Text("Review interview", style = MaterialTheme.typography.headlineSmall)
-                    Text("${state.issues.size} sections need attention. This records local completion only.")
+                    Text("${state.progress.ready} of ${state.progress.total} sections ready. This records local completion only.")
+                    LinearProgressIndicator(
+                        progress = { if (state.progress.total == 0) 0f else state.progress.ready.toFloat() / state.progress.total },
+                        modifier = Modifier.fillMaxWidth().testTag("review-progress"),
+                    )
                     state.issues.forEach { issue ->
                         OutlinedButton(onClick = { if (issue.route == "members") model.leave(onExit) else model.select(issue.route, issue.memberId) }, modifier = Modifier.fillMaxWidth()) {
                             Text("${issue.label}: ${issue.errors.size} missing or invalid answers")
@@ -63,6 +68,9 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
                 } else {
                     Text(state.section.title, style = MaterialTheme.typography.headlineSmall)
                     if (state.route == "consent") Text("Fictional-data demonstration only. Explain the purpose of the demo and ask whether the respondent agrees. Refusal is saved and never marked reviewed. A typed fictional name is a signature for this demo.")
+                    if (state.route == "consent" && state.answers.scalar("consent") == "Yes") {
+                        SignatureColumn(model)
+                    }
                     val form = SectionFormState(state.answers, state.errors, state.attempt)
                     val visible = state.section.visibleFields(state.answers)
                     val firstError = visible.firstOrNull { it.key in state.errors }?.key
@@ -81,6 +89,19 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
                             }
                         }
                     }
+                    if (state.route == "visit") {
+                        Button(onClick = model::recordVisit, enabled = state.phase != SavePhase.Saving) { Text("Record visit result") }
+                        Text("Save draft keeps your edits. Record visit result adds a dated entry to the visit history.", style = MaterialTheme.typography.bodySmall)
+                        Text("Visit history", style = MaterialTheme.typography.titleMedium)
+                        if (state.record!!.visits.isEmpty()) Text("No recorded visits yet.")
+                        state.record!!.visits.sortedByDescending { it.recordedAt }.forEach { visit ->
+                            Column(Modifier.fillMaxWidth().testTag("visit-${visit.id}")) {
+                                Text("${visit.visitedOn.ifBlank { "Date unrecorded" }} · ${visit.outcome}")
+                                visit.callbackAt?.let { Text("Callback appointment: $it") }
+                                if (visit.notes.isNotBlank()) Text(visit.notes)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -95,6 +116,23 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
                 }
             }
         }
+    }
+}
+
+/** The consent signature slot (plan card D13): drawn pad with undo/clear plus the typed name field. */
+@Composable
+private fun SignatureColumn(model: InterviewWorkspaceViewModel) {
+    val state by model.state.collectAsStateWithLifecycle()
+    val saved = state.record?.attachments?.find { it.kind == HouseholdRepository.SIGNATURE }?.relativePath
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Respondent signature (drawn)", style = MaterialTheme.typography.titleSmall)
+        PhotoPreview(saved, "Saved drawn signature")
+        SignaturePad(
+            hasSavedSignature = model.hasSignature,
+            onSave = model::saveSignature,
+            onClear = model::clearSignature,
+        )
+        Text("Or type a fictional name as the signature below.", style = MaterialTheme.typography.bodySmall)
     }
 }
 

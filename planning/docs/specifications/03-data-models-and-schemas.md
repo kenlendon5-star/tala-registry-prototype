@@ -1,12 +1,12 @@
 # Data Models & Schemas — Tala
 
-Version 1.0 · 11 October 2026. **Current** means checked-in Room version 1. **Target** means a design proposal requiring implementation/migration. No database is modified by this specification.
+Updated 18 October 2026. **Current** means checked-in Room version 3. **Target** means a design proposal requiring implementation/migration. No database is modified by this specification.
 
 ## 1. Sources of truth
 
 - Current entities: [Entities.kt](../../../android-native/app/src/main/java/ph/tala/registry/data/local/Entities.kt).
-- Authoritative exported Room schema: [version 1 JSON](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/1.json).
-- Readable generated DDL snapshot: [room-v1.sql](../schemas/room-v1.sql). Documentation only; do not apply as a Supabase migration.
+- Authoritative exported Room schema: [version 3 JSON](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/3.json); [version 1](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/1.json) and [version 2](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/2.json) remain migration fixtures.
+- Readable generated historical DDL snapshot: [room-v1.sql](../schemas/room-v1.sql). Documentation only; do not apply as a Supabase migration or treat it as the latest Room schema.
 - Current questionnaire: [field dictionary](../schemas/questionnaire-field-dictionary.md), [machine-readable inventory](../schemas/questionnaire-current.json), generated from browser/forms.js.
 - Target portable format: [backup-v1.schema.json](../schemas/backup-v1.schema.json), [fictional example](../schemas/backup-v1.example.json). No current restore implementation consumes this format.
 
@@ -27,7 +27,7 @@ erDiagram
 
 One interview per household is enforced by a unique householdId index. The store expects an interview when loading a complete snapshot, although the household row can exist independently at the SQL level. Multiple visits belong to that interview. A future repeated census cycle needs a deliberate change to interview uniqueness; it is not supported by silently adding another interview now.
 
-## 3. Current Room version-2 dictionary
+## 3. Current Room version-3 dictionary
 
 All String columns use SQLite TEXT; Double uses REAL; Long uses INTEGER. Fields are non-null unless suffixed `?` below. UUID validation is performed by RoomRecordStore, not a SQL UUID column type.
 
@@ -36,11 +36,11 @@ All String columns use SQLite TEXT; Double uses REAL; Long uses INTEGER. Fields 
 | households | id:String; displayCode:String; headName:String; address:String; status:String; archivedAt:Long? | PK id; unique displayCode. Store permits NotStarted, InProgress, Callback, Reviewed; archivedAt is null on active records and set when a record is archived. Migration 1 → 2 adds this column with `ALTER TABLE households ADD COLUMN archivedAt INTEGER` and keeps every existing row active |
 | members | id:String; householdId:String; displayName:String | PK id; FK householdId→households.id CASCADE; household index; unique (id,householdId) |
 | interviews | id:String; householdId:String; questionnaireVersion:String | PK id; unique householdId; FK→households CASCADE; unique (id,householdId). Kotlin default practice-v1 |
-| visits | id:String; interviewId:String; outcome:String; callbackAt:String? | PK id; FK→interviews CASCADE; interview index. Current callback has no explicit zone column |
+| visits | id:String; interviewId:String; outcome:String; callbackAt:String?; visitedOn:String; notes:String; recordedAt:Long | PK id; FK→interviews CASCADE; interview index. Migration 2→3 preserves existing rows and adds blank date/notes and zero recordedAt defaults. Explicit visit actions append entries ordered by recordedAt then id; callback appointment is local date/time with no explicit zone column |
 | household_answers | interviewId:String; section:String; field:String; kind:String; value:String | PK (interviewId,section,field); FK→interviews CASCADE |
 | member_answers | interviewId:String; householdId:String; memberId:String; section:String; field:String; kind:String; value:String | PK (interviewId,memberId,section,field); composite FKs ensure interview and member belong to householdId; both FK pairs indexed |
 | coordinates | householdId:String; latitude:Double; longitude:Double; accuracyMetres:Double?; capturedAt:Long | PK/FK householdId→households CASCADE; store validates latitude ±90, longitude ±180, finite nonnegative accuracy |
-| attachments | id:String; householdId:String; memberId:String?; kind:String; relativePath:String; mimeType:String | PK id; household FK and optional composite member FK CASCADE; path validated as attachments/name.extension; referenced files not yet managed |
+| attachments | id:String; householdId:String; memberId:String?; kind:String; relativePath:String; mimeType:String | PK id; household FK and optional composite member FK CASCADE; path validated as attachments/name.extension; PhotoStore stages private JPEG pictures and PNG signatures before committing references, then removes old files and recovers unreferenced copies |
 
 Kotlin constructor defaults are not necessarily SQL DEFAULT clauses. Use the exported schema when constructing SQL fixtures. Current save replaces the household's complete child graph transactionally; partial snapshots are unsafe unless merged before save.
 
@@ -58,17 +58,17 @@ Current native demo identifiers such as HH-00452 are readable placeholders. Targ
 
 | Entity | Proposed fields / change | Purpose |
 |---|---|---|
-| Household | revision:Long; createdAt/updatedAt:UTC timestamp; archivedAt:nullable timestamp | Optimistic concurrency, history boundary, persistent archive |
+| Household | revision:Long; createdAt/updatedAt:UTC timestamp | Optimistic concurrency and history boundary; archivedAt is already implemented |
 | Member | firstName/middleName/lastName/extension/alias; sortOrder:Int | One authoritative name and stable user-visible roster order; displayName derived |
 | Household head | headMemberId:nullable member FK in same household, plus provisional head name before roster | Avoid two independent identities; confirm respondent versus head semantics |
 | Interview | consent:Unanswered/Yes/No; signedName?; signatureAttachmentId?; reviewedAt?; reviewedRevision? | Review tied to acknowledged record content; no duplicate signature source |
-| Visit | visitedAt:timestamp; callbackLocalDateTime?; callbackTimeZone?; notes?; enumerator attribution | Ordered visit history and unambiguous appointments |
+| Visit | visitedAt:timestamp; callbackTimeZone?; enumerator attribution | Extend current dated history/local appointments with time-zone and attribution metadata; notes and recording order are already implemented |
 | Coordinate | source:device/manual; confirmedAt; addressAtCapture; notes? | Preserve capture provenance and detect address changes |
 | Attachment | byteSize; sha256; createdAt; source; lifecycle state | Integrity, backup, orphan cleanup and file/database reconciliation |
 | Enumerator profile | local profile ID; name; barangay code/label; photo reference | Local workspace configuration; separate from authenticated cloud identity |
 | Reference catalogs | catalog ID/version plus barangay/evacuation items | Replace samples without changing existing historical labels silently |
 
-These extensions require a Room v2+ migration and preservation tests. DEC-02 (social-protection scope) and DEC-03 (school classification) must be resolved before changing answer meanings. Keep older questionnaire versions readable.
+Remaining extensions require a later Room migration and preservation tests. DEC-02 (social-protection scope) and DEC-03 (school classification) must be resolved before changing answer meanings. Keep older questionnaire versions readable.
 
 ## 6. Portable backup contract
 

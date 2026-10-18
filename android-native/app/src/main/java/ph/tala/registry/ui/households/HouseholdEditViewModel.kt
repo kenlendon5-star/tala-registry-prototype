@@ -115,7 +115,13 @@ class HouseholdEditViewModel(
     fun setStatus(value: HouseholdStatus) { if (saveStatus.value.phase == SavePhase.Saving) return; dropSavedAck(); savedState[STATUS] = value.name; status.value = value.name }
 
     fun save() = persist {}
-    fun openNameDetails(onOpen: () -> Unit) = persist(onOpen)
+    fun openNameDetails(onOpen: () -> Unit) {
+        val current = uiState.value
+        // Old builds could derive an overlong read-only name. Always leave a path
+        // to repair its components; other unsaved editor inputs remain in saved state.
+        if (!current.loading && !current.saving && current.structuredName && EditRules.headName(current.headName) != null) onOpen()
+        else persist(onOpen)
+    }
     private fun persist(onSaved: () -> Unit) {
         if (saveStatus.value.phase == SavePhase.Saving) return
         viewModelScope.launch {
@@ -126,7 +132,7 @@ class HouseholdEditViewModel(
                 status = status.value?.let { saved -> HouseholdStatus.entries.find { it.name == saved } }
                     ?: record?.status ?: HouseholdStatus.InProgress,
             )
-            val problem = EditRules.householdProblem(draft)
+            val problem = EditRules.householdProblem(draft, allowReviewed = record?.status == HouseholdStatus.Reviewed)
             if (problem != null) {
                 saveStatus.value = SaveStatus(SavePhase.Failed, problem, attempted = true)
                 return@launch

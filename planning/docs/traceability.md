@@ -1,10 +1,12 @@
 # Requirements traceability
 
+Current native mapping (17 October 2026): use the [complete native acceptance matrix](reference/native-acceptance-matrix.md) for each PR/TR requirement and the [18-section matrix](reference/questionnaire-coverage.md) for field scope/tests. D01–D13 have recorded acceptance. The latest D13 OPPO run passes 144 JVM and 42 instrumentation tests; build/source identity and remaining peer/release gates are in its evidence record. D13 and later release gates remain separate. The dated table and updates below preserve historical snapshots rather than current status claims.
+
 11 October 2026. This matrix connects the six specifications to existing code and required acceptance work. Existing tests are evidence of their implemented scope, not proof that all proposed behavior is complete.
 
 12 October 2026 completion update: D08 registration acceptance passed (48 JVM tests, 12 isolated-device tests and lint); D01–D08 are Done and D09–D20 remain Backlog. Native registration saves scoped drafts through `HouseholdRepository.saveDraftSection`, pictures have a bounded app-private lifecycle, profile settings persist in DataStore, and displayed counts pass after force-stop. See [D08 evidence and tested source identity](../03-evidence/D08.md). All 18 definitions exist; the later section-specific gates remain open.
 
-| Requirements | Target screens | Current source / evidence | Remaining acceptance |
+| Requirements | Target screens | Source / evidence at the original snapshot | Acceptance remaining at that snapshot |
 |---|---|---|---|
 | PR-01–03 | S01, S02, S10 | Native RegistryViewModel, DataStoreEnumeratorProfileStore; RegistrationRegressionTest; registration/restart device evidence | D08 profile/count acceptance passed; release regression and UAT remain |
 | PR-04–08 | S03–S06 | Native UUID repositories, structured-name guards, FormRules, scoped draft saves; editing/registration device evidence | Later member-section coverage and wider stale-editor acceptance |

@@ -135,15 +135,31 @@ class FormDeviceTest {
     @Test fun calendarAndTimePickersCommitOnlyOnConfirmation() {
         input("dob", "2000-01-02")
         compose.onNodeWithTag("pick-dob").performClick()
-        compose.onNodeWithText("Cancel", useUnmergedTree = true).performClick()
+        clickDialogButton("Cancel")
+        awaitActivityFocus()
         compose.onNodeWithTag("field-dob").assertTextContains("2000-01-02")
         compose.onNodeWithTag("pick-dob").performClick()
-        compose.onNodeWithText("Use date", useUnmergedTree = true).performClick()
+        clickDialogButton("Use date")
+        awaitActivityFocus()
         compose.onNodeWithTag("field-dob").assertTextContains("2000-01-02")
         compose.onNodeWithTag("pick-callbackDate").performScrollTo().performClick()
-        compose.onNodeWithText("Choose time", useUnmergedTree = true).performClick()
-        compose.onNodeWithText("Use appointment", useUnmergedTree = true).performClick()
+        clickDialogButton("Choose time")
+        clickDialogButton("Use appointment")
+        awaitActivityFocus()
         compose.onNodeWithTag("field-callbackDate").assertTextContains("${LocalDate.now()}T09:00")
+    }
+
+    private fun clickDialogButton(label: String) {
+        compose.waitUntil(5_000) { compose.onAllNodesWithText(label, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText(label, useUnmergedTree = true).performClick()
+    }
+
+    private fun awaitActivityFocus() {
+        compose.waitUntil(5_000) {
+            var focused = false
+            compose.activityRule.scenario.onActivity { focused = it.hasWindowFocus() }
+            focused
+        }
     }
 
     private fun capture(name: String) {

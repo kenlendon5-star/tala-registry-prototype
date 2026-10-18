@@ -52,13 +52,25 @@ class EditingDeviceTest {
 
     private fun waitUntilStatusContains(substring: String) {
         compose.waitUntil(5_000) {
-            val config = compose.onNodeWithTag("save-status").fetchSemanticsNode().config
-            val texts = config.getOrNull(SemanticsProperties.Text)?.map { it.text }.orEmpty()
-            texts.any { it.contains(substring) }
+            compose.onAllNodesWithTag("save-status").fetchSemanticsNodes().any { node ->
+                val texts = node.config.getOrNull(SemanticsProperties.Text)?.map { it.text }.orEmpty()
+                texts.any { it.contains(substring) }
+            }
         }
     }
 
     private fun waitUntilSaved() = waitUntilStatusContains("Saved")
+
+    private fun awaitRecordCode(expected: String? = null): String {
+        // Room's record observer can update after the write acknowledgement.
+        compose.waitUntil(5_000) {
+            compose.onAllNodesWithTag("edit-record-id").fetchSemanticsNodes().any { node ->
+                val code = node.config.getOrNull(SemanticsProperties.Text)?.firstOrNull()?.text
+                code != null && if (expected == null) Regex("^HH-\\d{5}$").matches(code) else code == expected
+            }
+        }
+        return recordCode()
+    }
 
     @Test fun newHouseholdReportsSavedAndReloadsAfterRecreation() {
         awaitSeededFixtures()
@@ -69,10 +81,11 @@ class EditingDeviceTest {
         compose.onNodeWithTag("save-household").performClick()
         waitUntilSaved()
         // The new record keeps its generated identity and receives the next display code.
-        val code = recordCode()
+        val code = awaitRecordCode()
         assertTrue("Expected a generated HH-##### display code, got $code", Regex("^HH-\\d{5}$").matches(code))
 
         compose.activityRule.scenario.recreate()
+        awaitRecordCode(code)
         assertNodeContainsText("field-headName", "Luna Reyes")
         assertEquals(code, recordCode())
 
@@ -127,6 +140,9 @@ class EditingDeviceTest {
         compose.onNodeWithTag("tab-Overview").performClick()
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("edit-household"))
         compose.onNodeWithTag("edit-household").performClick()
+        compose.waitUntil(30_000) {
+            compose.onAllNodesWithTag("household-edit-screen").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithTag("archive-household").performScrollTo().performClick()
         compose.onNodeWithText("Confirm archive", useUnmergedTree = true).performClick()
         waitUntilStatusContains("Archived")

@@ -1,0 +1,5 @@
+Database: tala-registry-interview-lifecycle-test.db closed and reopened
+Callback household: status=Callback, callbackDate=2026-10-20T10:30
+Dated visit history survives reopen; repeated Record visit action retains one entry
+Refused household: status=InProgress, ready=1 of 18
+Refusal issue: Consent is required for Reviewed. Refusal remains saved as a draft.

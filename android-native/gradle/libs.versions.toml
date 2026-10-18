@@ -8,8 +8,10 @@ activityCompose = "1.13.0"
 navigationCompose = "2.10.2"
 coroutines = "1.9.0"
 junit = "4.13.2"
-androidxTestJunit = "1.1.5"
-espresso = "3.5.1"
+androidxTestJunit = "1.3.0"
+# 3.5.1 injects input events through a hidden InputManager.getInstance() method removed
+# after API 35; 3.7.0 supports the API 36+ input pipeline (D12 emulator evidence).
+espresso = "3.7.0"
 room = "2.8.5"
 ksp = "2.3.6"
 datastore = "1.1.1"

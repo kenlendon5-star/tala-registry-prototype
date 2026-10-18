@@ -77,6 +77,8 @@ class ShellDeviceTest {
     @Test fun restoredFilterAndEmptySearchHaveRecovery() {
         awaitSeededFixtures()
         compose.onNodeWithTag("nav-Households").performClick()
+        compose.onNodeWithTag("household-search").performTextReplacement("No Such Fictional Household D13")
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("No matching households").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Reviewed", useUnmergedTree = true).performClick()
         compose.onNodeWithText("No matching households").assertIsDisplayed()
         compose.activityRule.scenario.recreate()

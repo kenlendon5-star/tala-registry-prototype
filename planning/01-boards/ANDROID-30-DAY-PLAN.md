@@ -50,8 +50,8 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D09: Done. [Implementation evidence](../03-evidence/D09.md).
 - D10: Done. [Implementation evidence](../03-evidence/D10.md).
 - D11: Done. [Implementation evidence](../03-evidence/D11.md).
-- D12: Backlog. [Implementation evidence](../03-evidence/D12.md).
-- D13: Backlog. [Implementation evidence](../03-evidence/D13.md).
+- D12: Done. [Implementation evidence](../03-evidence/D12.md).
+- D13: Done. [Implementation evidence](../03-evidence/D13.md).
 - D14: Backlog. [Implementation evidence](../03-evidence/D14.md).
 - D15: Backlog. [Implementation evidence](../03-evidence/D15.md).
 - D16: Backlog. [Implementation evidence](../03-evidence/D16.md).
@@ -80,7 +80,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Scope checklist + requirements matrix
 
-**Implementation evidence:** 2026-10-08: Release agreement recorded. planning/01-boards/ANDROID-30-DAY-PLAN.md fixes the offline Kotlin + Jetpack Compose scope (all 18 sections plus editing, callbacks, signatures, photos, coordinates, mapping, export/restore, archiving, device tests, signed APK and documentation), the 30-day/164-hour capacity, one developer, the OPPO CPH2529 / Android 15 target phone, sprint gates, the release acceptance checklist and the risk/scope rules; every card carries a testable finish line and deliverable. Unresolved questionnaire wording stays on documented demo labels instead of invented official definitions. Evidence: planning/03-evidence/D01.md. Known gap: there is no separate spreadsheet-style requirements matrix; that mapping lives in the per-card acceptance lines and the release checklist.
+**Implementation evidence:** 2026-10-08: Release agreement recorded. planning/01-boards/ANDROID-30-DAY-PLAN.md fixes the offline Kotlin + Jetpack Compose scope (all 18 sections plus editing, callbacks, signatures, photos, coordinates, mapping, export/restore, archiving, device tests, signed APK and documentation), the 30-day/164-hour capacity, one developer, the OPPO CPH2529 / Android 15 target phone, sprint gates, the release acceptance checklist and the risk/scope rules; every card carries a testable finish line and deliverable. Unresolved questionnaire wording stays on documented demo labels instead of invented official definitions. Evidence: planning/03-evidence/D01.md. 2026-10-17 follow-up: the matrix gap is closed by planning/docs/reference/native-acceptance-matrix.md, mapping all PR/TR requirements to code, tests and remaining gates.
 
 ### D02 · 2026-09-30 · Set up Android Studio
 
@@ -98,7 +98,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Setup guide + device evidence
 
-**Implementation evidence:** 2026-10-08: Toolchain reproducible. android-native/ carries the standard Gradle wrapper, a pinned version catalog with Compose BOM (AGP 9.4.1, Kotlin 2.2.10, JDK 17), gradle.properties tuned for an 8 GB machine, and the documented setup guide android-native/README.md. Debug and instrumentation APKs build, install and run every test suite against the OPPO CPH2529 (adb device e7d5dc18). Evidence: planning/03-evidence/D02.md. Known gap: no emulator or second device configuration exists in this environment, so the second-configuration check is carried to the Day 28 rehearsal instead of being claimed here.
+**Implementation evidence:** 2026-10-08: Toolchain reproducible. android-native/ carries the standard Gradle wrapper, a pinned version catalog with Compose BOM (AGP 9.4.1, Kotlin 2.2.10, JDK 17), gradle.properties tuned for an 8 GB machine, and the documented setup guide android-native/README.md. Debug and instrumentation APKs build, install and run every test suite against the OPPO CPH2529 (adb device e7d5dc18). Evidence: planning/03-evidence/D02.md. 2026-10-17 follow-up: Android 17/API 37 emulator acceptance passes the rebuilt isolated D12 harness (34 tests), including shell/forms/editing and native questionnaire force-stop recovery; physical-phone history remains separate from this current-build emulator run. The earlier second-configuration deferral is closed for foundation acceptance.
 
 ### D03 · 2026-10-01 · Build the native app shell
 
@@ -242,7 +242,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Education/employment evidence
 
-**Implementation evidence:** 2026-10-14: Day 10 Education & Employment sections complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Attendance and employment branching with hidden-answer clearing, weekly-hours bounds 0-168, member-scoped answers verified against a real Room reopen. Fixed syntax errors in EducationEmploymentValidationTest.kt and EmploymentValidationTest.kt and string interpolation bug in EducationEmploymentPersistenceTest.kt. Verified 74 JVM tests across 17 suites (0 failures), lint 0 errors, EducationEmploymentPersistenceTest OK on device, port-native-questionnaire --check in sync, and same-build D08/D09 harness regressions passed. Evidence: planning/03-evidence/D10.md and planning/03-evidence/day10/ (logs, JVM XML, APK/source SHA-256). D11 onward remains separate acceptance work.
+**Implementation evidence:** 2026-10-14: Day 10 Education & Employment sections complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Attendance and employment branching with hidden-answer clearing, weekly-hours bounds 0-168, member-scoped answers verified against a real Room reopen. Fixed syntax errors in EducationEmploymentValidationTest.kt and EmploymentValidationTest.kt and string interpolation bug in EducationEmploymentPersistenceTest.kt. Verified 74 JVM tests across 17 suites (0 failures), lint 0 errors, EducationEmploymentPersistenceTest OK on device, port-native-questionnaire --check in sync, and same-build D08/D09 harness regressions passed. Evidence: planning/03-evidence/D10.md and planning/03-evidence/day10/ (logs, JVM XML, APK/source SHA-256). D11 onward remains separate acceptance work. 2026-10-17 integration follow-up: FoundationSectionsDeviceTest passes native two-member education/work branches, reversal, hours error focus, optional track and saved-answer recovery after an actual force-stop on API 37; evidence is retained in day12/device-questionnaire-write.log and device-questionnaire-restart.log.
 
 ### D11 · 2026-10-09 · Complete household services
 
@@ -266,37 +266,37 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Preserve the latest questionnaire revisions.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D11
 
-- [ ] Implement Disaster preparedness: disaster type, hazards, evacuation-known branching, sample site labels, Other text and emergency-kit answers.
-- [ ] Implement Social protection: PhilHealth member/dependent, DSWD, 4Ps and other assistance branches without silently resolving ambiguous source notes.
-- [ ] Cross-check all 18 sections against the inventory, document approved labels and keep unresolved real-world choices visibly marked for the demo.
+- [x] Implement Disaster preparedness: disaster type, hazards, evacuation-known branching, sample site labels, Other text and emergency-kit answers.
+- [x] Implement Social protection: PhilHealth member/dependent, DSWD, 4Ps and other assistance branches without silently resolving ambiguous source notes.
+- [x] Cross-check all 18 sections against the inventory, document approved labels and keep unresolved real-world choices visibly marked for the demo.
 
 **Done when:** Every section has an implementation/test entry; disaster/protection dependent answers clear correctly.
 
 **Evidence/deliverable:** 18-section coverage matrix
 
-**Implementation evidence:** 2026-10-12 audit: no Disaster preparedness or Social protection sections exist natively; the interview shows the 18-section inventory as titles only. Card reset to Backlog.
+**Implementation evidence:** 2026-10-17: D12 disaster/protection and D01-D12 audit repairs accepted on isolated Android 17/API 37 emulator, app 0.5.0 (5). All 18 sections have scope/implementation/test entries; native branches and hidden-answer clearing pass. Full JVM suite 139 tests/26 suites, lint zero errors (15 warnings), both APKs assemble; 34 instrumentation tests pass including media/storage/migration, controlled workspace restoration, shell/forms/editing and two-member questionnaire write/force-stop recovery. APK/source fingerprints and prior failures retained under planning/03-evidence/day12/. Evidence: planning/03-evidence/D12.md. OPPO current-build rerun remains a release follow-up; D13+ gates remain separate.
 
 ### D13 · 2026-10-11 · Finish interviews and callbacks
 
 **Goal:** Complete the end-to-end interview lifecycle.
 
-**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 2 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D12
 
-- [ ] Implement visit-result actions, callback list/date scheduling, refusal/no-respondent paths and resuming a partial interview; notifications are outside scope.
-- [ ] Implement review, jump-to-error, progress calculation and explicit local completion status; do not label local completion as server synchronization.
-- [ ] Build a Compose signature pad with drawn/typed modes, clear/redo and saved attachment handling; implement consent/refusal behavior and test reopening.
+- [x] Implement visit-result actions, callback list/date scheduling, refusal/no-respondent paths and resuming a partial interview; notifications are outside scope.
+- [x] Implement review, jump-to-error, progress calculation and explicit local completion status; do not label local completion as server synchronization.
+- [x] Build a Compose signature pad with drawn/typed modes, clear/redo and saved attachment handling; implement consent/refusal behavior and test reopening.
 
 **Done when:** One complete and one refused/callback interview follow the agreed rules; saved signatures survive reopen.
 
 **Evidence/deliverable:** Interview lifecycle recording
 
-**Implementation evidence:** 2026-10-12 audit: visit results, callback scheduling, consent and signature capture have no native UI; the Room schema stores visit rows and attachment metadata only, and the browser prototype keeps the reference behavior. Card reset to Backlog.
+**Implementation evidence:** 2026-10-18: Native lifecycle accepted on isolated OPPO CPH2529 Android 15/API 35 physical phone, app 0.5.0 (5). Dated append-only visit actions/history, callback list/date, no-respondent/refusal/resume, 18-section review/jump and drawn/typed signatures with undo/redo/clear and force-stop reopen pass. Room v3 migration preserves legacy visits/attachments. Full JVM 144 tests/27 suites, lint zero errors (15 warnings), both APKs assemble; 42 instrumentation tests pass. Source/APK fingerprints and earlier failures retained. Evidence: planning/03-evidence/D13.md. D14 peer/full-entry and later broad release gates remain separate.
 
 ### D14 · 2026-10-12 · Review questionnaire coverage
 
@@ -314,7 +314,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Reviewer notes + coverage sign-off
 
-**Implementation evidence:** 2026-10-12 audit: a scripted 18-section native interview cannot run until D09-D13 land, and no reviewer sign-off record exists; the week-two gate stays open. Card reset to Backlog.
+**Implementation evidence:** 2026-10-18: D09-D12 have emulator acceptance and D13 has current-build OPPO acceptance, including local review and reopened signatures. D14 remains Backlog: run the full scripted 18-section interview with two members and obtain peer/adviser label/flow sign-off; D13 fixture-backed lifecycle verification does not replace this gate.
 
 ### D15 · 2026-10-13 · Capture native location
 

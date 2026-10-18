@@ -15,6 +15,7 @@ Supporting artifacts:
 
 - [Linked wireframe gallery](design/wireframes.html): 12 target screens, local/offline HTML.
 - [Requirements traceability](traceability.md): features → screens → code/tests → remaining acceptance.
+- [Native acceptance matrix](reference/native-acceptance-matrix.md): every PR/TR requirement mapped to implementation, tests and outstanding gates.
 - [Field dictionary](schemas/questionnaire-field-dictionary.md): 18 sections and current browser field definitions.
 - [Current questionnaire JSON](schemas/questionnaire-current.json) and [Room v1 SQLite DDL](schemas/room-v1.sql): generated implementation references.
 - [Proposed backup schema](schemas/backup-v1.schema.json) and [fictional example](schemas/backup-v1.example.json): documented target; no importer is implemented yet.

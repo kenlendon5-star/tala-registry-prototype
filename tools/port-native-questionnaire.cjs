@@ -32,6 +32,10 @@ for(const s of inventory.sections){
   if(f.min!==undefined)args.push('min = '+f.min);
   if(f.max!==undefined)args.push('max = '+f.max);
   if(f.past)args.push('mustBePast = true');
+  // Native editor constraints share Kotlin constants; keep partial invalid drafts
+  // recoverable without deriving an overlong household/member display name.
+  if(['household','demographics'].includes(s.route)&&['firstName','middleName','lastName'].includes(f.key))args.push('maxLength = RecordTextLimits.NAME');
+  if(s.route==='household'&&f.key==='address')args.push('maxLength = RecordTextLimits.ADDRESS');
   if(f.condition)args.push('visibleWhen = '+condition(f.condition));
   const exclusive=(f.options||[]).filter(x=>['None','Prefer not to answer'].includes(x));
   if(f.type==='multi'&&exclusive.length)args.push(`exclusiveOptions = setOf(${exclusive.map(q).join(', ')})`);

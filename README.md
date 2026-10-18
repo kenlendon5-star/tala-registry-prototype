@@ -8,7 +8,7 @@ Tala is an offline-first household enumeration capstone. The primary release tar
 
 | Folder | Purpose / current status |
 |---|---|
-| [android-native](android-native/README.md) | Compose shell, practice forms, Room storage and household/member editing |
+| [android-native](android-native/README.md) | Native registration, 18 questionnaire definitions, scoped drafts, photos, profile and Room storage; release acceptance remains in progress |
 | [browser](planning/prototype as web app/README.md) | Working 18-section browser prototype; localStorage only |
 | mobile/ | Earlier Expo starter; no Tala workflows; outside the active native build |
 | [supabase](supabase/README.md) | Development tooling and placeholder migrations; no app backend connected |
@@ -24,25 +24,23 @@ Repository tooling uses Node 24.18.0 (see .nvmrc). Install the pinned developmen
 From this repository root:
 
 ```powershell
-rtk npm --prefix browser start
+rtk npm start
 ```
 
 Open [http://localhost:5173](http://localhost:5173). The preview server binds to loopback. Records, images and signatures save in that browser, with known limitations recorded in the [system review](planning/docs/reviews/SYSTEM-ANALYSIS.md).
 
 ```powershell
-rtk npm --prefix browser run check
-rtk proxy node browser/tests/verify.cjs
-rtk proxy node browser/tests/verify-map.cjs
-rtk proxy node browser/tests/verify-revisions.cjs
+rtk npm run check
+rtk npm run test:browser
 ```
 
-Browser checks require the preview server, Playwright, and installed Microsoft Edge. They use isolated fictional records and write screenshots under browser/screenshots/.
+Browser scenario checks require the preview server, Playwright, and installed Microsoft Edge. They use isolated fictional records and write screenshots under `planning/prototype as web app/screenshots/`.
 
 Root shortcuts are also available: `rtk npm start`, `rtk npm run check`, `rtk npm run docs:verify`, `rtk npm run board:build` and `rtk npm run test:browser`.
 
 ## Build native Android
 
-Open android-native/ in Android Studio or follow its [setup and build guide](android-native/README.md). Run the Gradle wrapper from that directory. Household and member add/edit screens save through the Room repository; practice-form drafts remain session-only until the questionnaire cards port them.
+Open android-native/ in Android Studio or follow its [setup and build guide](android-native/README.md). Run the Gradle wrapper from that directory. Household/member editors and the questionnaire workspace save through Room; the separate practice form remains session-only. See the [native acceptance matrix](planning/docs/reference/native-acceptance-matrix.md) for implemented slices and outstanding release gates.
 
 ## Planning and documentation
 

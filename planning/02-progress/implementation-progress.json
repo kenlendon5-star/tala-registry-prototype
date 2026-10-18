@@ -6,7 +6,7 @@
       true,
       true
     ],
-    "notes": "2026-10-08: Release agreement recorded. planning/01-boards/ANDROID-30-DAY-PLAN.md fixes the offline Kotlin + Jetpack Compose scope (all 18 sections plus editing, callbacks, signatures, photos, coordinates, mapping, export/restore, archiving, device tests, signed APK and documentation), the 30-day/164-hour capacity, one developer, the OPPO CPH2529 / Android 15 target phone, sprint gates, the release acceptance checklist and the risk/scope rules; every card carries a testable finish line and deliverable. Unresolved questionnaire wording stays on documented demo labels instead of invented official definitions. Evidence: planning/03-evidence/D01.md. Known gap: there is no separate spreadsheet-style requirements matrix; that mapping lives in the per-card acceptance lines and the release checklist."
+    "notes": "2026-10-08: Release agreement recorded. planning/01-boards/ANDROID-30-DAY-PLAN.md fixes the offline Kotlin + Jetpack Compose scope (all 18 sections plus editing, callbacks, signatures, photos, coordinates, mapping, export/restore, archiving, device tests, signed APK and documentation), the 30-day/164-hour capacity, one developer, the OPPO CPH2529 / Android 15 target phone, sprint gates, the release acceptance checklist and the risk/scope rules; every card carries a testable finish line and deliverable. Unresolved questionnaire wording stays on documented demo labels instead of invented official definitions. Evidence: planning/03-evidence/D01.md. 2026-10-17 follow-up: the matrix gap is closed by planning/docs/reference/native-acceptance-matrix.md, mapping all PR/TR requirements to code, tests and remaining gates."
   },
   "D02": {
     "status": "Done",
@@ -15,7 +15,7 @@
       true,
       true
     ],
-    "notes": "2026-10-08: Toolchain reproducible. android-native/ carries the standard Gradle wrapper, a pinned version catalog with Compose BOM (AGP 9.4.1, Kotlin 2.2.10, JDK 17), gradle.properties tuned for an 8 GB machine, and the documented setup guide android-native/README.md. Debug and instrumentation APKs build, install and run every test suite against the OPPO CPH2529 (adb device e7d5dc18). Evidence: planning/03-evidence/D02.md. Known gap: no emulator or second device configuration exists in this environment, so the second-configuration check is carried to the Day 28 rehearsal instead of being claimed here."
+    "notes": "2026-10-08: Toolchain reproducible. android-native/ carries the standard Gradle wrapper, a pinned version catalog with Compose BOM (AGP 9.4.1, Kotlin 2.2.10, JDK 17), gradle.properties tuned for an 8 GB machine, and the documented setup guide android-native/README.md. Debug and instrumentation APKs build, install and run every test suite against the OPPO CPH2529 (adb device e7d5dc18). Evidence: planning/03-evidence/D02.md. 2026-10-17 follow-up: Android 17/API 37 emulator acceptance passes the rebuilt isolated D12 harness (34 tests), including shell/forms/editing and native questionnaire force-stop recovery; physical-phone history remains separate from this current-build emulator run. The earlier second-configuration deferral is closed for foundation acceptance."
   },
   "D03": {
     "status": "Done",
@@ -87,7 +87,7 @@
       true,
       true
     ],
-    "notes": "2026-10-14: Day 10 Education & Employment sections complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Attendance and employment branching with hidden-answer clearing, weekly-hours bounds 0-168, member-scoped answers verified against a real Room reopen. Fixed syntax errors in EducationEmploymentValidationTest.kt and EmploymentValidationTest.kt and string interpolation bug in EducationEmploymentPersistenceTest.kt. Verified 74 JVM tests across 17 suites (0 failures), lint 0 errors, EducationEmploymentPersistenceTest OK on device, port-native-questionnaire --check in sync, and same-build D08/D09 harness regressions passed. Evidence: planning/03-evidence/D10.md and planning/03-evidence/day10/ (logs, JVM XML, APK/source SHA-256). D11 onward remains separate acceptance work."
+    "notes": "2026-10-14: Day 10 Education & Employment sections complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Attendance and employment branching with hidden-answer clearing, weekly-hours bounds 0-168, member-scoped answers verified against a real Room reopen. Fixed syntax errors in EducationEmploymentValidationTest.kt and EmploymentValidationTest.kt and string interpolation bug in EducationEmploymentPersistenceTest.kt. Verified 74 JVM tests across 17 suites (0 failures), lint 0 errors, EducationEmploymentPersistenceTest OK on device, port-native-questionnaire --check in sync, and same-build D08/D09 harness regressions passed. Evidence: planning/03-evidence/D10.md and planning/03-evidence/day10/ (logs, JVM XML, APK/source SHA-256). D11 onward remains separate acceptance work. 2026-10-17 integration follow-up: FoundationSectionsDeviceTest passes native two-member education/work branches, reversal, hours error focus, optional track and saved-answer recovery after an actual force-stop on API 37; evidence is retained in day12/device-questionnaire-write.log and device-questionnaire-restart.log."
   },
   "D11": {
     "status": "Done",
@@ -99,22 +99,22 @@
     "notes": "2026-10-16: Day 11 household services complete on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. Health, Food security, Transport & finance, Internet & safety, Water & sanitation and Housing verified for conditional branching (illness/treatment, internet/connection) with fixed-point hidden-answer clearing, multi-select exclusivity (accounts None / Prefer not to answer), numeric limits (housing rooms 0-50) and household-level scoping (member scopes refused; single household draft bucket). Verified 95 JVM tests across 20 suites (0 failures), lint 0 errors, port-native-questionnaire --check in sync, and HouseholdServicesPersistenceTest OK on device: 20 household rows survive a real Room close/reopen, member_answers stays empty, full-snapshot re-save replaces exactly the new rows, plus same-build D08-D10 harness regressions. Evidence: planning/03-evidence/D11.md and planning/03-evidence/day11/ (logs, JVM XML, reopen summaries, APK SHA-256). D12 onward remains separate acceptance work."
   },
   "D12": {
-    "status": "Backlog",
+    "status": "Done",
     "checks": [
-      false,
-      false,
-      false
+      true,
+      true,
+      true
     ],
-    "notes": "2026-10-12 audit: no Disaster preparedness or Social protection sections exist natively; the interview shows the 18-section inventory as titles only. Card reset to Backlog."
+    "notes": "2026-10-17: D12 disaster/protection and D01-D12 audit repairs accepted on isolated Android 17/API 37 emulator, app 0.5.0 (5). All 18 sections have scope/implementation/test entries; native branches and hidden-answer clearing pass. Full JVM suite 139 tests/26 suites, lint zero errors (15 warnings), both APKs assemble; 34 instrumentation tests pass including media/storage/migration, controlled workspace restoration, shell/forms/editing and two-member questionnaire write/force-stop recovery. APK/source fingerprints and prior failures retained under planning/03-evidence/day12/. Evidence: planning/03-evidence/D12.md. OPPO current-build rerun remains a release follow-up; D13+ gates remain separate."
   },
   "D13": {
-    "status": "Backlog",
+    "status": "Done",
     "checks": [
-      false,
-      false,
-      false
+      true,
+      true,
+      true
     ],
-    "notes": "2026-10-12 audit: visit results, callback scheduling, consent and signature capture have no native UI; the Room schema stores visit rows and attachment metadata only, and the browser prototype keeps the reference behavior. Card reset to Backlog."
+    "notes": "2026-10-18: Native lifecycle accepted on isolated OPPO CPH2529 Android 15/API 35 physical phone, app 0.5.0 (5). Dated append-only visit actions/history, callback list/date, no-respondent/refusal/resume, 18-section review/jump and drawn/typed signatures with undo/redo/clear and force-stop reopen pass. Room v3 migration preserves legacy visits/attachments. Full JVM 144 tests/27 suites, lint zero errors (15 warnings), both APKs assemble; 42 instrumentation tests pass. Source/APK fingerprints and earlier failures retained. Evidence: planning/03-evidence/D13.md. D14 peer/full-entry and later broad release gates remain separate."
   },
   "D14": {
     "status": "Backlog",
@@ -123,7 +123,7 @@
       false,
       false
     ],
-    "notes": "2026-10-12 audit: a scripted 18-section native interview cannot run until D09-D13 land, and no reviewer sign-off record exists; the week-two gate stays open. Card reset to Backlog."
+    "notes": "2026-10-18: D09-D12 have emulator acceptance and D13 has current-build OPPO acceptance, including local review and reopened signatures. D14 remains Backlog: run the full scripted 18-section interview with two members and obtain peer/adviser label/flow sign-off; D13 fixture-backed lifecycle verification does not replace this gate."
   },
   "D15": {
     "status": "Backlog",

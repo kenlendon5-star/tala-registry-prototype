@@ -7,7 +7,12 @@ import java.time.LocalDateTime
 /** Pure Kotlin rules: no Compose, Android context, repository or wall-clock dependency in tests. */
 object FormRules {
     fun validate(section: SectionSpec, answers: AnswerState, today: LocalDate = LocalDate.now()): Map<String, String> =
-        section.fields.mapNotNull { field -> error(field, answers, today)?.let { field.key to it } }.toMap()
+        section.fields.mapNotNull { field -> error(field, answers, today)?.let { field.key to it } }.toMap().toMutableMap().apply {
+            if (section.route in setOf("household", "demographics") &&
+                RecordTextLimits.structuredName(answers).length > RecordTextLimits.NAME) {
+                putIfAbsent("lastName", "Use ${RecordTextLimits.NAME} characters or fewer for the full name, including spaces and extension.")
+            }
+        }
 
     fun error(field: FieldSpec, answers: AnswerState, today: LocalDate): String? {
         if (!field.isVisible(answers)) return null
@@ -20,6 +25,7 @@ object FormRules {
             return null
         }
         val text = (value as? AnswerValue.Scalar)?.text?.trim() ?: return "Enter a single answer."
+        if (field.maxLength != null && text.length > field.maxLength) return "Use ${field.maxLength} characters or fewer."
         return when (field.type) {
             FieldType.Text, FieldType.TextArea -> null
             FieldType.Phone -> if (phonePattern.matches(text)) null else "Use 11 digits, for example 0917-123-4567."

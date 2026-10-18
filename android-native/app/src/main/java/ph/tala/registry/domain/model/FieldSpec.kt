@@ -62,6 +62,7 @@ data class FieldSpec(
     val visibleWhen: Condition? = null,
     /** A choice such as None cannot coexist with another selection. */
     val exclusiveOptions: Set<String> = emptySet(),
+    val maxLength: Int? = null,
 ) {
     init {
         require(key.isNotBlank())
@@ -69,6 +70,7 @@ data class FieldSpec(
         require(options.distinct().size == options.size)
         require(exclusiveOptions.all { it in options })
         require(exclusiveOptions.isEmpty() || type == FieldType.MultiSelect)
+        require(maxLength == null || maxLength > 0)
     }
     val isChoiceLike: Boolean
         get() = type == FieldType.Choice || type == FieldType.Select || type == FieldType.MultiSelect

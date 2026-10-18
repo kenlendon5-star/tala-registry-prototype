@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.EmploymentValidationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-18T12:46:40.657Z" hostname="KEN" time="0.001">
+  <properties/>
+  <testcase name="employment section field specifications and validation" classname="ph.tala.registry.domain.form.EmploymentValidationTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

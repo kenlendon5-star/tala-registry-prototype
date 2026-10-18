@@ -97,7 +97,11 @@ class MemberEditViewModel(
     }
 
     fun save() = persist {}
-    fun openNameDetails(onOpen: () -> Unit) = persist(onOpen)
+    fun openNameDetails(onOpen: () -> Unit) {
+        val current = uiState.value
+        if (!current.loading && !current.saving && current.structuredName && EditRules.displayName(current.displayName) != null) onOpen()
+        else persist(onOpen)
+    }
     private fun persist(onSaved: () -> Unit) {
         if (saveStatus.value.phase == SavePhase.Saving) return
         viewModelScope.launch {

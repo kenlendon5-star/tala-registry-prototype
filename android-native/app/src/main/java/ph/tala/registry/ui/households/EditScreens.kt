@@ -91,6 +91,7 @@ fun HouseholdEditScreen(
                 modifier = Modifier.fillMaxWidth().testTag("field-address"),
             )
             Text("Visit status", style = MaterialTheme.typography.titleSmall)
+            if (state.status == HouseholdStatus.Reviewed) Text("Reviewed on this device. Saving changed details reopens the interview for review.")
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 HouseholdStatus.entries.filterNot { it == HouseholdStatus.Reviewed }.forEach { option ->
                     Row(

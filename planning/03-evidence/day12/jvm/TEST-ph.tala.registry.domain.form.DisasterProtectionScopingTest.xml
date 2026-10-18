@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.DisasterProtectionScopingTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-17T12:17:34.400Z" hostname="KEN" time="0.015">
+  <properties/>
+  <testcase name="disaster and protection answers are keyed once not per member" classname="ph.tala.registry.domain.form.DisasterProtectionScopingTest" time="0.011"/>
+  <testcase name="disaster branch clearing applies to the single shared bucket" classname="ph.tala.registry.domain.form.DisasterProtectionScopingTest" time="0.0"/>
+  <testcase name="disaster and protection reject member scopes" classname="ph.tala.registry.domain.form.DisasterProtectionScopingTest" time="0.001"/>
+  <testcase name="switching member context never splits household answers" classname="ph.tala.registry.domain.form.DisasterProtectionScopingTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

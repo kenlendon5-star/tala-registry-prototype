@@ -1,0 +1,16 @@
+Database: tala-registry-disaster-protection-test.db closed and reopened
+Household answers after reopen: 13 rows across the two household sections
+Member answers after reopen: 0 rows (expected 0 - household fields are not member-scoped)
+disaster.disasterType = Scalar(text=Natural)
+disaster.emergencyKit = Scalar(text=Yes)
+disaster.evacuation = Scalar(text=Other)
+disaster.evacuationKnown = Scalar(text=Yes)
+disaster.evacuationOther = Scalar(text=Bgy. Multi-purpose building)
+disaster.hazards = Multi(selected=[Flood, Typhoon])
+protection.assistance = Scalar(text=Yes)
+protection.assistanceDetail = Scalar(text=Ayuda)
+protection.dswd = Scalar(text=Yes)
+protection.fourPs = Scalar(text=No)
+protection.philHealth = Scalar(text=Yes)
+protection.philHealthRole = Scalar(text=Dependent)
+protection.programs = Multi(selected=[4Ps, Senior citizen assistance])

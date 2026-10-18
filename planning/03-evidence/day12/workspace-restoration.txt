@@ -1,0 +1,1 @@
+Pending debounce cancelled; draft/route/member/base survived Android Bundle/Parcel into a fresh ViewModel and saved to real Room. This is a controlled restoration test, not an OS-kill test.

@@ -18,12 +18,12 @@ object QuestionnaireSections {
         FieldSpec("visitNotes", "Visit notes", FieldType.TextArea, optional = true),
     ), scopedToMember = false)
     val household = SectionSpec("household", "Household profile", listOf(
-        FieldSpec("firstName", "First Name", FieldType.Text),
-        FieldSpec("middleName", "Middle Name (Optional)", FieldType.Text, optional = true),
-        FieldSpec("lastName", "Last Name", FieldType.Text),
+        FieldSpec("firstName", "First Name", FieldType.Text, maxLength = RecordTextLimits.NAME),
+        FieldSpec("middleName", "Middle Name (Optional)", FieldType.Text, optional = true, maxLength = RecordTextLimits.NAME),
+        FieldSpec("lastName", "Last Name", FieldType.Text, maxLength = RecordTextLimits.NAME),
         FieldSpec("extension", "Extension (Optional)", FieldType.Select, options = listOf("Jr.", "Sr.", "II", "III", "IV"), optional = true),
         FieldSpec("alias", "Nickname / Alias (Optional)", FieldType.Text, optional = true),
-        FieldSpec("address", "Address / purok", FieldType.Text),
+        FieldSpec("address", "Address / purok", FieldType.Text, maxLength = RecordTextLimits.ADDRESS),
         FieldSpec("respondent", "Respondent name", FieldType.Text),
         FieldSpec("phone", "Contact Number (Optional)", FieldType.Phone, optional = true),
         FieldSpec("previousCity", "Previous City (Optional)", FieldType.Text, optional = true),
@@ -34,9 +34,9 @@ object QuestionnaireSections {
     val members = SectionSpec("members", "Household members", listOf(
     ), scopedToMember = false)
     val demographics = SectionSpec("demographics", "Demographics", listOf(
-        FieldSpec("firstName", "First Name", FieldType.Text),
-        FieldSpec("middleName", "Middle Name (Optional)", FieldType.Text, optional = true),
-        FieldSpec("lastName", "Last Name", FieldType.Text),
+        FieldSpec("firstName", "First Name", FieldType.Text, maxLength = RecordTextLimits.NAME),
+        FieldSpec("middleName", "Middle Name (Optional)", FieldType.Text, optional = true, maxLength = RecordTextLimits.NAME),
+        FieldSpec("lastName", "Last Name", FieldType.Text, maxLength = RecordTextLimits.NAME),
         FieldSpec("extension", "Extension (Optional)", FieldType.Select, options = listOf("Jr.", "Sr.", "II", "III", "IV"), optional = true),
         FieldSpec("alias", "Nickname / Alias (Optional)", FieldType.Text, optional = true),
         FieldSpec("phone", "Contact Number (Optional)", FieldType.Phone, optional = true),

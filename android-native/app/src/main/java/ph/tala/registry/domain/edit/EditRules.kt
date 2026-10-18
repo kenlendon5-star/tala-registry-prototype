@@ -1,6 +1,7 @@
 package ph.tala.registry.domain.edit
 
 import ph.tala.registry.domain.model.HouseholdStatus
+import ph.tala.registry.domain.model.RecordTextLimits
 
 /**
  * What the editing screens submit. Drafts carry trimmed user input only; record
@@ -20,9 +21,9 @@ data class MemberDraft(val displayName: String)
  * record saved here stays exportable without truncation later.
  */
 object EditRules {
-    const val HEAD_MAX = 80
-    const val ADDRESS_MAX = 150
-    const val NAME_MAX = 80
+    const val HEAD_MAX = RecordTextLimits.NAME
+    const val ADDRESS_MAX = RecordTextLimits.ADDRESS
+    const val NAME_MAX = RecordTextLimits.NAME
 
     fun headName(value: String): String? = when {
         value.isBlank() -> "Enter the household head's name."
@@ -43,9 +44,9 @@ object EditRules {
     }
 
     /** The reason a household draft cannot be written, or null when it is ready. */
-    fun householdProblem(draft: HouseholdDraft): String? =
+    fun householdProblem(draft: HouseholdDraft, allowReviewed: Boolean = false): String? =
         headName(draft.headName) ?: address(draft.address)
-            ?: if (draft.status == HouseholdStatus.Reviewed) "Complete the interview review before marking this household reviewed." else null
+            ?: if (draft.status == HouseholdStatus.Reviewed && !allowReviewed) "Complete the interview review before marking this household reviewed." else null
 
     /** The reason a member draft cannot be written, or null when it is ready. */
     fun memberProblem(draft: MemberDraft): String? = displayName(draft.displayName)

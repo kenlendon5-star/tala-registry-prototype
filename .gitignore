@@ -34,3 +34,7 @@ temp-gradle-version.txt
 # Local build evidence (tracked acceptance lives in planning/03-evidence/)
 android-native/build-*.txt
 logs/android/
+
+# Local D01-D12 audit diagnostics and closure helper
+logs/review-d01-d12-2026-10-17/
+logs/close-d12-evidence.cjs

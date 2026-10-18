@@ -1,6 +1,9 @@
 package ph.tala.registry.data.local
 
 import androidx.room.*
+import ph.tala.registry.domain.model.InterviewData
+import ph.tala.registry.domain.model.AnswerState
+import ph.tala.registry.domain.model.AttachmentKinds
 
 @Entity(tableName = "households", indices = [Index(value = ["displayCode"], unique = true)])
 data class HouseholdRow(
@@ -20,7 +23,12 @@ data class MemberRow(@PrimaryKey val id: String, val householdId: String, val di
 data class InterviewRow(@PrimaryKey val id: String, val householdId: String, val questionnaireVersion: String = "practice-v1")
 
 @Entity(tableName = "visits", foreignKeys = [ForeignKey(entity = InterviewRow::class, parentColumns = ["id"], childColumns = ["interviewId"], onDelete = ForeignKey.CASCADE)], indices = [Index("interviewId")])
-data class VisitRow(@PrimaryKey val id: String, val interviewId: String, val outcome: String, val callbackAt: String? = null)
+data class VisitRow(
+    @PrimaryKey val id: String, val interviewId: String, val outcome: String, val callbackAt: String? = null,
+    @ColumnInfo(defaultValue = "''") val visitedOn: String = "",
+    @ColumnInfo(defaultValue = "''") val notes: String = "",
+    @ColumnInfo(defaultValue = "0") val recordedAt: Long = 0,
+)
 
 @Entity(tableName = "household_answers", primaryKeys = ["interviewId", "section", "field"], foreignKeys = [ForeignKey(entity = InterviewRow::class, parentColumns = ["id"], childColumns = ["interviewId"], onDelete = ForeignKey.CASCADE)])
 data class HouseholdAnswerRow(val interviewId: String, val section: String, val field: String, val kind: String, val value: String)
@@ -50,7 +58,15 @@ data class StoredRecord(
     val memberAnswers: List<MemberAnswerRow> = emptyList(),
     val coordinates: CoordinateRow? = null,
     val attachments: List<AttachmentRow> = emptyList(),
-)
+) : InterviewData {
+    override val memberNames: Map<String, String> get() = members.associate { it.id to it.displayName }
+    override val hasDrawnSignature: Boolean get() = attachments.any { it.kind == AttachmentKinds.SIGNATURE }
+    override fun sectionAnswers(route: String, memberId: String?): AnswerState =
+        if (memberId != null) memberAnswers.filter { it.section == route && it.memberId == memberId }
+            .associate { it.field to AnswerCodec.decode(it.kind, it.value) }
+        else householdAnswers.filter { it.section == route }
+            .associate { it.field to AnswerCodec.decode(it.kind, it.value) }
+}
 
 /** Read model for lists and screens: one household row with its members, no answers. */
 data class HouseholdWithMembers(

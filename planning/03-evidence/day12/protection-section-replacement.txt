@@ -1,0 +1,7 @@
+Full-snapshot re-save replaced the stored rows exactly
+Household answers after re-save and reopen: 5 rows (expected 5)
+disaster.disasterType = Scalar(text=Man-made)
+disaster.evacuationKnown = Scalar(text=No)
+protection.philHealth = Scalar(text=Yes)
+protection.philHealthRole = Scalar(text=Member)
+protection.programs = Multi(selected=[PhilHealth, SSS])
