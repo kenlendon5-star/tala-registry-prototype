@@ -1,11 +1,6 @@
-# D14 peer review — questionnaire labels and flow
+# D14 internal AI review — peer/adviser acceptance pending
 
-Reviewed 18 October 2026 against the week-two gate (D14): label clarity, skip rules,
-conditional clearing, member scoping and the review/completion flow across all 18
-sections. Reviewer: **Claude Code (AI assistant), acting as peer reviewer at the
-developer's request.** The 30-day plan allows a peer reviewer while the developer
-remains responsible for the card; a human peer/adviser should still cover
-usability during UAT (D23). This review does not claim human sign-off.
+**Status: Internal review only; independent sign-off pending.** Claude Code wrote the original implementation and review notes on 18 October 2026. That self-review does not establish the planned peer/adviser gate. Use the [review worksheet](reviewer-signoff.md) to record the actual reviewer, outcomes and decision. D23 UAT is a separate gate and does not replace D14 review.
 
 ## Method
 
@@ -17,20 +12,20 @@ usability during UAT (D23). This review does not claim human sign-off.
   (section chips, member scopes, review issues, reviewed guard) and the section
   suites listed in the coverage matrix.
 - The scripted 18-section, two-member interview (`FullCoverageDeviceTest`) exercises
-  every reviewed field on-device; results are recorded in the D14 evidence files.
+  required questionnaire answers and selected branches on-device; optional photos and other branches have separate acceptance; results are recorded in the D14 evidence files.
 
-## Approved corrections (logged separately from new scope)
+## Internal correction (separate from new scope)
 
 | Finding | Decision | Action |
 | --- | --- | --- |
-| `education.track` label read "Program / track (optional)" — the only one of 94 fields with lowercase "optional" | Approved: standardize capitalization | `questionnaire-current.json` updated, native spec regenerated, `--check` green, docs checker green. The prototype `forms.js` is intentionally left unchanged (behavior reference only, not packaged) |
+| `education.track` label read "Program / track (optional)" — the only one of 94 fields with lowercase "optional" | Internal correction: standardize capitalization | The audit found the source JSON had not been updated. The follow-up fixes the JSON and regenerates the native spec; `--check` now passes. The prototype `forms.js` is intentionally left unchanged (behavior reference only, not packaged) |
 
 No other label defects found: all optional labels carry "(Optional)", the sample
 evacuation-site marking (`(Sample)` labels + confirming hint) is intact, and the
 social-protection programs list remains a recorded demo inventory rather than an
 authoritative one.
 
-## Flow review — approved as correct
+## Flow observations from the AI review — awaiting independent review
 
 - **Scoping**: the 5 member sections (Demographics, Other demographics, Migration,
   Education, Employment) key answers per member; the 12 household sections refuse
@@ -63,6 +58,4 @@ authoritative one.
 
 ## Verdict
 
-Labels and flow are approved for the week-two gate with the single correction above
-applied and verified. Remaining acceptance for the gate is the passing device run of
-the scripted two-member interview recorded in this folder.
+Independent peer/adviser review remains pending. These notes support the reviewer; they do not approve the week-two gate. Technical execution and repeatability outcomes are recorded separately in [D14 evidence](../D14.md).

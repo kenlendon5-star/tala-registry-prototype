@@ -85,7 +85,7 @@
     },
     {
         "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/FullCoverageDeviceTest.kt",
-        "sha256":  "DCD6B72098B9519593ED52C74482A987859CDFD409ADAF6A881B011D42901CF3"
+        "sha256":  "0356D98FD67B1512E1E350AEB9154E4899CA56C3C6A69111D0F1488C62608763"
     },
     {
         "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/IdentityDeviceTest.kt",
@@ -408,11 +408,15 @@
         "sha256":  "40A6CAF0B6EAAFD1B3D17927BE3E7A469881072B3622C96D29AD4CE234A00471"
     },
     {
+        "path":  "planning/docs/schemas/questionnaire-current.json",
+        "sha256":  "CFB708D2EC657861B863912B7A6FF0D7D2ED61B31738C9C00B53DAE1CDCF6473"
+    },
+    {
         "path":  "tools/port-native-questionnaire.cjs",
         "sha256":  "05266083A23CBDC664BA79B3E68BCE9547249C3D81E49C0220BF2D65AF026326"
     },
     {
         "path":  "tools/verify-d14-device.ps1",
-        "sha256":  "85348EE67F8C4C8169923B33AF224F33AC607433B7397A325E9BCC796D9D6A02"
+        "sha256":  "60FFDA71D16B320049A79A8DC1EA451778C46CEE259B75C29DDA2BC2AD1E2FBD"
     }
 ]

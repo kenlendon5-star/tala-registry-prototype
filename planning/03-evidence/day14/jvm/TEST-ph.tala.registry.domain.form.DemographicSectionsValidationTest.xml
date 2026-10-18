@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.DemographicSectionsValidationTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-18T13:17:31.388Z" hostname="KEN" time="0.015">
+  <properties/>
+  <testcase name="voterAndOverseasRequireAnExplicitValidChoice" classname="ph.tala.registry.domain.form.DemographicSectionsValidationTest" time="0.0"/>
+  <testcase name="optionalPhoneAndNamesRespectTheirActualRequirements" classname="ph.tala.registry.domain.form.DemographicSectionsValidationTest" time="0.001"/>
+  <testcase name="birthDateRejectsFutureImpossibleAndMissingDates" classname="ph.tala.registry.domain.form.DemographicSectionsValidationTest" time="0.01"/>
+  <testcase name="migrationRequiresResidenceAndValidYearOnlyWhenMoved" classname="ph.tala.registry.domain.form.DemographicSectionsValidationTest" time="0.001"/>
+  <testcase name="disabilityRegistrationAndIdValidateAllParentCombinations" classname="ph.tala.registry.domain.form.DemographicSectionsValidationTest" time="0.001"/>
+  <testcase name="soloParentIdIsOptionalAndOnlyVisibleForYes" classname="ph.tala.registry.domain.form.DemographicSectionsValidationTest" time="0.0"/>
+  <testcase name="identitySectionsAreMemberScoped" classname="ph.tala.registry.domain.form.DemographicSectionsValidationTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

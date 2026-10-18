@@ -590,7 +590,7 @@
         },
         {
           "key": "track",
-          "label": "Program / track (optional)",
+          "label": "Program / track (Optional)",
           "type": "text",
           "options": [],
           "optional": true,

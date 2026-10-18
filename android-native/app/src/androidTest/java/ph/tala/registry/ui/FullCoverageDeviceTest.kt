@@ -19,6 +19,7 @@ import ph.tala.registry.domain.form.*
 import ph.tala.registry.domain.model.*
 import ph.tala.registry.testing.CompleteInterviewFixture
 import java.io.File
+import java.util.UUID
 
 /**
  * D14 week-two gate: one scripted interview walked through the real workspace UI,
@@ -31,9 +32,19 @@ class FullCoverageDeviceTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val app get() = context.applicationContext as TalaApplication
-    private val hh = HouseholdId("d1400000-0000-4000-8000-000000000141")
-    private val maria = MemberId("d1400000-0000-4000-8000-000000000142")
-    private val juan = MemberId("d1400000-0000-4000-8000-000000000143")
+    // Each writer run starts with fresh identities. Keep them in app-private storage
+    // so the separate force-stop verifier reopens exactly that run's interview.
+    private val fixtureFile get() = File(context.filesDir, "day14-fixture-ids.txt")
+    private val fixtureIds by lazy {
+        require(fixtureFile.isFile) { "Run the D14 interview writer before the restart verifier." }
+        fixtureFile.readLines().also { ids ->
+            require(ids.size == 3 && ids.distinct().size == 3)
+            ids.forEach { UUID.fromString(it) }
+        }
+    }
+    private val hh get() = HouseholdId(fixtureIds[0])
+    private val maria get() = MemberId(fixtureIds[1])
+    private val juan get() = MemberId(fixtureIds[2])
 
     /** Second member: distinct answers and the opposite migration/education branches. */
     private val juanAnswers: Map<String, AnswerState> = mapOf(
@@ -161,6 +172,7 @@ class FullCoverageDeviceTest {
 
     @Test fun fullInterviewThroughAllSectionsWithTwoMembers() {
         check(context.packageName.endsWith(".d08test"))
+        fixtureFile.writeText(List(3) { UUID.randomUUID().toString() }.joinToString("\n"))
         runBlocking {
             assertEquals(WriteResult.Saved, app.repository.createHousehold(hh, HouseholdDraft("Lifecycle Acceptance", "Fictional Lifecycle Street", HouseholdStatus.InProgress)))
             assertEquals(WriteResult.Saved, app.repository.saveMember(hh, maria, MemberDraft("Maria Sample")))

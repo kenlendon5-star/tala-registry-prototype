@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.DisasterProtectionValidationTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-18T13:17:31.445Z" hostname="KEN" time="0.012">
+  <properties/>
+  <testcase name="programs multi select validation and exclusivity" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.001"/>
+  <testcase name="sample evacuation sites stay visibly marked for the demo" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.001"/>
+  <testcase name="phil health role branch validation" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.0"/>
+  <testcase name="disaster type and emergency kit validation" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.001"/>
+  <testcase name="validate reports only visible protection fields" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.001"/>
+  <testcase name="both sections are household scoped with unique field keys" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.001"/>
+  <testcase name="validate reports only visible disaster fields" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.0"/>
+  <testcase name="hazards multi select validation and exclusivity" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.0"/>
+  <testcase name="assistance branches without silently resolving the source note" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.001"/>
+  <testcase name="evacuation branch validation with nested other text" classname="ph.tala.registry.domain.form.DisasterProtectionValidationTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

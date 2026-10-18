@@ -7,7 +7,7 @@ $evidence = Join-Path $workspace 'planning/03-evidence/day14'
 $metadata = Get-Content (Join-Path $workspace 'android-native/app/build/outputs/apk/debug/output-metadata.json') -Raw | ConvertFrom-Json
 if ($metadata.applicationId -ne $package) { throw 'Build with -PisolatedTestApp=true first.' }
 New-Item -ItemType Directory -Path $evidence -Force | Out-Null
-$sourceRoots = @('android-native/app/src', 'android-native/app/schemas', 'android-native/app/build.gradle.kts', 'android-native/gradle/libs.versions.toml', 'tools/port-native-questionnaire.cjs', 'tools/verify-d14-device.ps1')
+$sourceRoots = @('android-native/app/src', 'android-native/app/schemas', 'android-native/app/build.gradle.kts', 'android-native/gradle/libs.versions.toml', 'planning/docs/schemas/questionnaire-current.json', 'tools/port-native-questionnaire.cjs', 'tools/verify-d14-device.ps1')
 function Source-Fingerprints {
     @($sourceRoots | ForEach-Object { Get-ChildItem -LiteralPath (Join-Path $workspace $_) -Recurse -File } |
         Sort-Object FullName | ForEach-Object {
@@ -15,6 +15,8 @@ function Source-Fingerprints {
         }) | ConvertTo-Json -Depth 4
 }
 $testedSources = Source-Fingerprints
+& rtk proxy node (Join-Path $workspace 'tools/port-native-questionnaire.cjs') --check
+if ($LASTEXITCODE -ne 0) { throw 'Regenerate the native questionnaire from its source inventory before device acceptance.' }
 function Invoke-Adb([string[]]$Arguments) {
     & rtk proxy adb -s $DeviceSerial @Arguments
     if ($LASTEXITCODE -ne 0) { throw "adb failed: $($Arguments[0])" }
@@ -62,6 +64,11 @@ try {
     Invoke-Test 'ph.tala.registry.ui.FullCoverageDeviceTest#fullInterviewThroughAllSectionsWithTwoMembers' 'device-full-coverage-write.log'
     Invoke-Adb @('shell', 'am', 'force-stop', $package)
     Invoke-Test 'ph.tala.registry.ui.FullCoverageDeviceTest#verifyFullInterviewAfterForceStop' 'device-full-coverage-restart.log'
+    # Repeat on the same installed app without clearing data. A new interview must
+    # be entered from scratch and then survive another actual force-stop.
+    Invoke-Test 'ph.tala.registry.ui.FullCoverageDeviceTest#fullInterviewThroughAllSectionsWithTwoMembers' 'device-full-coverage-repeat-write.log'
+    Invoke-Adb @('shell', 'am', 'force-stop', $package)
+    Invoke-Test 'ph.tala.registry.ui.FullCoverageDeviceTest#verifyFullInterviewAfterForceStop' 'device-full-coverage-repeat-restart.log'
     foreach ($name in @('all-sections-consent.png', 'review-18-of-18.png', 'interview-reviewed.png', 'coverage-after-force-stop.png')) {
         Invoke-Adb @('pull', "/sdcard/Android/data/$package/files/day14/$name", (Join-Path $evidence $name))
     }
