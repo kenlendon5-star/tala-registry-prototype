@@ -1,4 +1,4 @@
-# D14 reviewer phone walkthrough (~30–40 minutes)
+# D14 reviewer phone walkthrough (allow 45–60 minutes)
 
 Companion to the [review worksheet](reviewer-signoff.md): tick each worksheet row as
 you finish the matching part below. Record every finding — however small — in the
@@ -13,14 +13,15 @@ feature/new scope**. Use fictional data only.
   highest HH display code on the Households list) with members **Maria Sample** and
   **Juan Sample**, completed and marked Reviewed. Inspect it freely; make your own
   edits only in a separate fictional household (Part E) so the sample stays intact.
-- "Try a practice interview" (Home) is session-only: nothing you type there is
-  saved. Use it for the validation/branch-clearing checks in Part D.
+- From a household record, "Try a practice interview" opens a session-only shared
+  controls example. It has no full questionnaire navigation, saved review or housing
+  section. Use it only for the practice checks explicitly identified in Part D.
 
 ## Part A — Walk all 18 sections in the sample (10 min)
 
-Open Lifecycle Acceptance → Continue questionnaire, and walk the section chips left
-to right. For each section, check the labels read clearly and the flow matches the
-worksheet row:
+Open Lifecycle Acceptance → Continue questionnaire. Walk the 17 form-section chips
+and inspect the roster separately on the record screen: together these are the 18
+questionnaire sections. For each section, check the labels and its worksheet row:
 
 1. **Survey setup** — enumerator, barangay, purok, interview date.
 2. **Visit information** — visit date/result; the visit history below the form shows
@@ -30,11 +31,12 @@ worksheet row:
 4. **Members / roster** — Maria and Juan both listed (go back to the record screen).
 5. **Health** → **Food security** → **Transport & finance** → **Disaster
    preparedness** → **Internet & public safety** → **Social protection** → **Water,
-   sanitation & waste** → **Housing** — shared household answers. On Disaster, check
-   the evacuation options carry visible "(Sample)" wording and the confirming hint;
-   on Social protection, check the program list reads as a demo inventory.
-6. **Consent & review** — the consent question, the drawn signature pad (a saved
-   mark preview appears) and the typed-name field.
+   sanitation & waste** → **Housing** — shared household answers. The sample answers
+   evacuation-known No, so evacuation choices are hidden. Check those choices on
+   your separate record in Part D. Programs remain a demo inventory.
+6. **Consent & review** — the sample uses the typed signature "Maria Sample". Its
+   drawing pad is blank and no saved drawn preview is expected. Part E checks a
+   drawn mark and preview on your separate record.
 
 ## Part B — Two members and member scoping (5 min)
 
@@ -53,32 +55,47 @@ In **Demographics**, **Other demographics**, **Migration**, **Education** and
   and year moved.
 - Employment: both worked "Yes" — each shows occupation/industry/type/hours.
 
-## Part D — Validation and clearing (10 min, practice interview)
+## Part D — Validation and clearing (practice plus a separate saved record)
 
-In "Try a practice interview", pick any section and try:
+In "Try a practice interview", use the household/member scope selector and try:
 
-- An invalid date (e.g. `2025-02-30`), a future birth date, hours `200`, rooms `60`,
-  an incomplete phone — then **Check answers**: clear inline errors, first field
-  focused.
-- Branch reversal: answering "Currently attending school?" Yes→No must remove the
-  school/track questions and their typed answers.
+- An invalid birth date (e.g. `2025-02-30`), a future birth date, hours `200` after
+  answering Worked Yes, and an incomplete phone. Use **Check answers**: errors
+  should be clear and the first invalid field focused.
+- Worked Yes→No must remove occupation/type/hours and clear their answers.
 - Exclusivity: in a multi-select with None/Prefer not to answer, choosing a normal
   option must clear None and vice versa.
-- **Review interview** with gaps: the issue list jumps to the section/member with
-  missing answers; "Mark interview reviewed" stays disabled until ready.
+- Practice answers remain session-only; it has no Review interview action.
+
+Next, add a separate fictional household with two members and open **Continue
+questionnaire**. Keep this record for Part E. Here, test:
+
+- Housing rooms `60` → Check answers; correct it to `2` afterward.
+- Education attendance Yes with school/track filled → No: dependent fields vanish.
+  Save, switch away/back, and confirm hidden values do not return.
+- Disaster evacuation-known Yes: inspect Sample choices and hint. Choose Other,
+  type a fictional venue, then change evacuation-known to No. Hidden values clear.
+- Review interview with gaps: an issue opens the affected section/member, and
+  Mark interview reviewed stays disabled while required answers are missing.
 
 ## Part E — Your own full interview (15 min, separate household)
 
-Add a fictional household and member, then walk setup → visit → household profile →
-member sections → services → consent:
+Continue your separate household with two members through setup → visit → household
+profile → all five member sections for each person → services → consent. Use the
+accepted sample as an answer reference and keep the two members' answers distinct:
 
 - Enter a callback visit result to see the callback date field; save; use
-  "Record visit result" and confirm the history entry.
+  "Record visit result" and confirm the history entry. Leave and reopen using the
+  Callback filter. Then record No respondent and Refused outcomes and inspect the
+  ordered history; a draft remains recoverable.
 - Save draft, leave to the Home screen and reopen: answers must reload.
-- Choose consent "Yes", sign by drawing **or** typing a fictional name, then
-  **Review interview → Mark interview reviewed**. Confirm the "local completion
-  only" wording. (Optional refusal check: consent "No" must save but never grant
-  Reviewed.)
+- Choose consent No, save, and confirm review cannot grant Reviewed. For the next
+  fictional consent scenario, choose Yes, draw a mark and test Undo, Redo and Clear.
+  Save another mark, leave/reopen, and confirm its preview. Clear it and try a typed
+  fictional signature as the other mode.
+- Record a Completed visit outcome for this final fictional scenario. Finish any
+  remaining required answers until review shows 18 of 18 ready; select **Mark
+  interview reviewed** and confirm the explicit local-completion message.
 
 ## After the walkthrough
 

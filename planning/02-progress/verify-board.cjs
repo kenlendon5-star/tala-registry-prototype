@@ -2,7 +2,7 @@ const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 const path=require('node:path');
 const baseline=require('./implementation-progress.json');
-const nextCard=Object.keys(baseline).find(id=>baseline[id].status==='Backlog');
+const nextCard=Object.keys(baseline).find(id=>['Ready','Backlog'].includes(baseline[id].status));
 const {pathToFileURL}=require('node:url');
 (async()=>{
  const browser=await chromium.launch({headless:true,channel:'msedge'});
@@ -14,7 +14,7 @@ const {pathToFileURL}=require('node:url');
   // Check every rendered status against the repository evidence baseline.
   const initialDoneCount=await page.locator('.column[data-status="Done"] .card').count();
   assert.equal(initialDoneCount,Object.values(baseline).filter(card=>card.status==='Done').length);
-  assert.equal(await page.locator('.column[data-status="Ready"] .card').count(),0);
+  assert.equal(await page.locator('.column[data-status="Ready"] .card').count(),Object.values(baseline).filter(card=>card.status==='Ready').length);
   assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),Object.values(baseline).filter(card=>card.status==='In progress').length);
   for(const [id,card] of Object.entries(baseline))assert.equal(await page.getByLabel(`Status for ${id}`).inputValue(),card.status);
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
@@ -39,7 +39,7 @@ const {pathToFileURL}=require('node:url');
   assert.match(await page.locator('[data-id="D22"] .gate').textContent(),/waiting for D21/);
   // Done gate: every checklist item and evidence note are required first; D08 still has unchecked tasks.
   await page.getByLabel(`Status for ${nextCard}`).selectOption('Done');
-  assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),'Backlog');
+  assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),baseline[nextCard].status);
   assert.match(await page.locator(`[data-id="${nextCard}"] .gate`).textContent(),/(?:Check|Tick) every task/);
   // WIP gate: one card building at a time. D03's dependency (D02) stays Done while D01 builds.
   await page.getByLabel('Status for D01').selectOption('In progress');

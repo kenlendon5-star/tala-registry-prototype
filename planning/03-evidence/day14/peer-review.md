@@ -1,6 +1,6 @@
-# D14 internal AI review — peer/adviser acceptance pending
+# D14 historical author AI review
 
-**Status: Internal review only; independent sign-off pending.** Claude Code wrote the original implementation and review notes on 18 October 2026. That self-review does not establish the planned peer/adviser gate. Use the [review worksheet](reviewer-signoff.md) to record the actual reviewer, outcomes and decision. D23 UAT is a separate gate and does not replace D14 review.
+**Status: Historical author review; supporting material for the owner-authorized Codex AI peer acceptance.** Claude Code wrote the original implementation and review notes on 18 October 2026. The original self-review did not establish the gate. The owner subsequently appointed Codex as AI peer; the [dated sign-off](reviewer-signoff.md) records that assessment and its limits. D23 UAT is a separate gate and does not replace D14 review.
 
 ## Method
 
@@ -20,12 +20,13 @@
 | --- | --- | --- |
 | `education.track` label read "Program / track (optional)" — the only one of 94 fields with lowercase "optional" | Internal correction: standardize capitalization | The audit found the source JSON had not been updated. The follow-up fixes the JSON and regenerates the native spec; `--check` now passes. The prototype `forms.js` is intentionally left unchanged (behavior reference only, not packaged) |
 
-No other label defects found: all optional labels carry "(Optional)", the sample
+Follow-up observation: optionality follows the source flags; Visit notes is optional
+without an Optional suffix. This is nonblocking label-consistency polish. The sample
 evacuation-site marking (`(Sample)` labels + confirming hint) is intact, and the
 social-protection programs list remains a recorded demo inventory rather than an
 authoritative one.
 
-## Flow observations from the AI review — awaiting independent review
+## Flow observations from the author review
 
 - **Scoping**: the 5 member sections (Demographics, Other demographics, Migration,
   Education, Employment) key answers per member; the 12 household sections refuse
@@ -37,8 +38,9 @@ authoritative one.
   all follow the prototype conditions; hidden dependent answers clear to a fixed point.
 - **Exclusivity**: `None` / `Prefer not to answer` behave exclusively in the
   financial-accounts, hazards and programs multi-selects.
-- **Validation**: strict calendar dates with `mustBePast` for birth/interview/visit
-  dates, weekly hours 0–168, sleeping rooms 0–50, move year 1900–2026, phone format
+- **Validation**: strict calendar dates; birth dates carry `mustBePast`, while interview
+  and visit dates follow their current source flags. Weekly hours 0–168, sleeping
+  rooms 0–50, move year 1900–2026, phone format
   and record text limits.
 - **Review/completion**: review issues aggregate across both member scopes plus the
   household scope; 18-of-18 readiness is required before "Mark interview reviewed";
@@ -53,9 +55,9 @@ authoritative one.
   list (documented in the coverage matrix).
 - The social-protection programs list is not an authoritative coverage inventory;
   ambiguous prototype source notes stay unresolved (documented in the revision notes).
-- Roster display names derive from the demographics section only; middle name /
-  extension do not alter the roster label (prototype parity).
+- Follow-up correction: roster display names derive from the demographics structured
+  name, including middle name and extension (`RecordTextLimits.structuredName`).
 
 ## Verdict
 
-Independent peer/adviser review remains pending. These notes support the reviewer; they do not approve the week-two gate. Technical execution and repeatability outcomes are recorded separately in [D14 evidence](../D14.md).
+These are historical author notes. The owner-authorized Codex AI peer decision, corrections and current verification are recorded in the [sign-off](reviewer-signoff.md) and [D14 evidence](../D14.md). Human usability/UAT remains separate.

@@ -52,8 +52,8 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D11: Done. [Implementation evidence](../03-evidence/D11.md).
 - D12: Done. [Implementation evidence](../03-evidence/D12.md).
 - D13: Done. [Implementation evidence](../03-evidence/D13.md).
-- D14: Verify. [Implementation evidence](../03-evidence/D14.md).
-- D15: Backlog. [Implementation evidence](../03-evidence/D15.md).
+- D14: Done. [Implementation evidence](../03-evidence/D14.md).
+- D15: Ready. [Implementation evidence](../03-evidence/D15.md).
 - D16: Backlog. [Implementation evidence](../03-evidence/D16.md).
 - D17: Backlog. [Implementation evidence](../03-evidence/D17.md).
 - D18: Backlog. [Implementation evidence](../03-evidence/D18.md).
@@ -302,25 +302,25 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Freeze required form behavior.
 
-**Sprint:** 2 · **Budget:** 2 hours · **Owner:** Developer · **Repository status:** Verify
+**Sprint:** 2 · **Budget:** 2 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D13
 
 - [x] Run a scripted interview covering all 18 sections and at least two members.
-- [ ] Have a peer/adviser review labels and flow; log approved corrections separately from new scope.
+- [x] Have a peer/adviser review labels and flow; log approved corrections separately from new scope.
 - [x] Update the acceptance matrix and use remaining time for rest; plan unresolved defects before adding features.
 
 **Done when:** Week-two gate passes: every required questionnaire section works offline with correct scope and validation.
 
 **Evidence/deliverable:** Reviewer notes + coverage sign-off
 
-**Implementation evidence:** 2026-10-18: Technical follow-up verified on isolated OPPO CPH2529 / Android 15 API 35, app 0.5.0 (5). Source JSON and generated native label now match. Full-entry test uses fresh persisted UUIDs; two consecutive two-member full-entry/actual force-stop reopen pairs pass without clearing app data. Storage 26 + UI/restoration 11 + coverage/reopen 4 = 41 device tests passed; JVM 144/27 current results, both APKs assemble, lint zero errors (15 warnings). Source/APK hashes and prior failures retained. Independent peer/adviser label/flow review remains pending; AI self-review is internal only. Worksheet: planning/03-evidence/day14/reviewer-signoff.md. D15 stays Backlog. Evidence: planning/03-evidence/D14.md.
+**Implementation evidence:** 2026-10-18: Owner explicitly appointed Codex as AI peer for D14. Dated sign-off records source/label/flow review, executed phone workflows, screenshot inspection, contribution disclosure and required documentation corrections. Fresh OPPO peer verification: 46 device tests across eleven invocations, including two consecutive two-member full-entry/force-stop reopen pairs, native branch reversals, signatures and callback/refusal/resume. Matching APKs and 106 peer source fingerprints; retained 144 JVM results. No human adviser signature or D23 UAT claimed. Evidence: planning/03-evidence/D14.md and day14/reviewer-signoff.md. D15 Ready; later reviewer/release gates unchanged.
 
 ### D15 · 2026-10-13 · Capture native location
 
 **Goal:** Make location permissions and GPS outcomes explicit.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Ready
 
 **Depends on:** D14
 
@@ -332,7 +332,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Permission matrix + GPS recording
 
-**Implementation evidence:** 2026-10-12 audit: the manifest requests no location permissions and no location code exists; the coordinates table stores manual and sample values only. The evidence file itself described the permission flow as designed rather than implemented. Card reset to Backlog.
+**Implementation evidence:** 2026-10-18: D14 accepted under the owner’s explicit Codex AI peer appointment. Native location package is Ready, not started. Follow planning/03-evidence/day14/day15-handoff.md: permissions/provider states, persisted accuracy/time and manual coordinates, stale-request/household isolation, target-phone permission matrix and failure/reopen evidence. Maps remain D16.
 
 ### D16 · 2026-10-14 · Finish household mapping
 
