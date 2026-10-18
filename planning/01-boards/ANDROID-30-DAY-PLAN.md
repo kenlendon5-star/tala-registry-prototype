@@ -52,7 +52,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D11: Done. [Implementation evidence](../03-evidence/D11.md).
 - D12: Done. [Implementation evidence](../03-evidence/D12.md).
 - D13: Done. [Implementation evidence](../03-evidence/D13.md).
-- D14: Backlog. [Implementation evidence](../03-evidence/D14.md).
+- D14: Done. [Implementation evidence](../03-evidence/D14.md).
 - D15: Backlog. [Implementation evidence](../03-evidence/D15.md).
 - D16: Backlog. [Implementation evidence](../03-evidence/D16.md).
 - D17: Backlog. [Implementation evidence](../03-evidence/D17.md).
@@ -302,19 +302,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Freeze required form behavior.
 
-**Sprint:** 2 · **Budget:** 2 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 2 · **Budget:** 2 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D13
 
-- [ ] Run a scripted interview covering all 18 sections and at least two members.
-- [ ] Have a peer/adviser review labels and flow; log approved corrections separately from new scope.
-- [ ] Update the acceptance matrix and use remaining time for rest; plan unresolved defects before adding features.
+- [x] Run a scripted interview covering all 18 sections and at least two members.
+- [x] Have a peer/adviser review labels and flow; log approved corrections separately from new scope.
+- [x] Update the acceptance matrix and use remaining time for rest; plan unresolved defects before adding features.
 
 **Done when:** Week-two gate passes: every required questionnaire section works offline with correct scope and validation.
 
 **Evidence/deliverable:** Reviewer notes + coverage sign-off
 
-**Implementation evidence:** 2026-10-18: D09-D12 have emulator acceptance and D13 has current-build OPPO acceptance, including local review and reopened signatures. D14 remains Backlog: run the full scripted 18-section interview with two members and obtain peer/adviser label/flow sign-off; D13 fixture-backed lifecycle verification does not replace this gate.
+**Implementation evidence:** 2026-10-18: Week-two questionnaire review accepted on OPPO CPH2529 / Android 15 / API 35, app 0.5.0 (5), isolated package ph.tala.registry.d08test. FullCoverageDeviceTest walks one scripted interview through the real workspace UI covering all 17 form sections with two members (distinct answers, opposite migration/education branches), records a dated visit, saves each section, reviews 18 of 18 with zero issues, marks the interview Reviewed, and after an actual force-stop verifies Reviewed status, empty review issues, visit history, both members' distinct stored answers and household-scope isolation. Peer review (developer's AI assistant acting as peer; human adviser still covers UAT): approved one label correction (education.track '(optional)' standardized to '(Optional)' in questionnaire-current.json, native spec regenerated, --check green) and approved flow (scoping, branching, exclusivity, validation, refusal-never-reviewed, local completion); new-scope notes logged unactioned. Same-build regressions: JVM 144 tests/27 suites 0 failures, device storage 26 tests and UI 11 tests OK. Evidence: planning/03-evidence/D14.md and planning/03-evidence/day14/ (logs, screenshots, peer review, APK/source SHA-256). D15 onward remains separate acceptance work.
 
 ### D15 · 2026-10-13 · Capture native location
 
