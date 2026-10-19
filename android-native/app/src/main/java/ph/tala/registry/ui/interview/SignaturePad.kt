@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +16,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -32,6 +36,10 @@ import java.io.ByteArrayOutputStream
  * Drawn consent signature (plan card D13). Strokes save on lift: only a visible mark is
  * recorded, so tapping a blank pad never signs the form. Undo drops the last stroke and
  * Clear removes the saved mark; the typed-name field is the other accepted mode.
+ *
+ * Gesture isolation: the pad consumes every change from the initial down event, so the
+ * surrounding scroll container can never turn a stroke into a page scroll (fieldwork
+ * finding: strokes starting near the pad edge dragged the form instead of drawing).
  */
 @Composable
 fun SignaturePad(
@@ -47,27 +55,39 @@ fun SignaturePad(
     val save by rememberUpdatedState(onSave)
     val clear by rememberUpdatedState(onClear)
     val saved by rememberUpdatedState(hasSavedSignature)
+    var expanded by remember { mutableStateOf(false) }
 
     Column(modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            OutlinedButton(
+                onClick = { expanded = !expanded },
+                modifier = Modifier.heightIn(min = 40.dp).testTag("signature-expand"),
+            ) { Text(if (expanded) "Shrink canvas" else "Expand canvas") }
+        }
         Canvas(
             Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(if (expanded) 320.dp else 180.dp)
                 .testTag("signature-pad")
                 .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { point -> current.clear(); current += normalize(point, size.width, size.height) },
-                        onDrag = { change, _ -> current += normalize(change.position, size.width, size.height) },
-                        onDragEnd = {
-                            if (current.size > 1) {
-                                strokes += current.toList()
-                                undone.clear()
-                                save(renderStrokes(strokes.toList()))
-                            }
-                            current.clear()
-                        },
-                        onDragCancel = { current.clear() },
-                    )
+                    awaitEachGesture {
+                        // requireUnconsumed = false: take the pointer even if a parent
+                        // scroll already claimed the stream, then own it from here on.
+                        val down = awaitFirstDown(requireUnconsumed = false)
+                        down.consume()
+                        current.clear()
+                        current += normalize(down.position, size.width, size.height)
+                        val completed = drag(down.id) { change ->
+                            change.consume()
+                            current += normalize(change.position, size.width, size.height)
+                        }
+                        if (completed && current.size > 1) {
+                            strokes += current.toList()
+                            undone.clear()
+                            save(renderStrokes(strokes.toList()))
+                        }
+                        current.clear()
+                    }
                 },
         ) {
             drawRect(Color.White)

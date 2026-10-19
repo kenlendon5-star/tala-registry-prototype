@@ -1,5 +1,6 @@
 package ph.tala.registry.ui.form
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,6 +9,7 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -133,16 +135,27 @@ fun SharedField(field: FieldSpec, state: SectionFormState, firstInvalid: Boolean
             }
             FieldType.Choice -> {
                 FieldLabel(field)
-                Column(target.focusable().selectableGroup().semantics { if (message != null) error(message) }) {
+                Column(target.focusable().selectableGroup().semantics { if (message != null) error(message) }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     field.options.forEach { option ->
-                        Row(
-                            Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                                .testTag("option-${field.key}-$option")
-                                .selectable(selected = scalar == option, role = Role.RadioButton, onClick = { onAnswer(field.key, AnswerValue.Scalar(option)) }),
-                            verticalAlignment = Alignment.CenterVertically,
+                        val selected = scalar == option
+                        // Enclosed card targets survive sunlight and one-handed taps better
+                        // than bare text rows; the selection fill doubles as the state cue.
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
-                            RadioButton(selected = scalar == option, onClick = null)
-                            Text(option, Modifier.padding(start = 12.dp))
+                            Row(
+                                Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                                    .testTag("option-${field.key}-$option")
+                                    .selectable(selected = selected, role = Role.RadioButton, onClick = { onAnswer(field.key, AnswerValue.Scalar(option)) })
+                                    .padding(horizontal = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                RadioButton(selected = selected, onClick = null)
+                                Text(option, Modifier.padding(start = 12.dp))
+                            }
                         }
                     }
                 }
@@ -170,15 +183,24 @@ fun SharedField(field: FieldSpec, state: SectionFormState, firstInvalid: Boolean
             FieldType.MultiSelect -> {
                 FieldLabel(field)
                 val selected = state.answers.multi(field.key)
-                Column(target.focusable().semantics { if (message != null) error(message) }) {
+                Column(target.focusable().semantics { if (message != null) error(message) }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     field.options.forEach { option ->
-                        Row(
-                            Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("option-${field.key}-$option")
-                                .toggleable(value = option in selected, role = Role.Checkbox, onValueChange = { onAnswer(field.key, FormRules.toggle(field, selected, option)) }),
-                            verticalAlignment = Alignment.CenterVertically,
+                        val checked = option in selected
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (checked) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, if (checked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Checkbox(checked = option in selected, onCheckedChange = null)
-                            Text(option, Modifier.padding(start = 12.dp))
+                            Row(
+                                Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("option-${field.key}-$option")
+                                    .toggleable(value = checked, role = Role.Checkbox, onValueChange = { onAnswer(field.key, FormRules.toggle(field, selected, option)) })
+                                    .padding(horizontal = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Checkbox(checked = checked, onCheckedChange = null)
+                                Text(option, Modifier.padding(start = 12.dp))
+                            }
                         }
                     }
                 }

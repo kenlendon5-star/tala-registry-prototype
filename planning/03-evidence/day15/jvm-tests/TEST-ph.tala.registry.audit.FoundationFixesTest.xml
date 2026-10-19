@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.audit.FoundationFixesTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:32.968Z" hostname="KEN" time="3.711">
+  <properties/>
+  <testcase name="archivedSearchUsesNameCodeAndAddressLikeActiveSearch" classname="ph.tala.registry.audit.FoundationFixesTest" time="2.658"/>
+  <testcase name="leavingWaitsForLatestDraftAndStaysOnFailure" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.393"/>
+  <testcase name="newerDraftCanRetryAfterDeathBetweenCommitAndAcknowledgement" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.09"/>
+  <testcase name="failedDraftRestorationRetainsOriginalConflictBase" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.038"/>
+  <testcase name="legacyOverlongReadOnlyNamesStillOfferNameDetailsRepair" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.224"/>
+  <testcase name="killedDebounceRestoresExactMemberSectionAndDraft" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.068"/>
+  <testcase name="longQuestionnaireDraftsRemainRepairableWithoutBreakingEditors" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.039"/>
+  <testcase name="switchingMembersDrainsKeystrokesArrivingDuringSave" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.057"/>
+  <testcase name="commitBeforeProcessDeathDoesNotCreateFalseConflictOnRestore" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.038"/>
+  <testcase name="reviewedRecordCanOpenNameDetailsAndChangedAddressReopensReview" classname="ph.tala.registry.audit.FoundationFixesTest" time="0.083"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

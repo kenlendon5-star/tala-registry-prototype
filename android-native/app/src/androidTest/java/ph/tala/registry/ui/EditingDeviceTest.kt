@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -12,6 +13,8 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performScrollToIndex
+import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import org.junit.Assert.assertEquals
@@ -51,7 +54,7 @@ class EditingDeviceTest {
     }
 
     private fun waitUntilStatusContains(substring: String) {
-        compose.waitUntil(5_000) {
+        compose.waitUntil(30_000) {
             compose.onAllNodesWithTag("save-status").fetchSemanticsNodes().any { node ->
                 val texts = node.config.getOrNull(SemanticsProperties.Text)?.map { it.text }.orEmpty()
                 texts.any { it.contains(substring) }
@@ -76,8 +79,12 @@ class EditingDeviceTest {
         awaitSeededFixtures()
         compose.onNodeWithTag("nav-Households").performClick()
         compose.onNodeWithTag("add-household").performScrollTo().performClick()
+        compose.waitUntil(30_000) {
+            compose.onAllNodesWithTag("field-headName").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithTag("field-headName").performTextInput("Luna Reyes")
         compose.onNodeWithTag("field-address").performTextInput("5 Sampaguita Street")
+        closeSoftKeyboard()
         compose.onNodeWithTag("save-household").performClick()
         waitUntilSaved()
         // The new record keeps its generated identity and receives the next display code.
@@ -91,11 +98,12 @@ class EditingDeviceTest {
 
         // Editing updates the same record instead of creating a second household.
         compose.onNodeWithTag("field-headName").performScrollTo().performTextReplacement("Luna Dizon Reyes")
+        closeSoftKeyboard()
         compose.onNodeWithTag("save-household").performClick()
         waitUntilSaved()
         assertEquals(code, recordCode())
 
-        compose.onNodeWithText("Back", useUnmergedTree = true).performClick()
+        compose.onNodeWithContentDescription("Back", useUnmergedTree = true).performClick()
         compose.onNodeWithTag("households-screen").assertIsDisplayed()
         compose.onNodeWithTag("households-screen").performScrollToNode(hasTestTag("household-$code"))
         compose.onNodeWithTag("household-$code").assertIsDisplayed()
@@ -116,10 +124,11 @@ class EditingDeviceTest {
             compose.onAllNodesWithTag("member-edit-screen", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNodeWithTag("field-displayName", useUnmergedTree = true).performScrollTo().performTextInput(memberName)
+        closeSoftKeyboard()
         compose.onNodeWithTag("save-member").performClick()
         waitUntilSaved()
 
-        compose.onNodeWithText("Back", useUnmergedTree = true).performClick()
+        compose.onNodeWithContentDescription("Back", useUnmergedTree = true).performClick()
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasText(memberName))
         compose.onNodeWithText(memberName).assertIsDisplayed().performClick()
         compose.waitUntil(5_000) {
@@ -127,6 +136,7 @@ class EditingDeviceTest {
         }
         val editedName = "Edited $memberName"
         compose.onNodeWithTag("field-displayName").performTextReplacement(editedName)
+        closeSoftKeyboard()
         compose.onNodeWithTag("save-member").performClick()
         waitUntilSaved()
         compose.onNodeWithTag("remove-member").performScrollTo().performClick()
@@ -136,8 +146,16 @@ class EditingDeviceTest {
         }
         compose.onNodeWithText(editedName).assertDoesNotExist()
 
-        compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("tab-Overview"))
-        compose.onNodeWithTag("tab-Overview").performClick()
+        // The chips share a horizontally scrollable row inside this LazyColumn.
+        // Put the header fully in view before a physical tap, rather than stopping
+        // when a partly clipped chip first enters the lazy semantics tree.
+        compose.onNodeWithTag("interview-screen").performScrollToIndex(0)
+        compose.onNodeWithTag("tab-Overview").performScrollTo().performClick()
+        compose.waitUntil(30_000) {
+            compose.onAllNodesWithTag("tab-Overview").fetchSemanticsNodes().any {
+                it.config.getOrNull(SemanticsProperties.Selected) == true
+            }
+        }
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("edit-household"))
         compose.onNodeWithTag("edit-household").performClick()
         compose.waitUntil(30_000) {

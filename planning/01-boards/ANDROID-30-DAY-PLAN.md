@@ -53,7 +53,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D12: Done. [Implementation evidence](../03-evidence/D12.md).
 - D13: Done. [Implementation evidence](../03-evidence/D13.md).
 - D14: Done. [Implementation evidence](../03-evidence/D14.md).
-- D15: Ready. [Implementation evidence](../03-evidence/D15.md).
+- D15: Done. [Implementation evidence](../03-evidence/D15.md).
 - D16: Backlog. [Implementation evidence](../03-evidence/D16.md).
 - D17: Backlog. [Implementation evidence](../03-evidence/D17.md).
 - D18: Backlog. [Implementation evidence](../03-evidence/D18.md).
@@ -320,19 +320,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Make location permissions and GPS outcomes explicit.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Ready
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D14
 
-- [ ] Implement a Kotlin location service and request-on-use permission flow; select a device-compatible provider and expose location state to the ViewModel.
-- [ ] Store coordinates, accuracy and capture time; provide manual correction and ignore stale results after switching households.
-- [ ] Test precise/approximate access, denied/permanently denied permissions, GPS off and timeout on the target phone.
+- [x] Implement a Kotlin location service and request-on-use permission flow; select a device-compatible provider and expose location state to the ViewModel.
+- [x] Store coordinates, accuracy and capture time; provide manual correction and ignore stale results after switching households.
+- [x] Test precise/approximate access, denied/permanently denied permissions, GPS off and timeout on the target phone.
 
 **Done when:** Permission denial never blocks the interview; coordinates update only the intended household and retain accuracy/time.
 
 **Evidence/deliverable:** Permission matrix + GPS recording
 
-**Implementation evidence:** 2026-10-18: D14 accepted under the owner’s explicit Codex AI peer appointment. Native location package is Ready, not started. Follow planning/03-evidence/day14/day15-handoff.md: permissions/provider states, persisted accuracy/time and manual coordinates, stale-request/household isolation, target-phone permission matrix and failure/reopen evidence. Maps remain D16.
+**Implementation evidence:** 2026-10-19: Full device acceptance after ADB permission control became available on the OPPO: 50 device checks across 13 invocations on CPH2529 API35, plus 166 JVM tests, isolated app/test builds and lint (0 errors/18 warnings). Permission matrix complete: real denial/permanent-denial dialogs with manual fallback and questionnaire save; precise and approximate dialogs accepting explicitly-mocked shell test-provider fixes (labelled, no live GPS claimed); fix force-stop reopen with manual correction removing measured accuracy; location-off fallback; 20-second timeout rejecting a stale fix. Matching build/device fingerprints, matching restored environment, empty restoration errors, all eight screenshots inspected. Coordinate writes preserve graph/rollback/isolation and archived refusal. D16 unstarted. Evidence: planning/03-evidence/D15.md.
 
 ### D16 · 2026-10-14 · Finish household mapping
 

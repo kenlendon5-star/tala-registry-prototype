@@ -15,6 +15,7 @@ interface RegistryDao {
     @Query("SELECT * FROM member_answers WHERE interviewId = :id ORDER BY memberId, section, field") suspend fun memberAnswers(id: String): List<MemberAnswerRow>
     @Query("SELECT * FROM member_answers WHERE section = 'demographics' AND field = 'sex'") fun observeSexAnswers(): Flow<List<MemberAnswerRow>>
     @Query("SELECT * FROM coordinates WHERE householdId = :id") suspend fun coordinates(id: String): CoordinateRow?
+    @Query("SELECT * FROM coordinates WHERE householdId = :id") fun observeCoordinate(id: String): Flow<CoordinateRow?>
     @Query("SELECT * FROM attachments WHERE householdId = :id ORDER BY id") suspend fun attachments(id: String): List<AttachmentRow>
     @Query("DELETE FROM attachments WHERE householdId = :id") suspend fun clearAttachments(id: String)
     @Query("DELETE FROM interviews WHERE householdId = :id") suspend fun clearInterviews(id: String)

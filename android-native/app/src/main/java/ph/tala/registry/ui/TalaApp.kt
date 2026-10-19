@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
 import ph.tala.registry.ui.interview.InterviewWorkspaceScreen
 import ph.tala.registry.ui.interview.InterviewWorkspaceViewModel
 import androidx.compose.foundation.background
@@ -17,13 +18,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +50,8 @@ import ph.tala.registry.data.PhotoStore
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.MemberId
+import ph.tala.registry.location.AndroidLocationClient
+import ph.tala.registry.location.AndroidLocationPermissions
 import ph.tala.registry.ui.form.FormSessionViewModel
 import ph.tala.registry.ui.form.PracticeFormScreen
 import ph.tala.registry.ui.households.HouseholdEditScreen
@@ -50,6 +59,10 @@ import ph.tala.registry.ui.households.HouseholdEditViewModel
 import ph.tala.registry.ui.households.MemberEditScreen
 import ph.tala.registry.ui.households.MemberEditViewModel
 import ph.tala.registry.ui.households.SaveStatusLine
+import ph.tala.registry.ui.location.HouseholdLocationCard
+import ph.tala.registry.ui.location.LocationCapture
+import ph.tala.registry.ui.location.LocationUiState
+import ph.tala.registry.ui.location.LocationViewModel
 import ph.tala.registry.ui.profile.EnumeratorProfileUiState
 import ph.tala.registry.ui.profile.EnumeratorProfileViewModel
 
@@ -76,6 +89,22 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
         route == Destination.HouseholdAdd.route || route == Destination.HouseholdEdit.PATTERN ||
         route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN || route == Destination.Profile.route
     val openHousehold: (HouseholdId) -> Unit = { nav.navigate(Destination.Interview(it).route) { launchSingleTop = true } }
+    val openFilteredHouseholds: (HouseholdFilter) -> Unit = { filter ->
+        registry.setFilter(filter)
+        nav.navigate(Destination.Households.route) { launchSingleTop = true }
+    }
+    // Contextual titles: the app bar names the screen the enumerator is on, not just the app.
+    val appBarTitle = when {
+        route == Destination.Households.route -> "Households"
+        route == Destination.HouseholdAdd.route -> "Register household"
+        route == Destination.HouseholdEdit.PATTERN -> "Edit household"
+        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN -> "Household member"
+        route == Destination.Interview.PATTERN -> "Interview"
+        route == Destination.Questionnaire.PATTERN -> "Questionnaire"
+        route == Destination.Practice.PATTERN -> "Practice interview"
+        route == Destination.Profile.route -> "Enumerator profile"
+        else -> null
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize().imePadding(),
@@ -83,12 +112,18 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
             TopAppBar(
                 title = {
                     Column {
-                        Text("Tala", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
-                        Text(savedProfile.barangay, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                        Text(appBarTitle ?: "Tala", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
+                        if (appBarTitle != null) {
+                            Text("Tala · ${savedProfile.barangay}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                        } else {
+                            Text(savedProfile.barangay, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                        }
                     }
                 },
                 navigationIcon = {
-                    if (route != Destination.Home.route && route != Destination.Questionnaire.PATTERN) TextButton(onClick = { nav.popBackStack() }) { Text("Back") }
+                    if (route != Destination.Home.route && route != Destination.Questionnaire.PATTERN) IconButton(onClick = { nav.popBackStack() }, modifier = Modifier.testTag("nav-back")) {
+                        BackArrowGlyph(Modifier.semantics { contentDescription = "Back" })
+                    }
                 },
                 actions = {
                     Text("LOCAL DEMO", modifier = Modifier.padding(end = 20.dp), style = MaterialTheme.typography.labelSmall)
@@ -132,6 +167,7 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                         onBrowse = { nav.navigate(Destination.Households.route) { launchSingleTop = true } },
                         onOpen = openHousehold,
                         onProfile = { nav.navigate(Destination.Profile.route) { launchSingleTop = true } },
+                        onOpenFilter = openFilteredHouseholds,
                     )
                 }
                 composable(Destination.Profile.route) {
@@ -213,6 +249,53 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                         initializer { InterviewViewModel(id, repository, createSavedStateHandle()) }
                     })
                     val interviewState by interview.uiState.collectAsStateWithLifecycle()
+                    // D15 request-on-use location: the ViewModel owns states and stale-callback
+                    // rejection; the launcher here is the only permission request surface.
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    val location: LocationViewModel = viewModel(factory = viewModelFactory {
+                        initializer { LocationViewModel(id, repository, AndroidLocationClient(context.applicationContext), AndroidLocationPermissions(context.applicationContext), savedState = createSavedStateHandle()) }
+                    })
+                    val locationState by location.state.collectAsStateWithLifecycle()
+                    val locationLifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current
+                    DisposableEffect(location, locationLifecycle, interviewState.tab) {
+                        fun refreshLocationActivity() {
+                            if (interviewState.tab == InterviewTab.Overview) location.activate() else location.deactivate()
+                        }
+                        refreshLocationActivity()
+                        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+                            if (event == androidx.lifecycle.Lifecycle.Event.ON_STOP) location.deactivate()
+                            if (event == androidx.lifecycle.Lifecycle.Event.ON_START) refreshLocationActivity()
+                        }
+                        locationLifecycle.lifecycle.addObserver(observer)
+                        onDispose { locationLifecycle.lifecycle.removeObserver(observer); location.deactivate() }
+                    }
+                    val locationLauncher = rememberLauncherForActivityResult(
+                        ActivityResultContracts.RequestMultiplePermissions(),
+                    ) { grants ->
+                        val fine = grants[android.Manifest.permission.ACCESS_FINE_LOCATION] == true
+                        val coarse = grants[android.Manifest.permission.ACCESS_COARSE_LOCATION] == true
+                        // No rationale after a refusal means the system will not ask again.
+                        val permanent = !fine && !coarse && context is androidx.activity.ComponentActivity &&
+                            listOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                                .none { context.shouldShowRequestPermissionRationale(it) }
+                        location.onPermissionResult(fine, coarse, permanent)
+                    }
+                    val openLocationSettings = {
+                        context.startActivity(
+                            android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                .setData(android.net.Uri.fromParts("package", context.packageName, null)),
+                        )
+                    }
+                    // One request path for the initial capture and every retry: the system
+                    // dialog launches only when the state machine asked for permission.
+                    val requestLocation: () -> Unit = {
+                        if (location.capture()) {
+                            locationLauncher.launch(arrayOf(
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            ))
+                        }
+                    }
                     InterviewScreen(
                         interviewState,
                         interview::selectTab,
@@ -222,6 +305,15 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                         onAddMember = { nav.navigate(Destination.MemberAdd(id).route) { launchSingleTop = true } },
                         onEditMember = { memberId -> nav.navigate(Destination.MemberEdit(id, memberId).route) { launchSingleTop = true } },
                         onQuestionnaire = { nav.navigate(Destination.Questionnaire(id).route) },
+                        locationState = locationState,
+                        onCaptureLocation = requestLocation,
+                        onOpenLocationManual = location::openManual,
+                        onLocationRetry = requestLocation,
+                        onOpenLocationSettings = openLocationSettings,
+                        onEditLocationLatitude = location::editManualLatitude,
+                        onEditLocationLongitude = location::editManualLongitude,
+                        onSaveLocationManual = location::saveManual,
+                        onCancelLocationManual = location::cancelManual,
                     )
                 }
                 composable(Destination.Practice.PATTERN, arguments = listOf(navArgument(Destination.Interview.ARGUMENT) { type = HouseholdIdNavType })) { backStack ->
@@ -236,7 +328,7 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
 }
 
 @Composable
-private fun HomeScreen(state: RegistryUiState, profile: EnumeratorProfileUiState, onBrowse: () -> Unit, onOpen: (HouseholdId) -> Unit, onProfile: () -> Unit) {
+private fun HomeScreen(state: RegistryUiState, profile: EnumeratorProfileUiState, onBrowse: () -> Unit, onOpen: (HouseholdId) -> Unit, onProfile: () -> Unit, onOpenFilter: (HouseholdFilter) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().testTag("home-screen"),
         contentPadding = PaddingValues(20.dp),
@@ -260,9 +352,11 @@ private fun HomeScreen(state: RegistryUiState, profile: EnumeratorProfileUiState
         else {
             item {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Metric("Households", state.households.size, Modifier.weight(1f))
+                    // Tappable metrics drill into the matching household list; counts without
+                    // a matching filter stay informational rather than pretending to filter.
+                    Metric("Households", state.households.size, Modifier.weight(1f), hint = "Browse all", onClick = onBrowse)
                     Metric("Members", state.memberCount, Modifier.weight(1f))
-                    Metric("Callbacks", state.callbackCount, Modifier.weight(1f))
+                    Metric("Callbacks", state.callbackCount, Modifier.weight(1f), hint = "Filter list", onClick = { onOpenFilter(HouseholdFilter.Callback) })
                 }
             }
             item {
@@ -346,6 +440,15 @@ private fun InterviewScreen(
     onAddMember: () -> Unit,
     onEditMember: (MemberId) -> Unit,
     onQuestionnaire: () -> Unit,
+    locationState: LocationUiState,
+    onCaptureLocation: () -> Unit,
+    onOpenLocationManual: () -> Unit,
+    onLocationRetry: () -> Unit,
+    onOpenLocationSettings: () -> Unit,
+    onEditLocationLatitude: (String) -> Unit,
+    onEditLocationLongitude: (String) -> Unit,
+    onSaveLocationManual: () -> Unit,
+    onCancelLocationManual: () -> Unit,
 ) {
     val household = state.household
     if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
@@ -390,6 +493,19 @@ private fun InterviewScreen(
                     }
                 }
                 item { Button(onClick = onEditHousehold, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("edit-household")) { Text("Edit household profile") } }
+                item {
+                    HouseholdLocationCard(
+                        state = locationState,
+                        onCapture = onCaptureLocation,
+                        onOpenManual = onOpenLocationManual,
+                        onRetry = onLocationRetry,
+                        onOpenSettings = onOpenLocationSettings,
+                        onEditManualLatitude = onEditLocationLatitude,
+                        onEditManualLongitude = onEditLocationLongitude,
+                        onSaveManual = onSaveLocationManual,
+                        onCancelManual = onCancelLocationManual,
+                    )
+                }
                 item { Button(onClick = onQuestionnaire, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open-questionnaire")) { Text("Continue questionnaire") } }
                 item { Button(onClick = { onTab(InterviewTab.Members) }, modifier = Modifier.fillMaxWidth()) { Text("View members") } }
                 item { OutlinedButton(onClick = { onTab(InterviewTab.Sections) }, modifier = Modifier.fillMaxWidth()) { Text("View interview sections") } }
@@ -455,21 +571,46 @@ private fun HouseholdCard(household: Household, onOpen: (HouseholdId) -> Unit) {
                 Text(household.headName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Text(household.displayCode, style = MaterialTheme.typography.labelMedium, fontFamily = FontFamily.Monospace)
                 Text(household.address, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(
-                    if (household.archived) "Archived" else household.status.label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (household.archived) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
-                )
+                StatusBadge(if (household.archived) "Archived" else household.status.label, archived = household.archived)
             }
         }
     }
 }
 
+/** Tinted chip for record state: recoverable archives read differently from live statuses. */
 @Composable
-private fun Metric(label: String, value: Int, modifier: Modifier = Modifier) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(value.toString(), modifier = Modifier.testTag("metric-$label"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun StatusBadge(label: String, archived: Boolean) {
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        color = if (archived) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.primaryContainer,
+        contentColor = if (archived) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimaryContainer,
+    ) {
+        Text(label, Modifier.padding(horizontal = 10.dp, vertical = 4.dp), style = MaterialTheme.typography.labelMedium)
+    }
+}
+
+@Composable
+private fun Metric(label: String, value: Int, modifier: Modifier = Modifier, hint: String? = null, onClick: (() -> Unit)? = null) {
+    // Clickable metrics get an enclosed card affordance; plain counts keep the compact layout.
+    if (onClick == null) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(value.toString(), modifier = Modifier.testTag("metric-$label"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    } else {
+        Surface(
+            onClick = onClick,
+            shape = RoundedCornerShape(14.dp),
+            color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            modifier = modifier,
+        ) {
+            Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(value.toString(), modifier = Modifier.testTag("metric-$label"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(hint ?: "", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+            }
+        }
     }
 }
 
@@ -543,6 +684,18 @@ private fun RegistryIcon(house: Boolean, modifier: Modifier = Modifier) {
             line(.22f, .42f, .22f, .88f); line(.78f, .42f, .78f, .88f); line(.22f, .88f, .78f, .88f)
             line(.44f, .88f, .44f, .62f); line(.44f, .62f, .59f, .62f); line(.59f, .62f, .59f, .88f)
         } else for (y in listOf(.25f, .5f, .75f)) { line(.15f, y, .23f, y); line(.4f, y, .85f, y) }
+    }
+}
+
+/** Standard back affordance, drawn like the other glyphs (this build ships no icon font). */
+@Composable
+private fun BackArrowGlyph(modifier: Modifier = Modifier) {
+    val color = LocalContentColor.current
+    Canvas(modifier.size(24.dp)) {
+        val stroke = 2.dp.toPx()
+        drawLine(color, Offset(size.width * 0.62f, size.height * 0.15f), Offset(size.width * 0.25f, size.height * 0.5f), strokeWidth = stroke, cap = StrokeCap.Round)
+        drawLine(color, Offset(size.width * 0.25f, size.height * 0.5f), Offset(size.width * 0.62f, size.height * 0.85f), strokeWidth = stroke, cap = StrokeCap.Round)
+        drawLine(color, Offset(size.width * 0.25f, size.height * 0.5f), Offset(size.width * 0.88f, size.height * 0.5f), strokeWidth = stroke, cap = StrokeCap.Round)
     }
 }
 

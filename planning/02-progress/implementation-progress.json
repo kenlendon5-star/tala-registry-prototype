@@ -126,13 +126,13 @@
     "notes": "2026-10-18: Owner explicitly appointed Codex as AI peer for D14. Dated sign-off records source/label/flow review, executed phone workflows, screenshot inspection, contribution disclosure and required documentation corrections. Fresh OPPO peer verification: 46 device tests across eleven invocations, including two consecutive two-member full-entry/force-stop reopen pairs, native branch reversals, signatures and callback/refusal/resume. Matching APKs and 106 peer source fingerprints; retained 144 JVM results. No human adviser signature or D23 UAT claimed. Evidence: planning/03-evidence/D14.md and day14/reviewer-signoff.md. D15 Ready; later reviewer/release gates unchanged."
   },
   "D15": {
-    "status": "Ready",
+    "status": "Done",
     "checks": [
-      false,
-      false,
-      false
+      true,
+      true,
+      true
     ],
-    "notes": "2026-10-18: D14 accepted under the owner’s explicit Codex AI peer appointment. Native location package is Ready, not started. Follow planning/03-evidence/day14/day15-handoff.md: permissions/provider states, persisted accuracy/time and manual coordinates, stale-request/household isolation, target-phone permission matrix and failure/reopen evidence. Maps remain D16."
+    "notes": "2026-10-19: Full device acceptance after ADB permission control became available on the OPPO: 50 device checks across 13 invocations on CPH2529 API35, plus 166 JVM tests, isolated app/test builds and lint (0 errors/18 warnings). Permission matrix complete: real denial/permanent-denial dialogs with manual fallback and questionnaire save; precise and approximate dialogs accepting explicitly-mocked shell test-provider fixes (labelled, no live GPS claimed); fix force-stop reopen with manual correction removing measured accuracy; location-off fallback; 20-second timeout rejecting a stale fix. Matching build/device fingerprints, matching restored environment, empty restoration errors, all eight screenshots inspected. Coordinate writes preserve graph/rollback/isolation and archived refusal. D16 unstarted. Evidence: planning/03-evidence/D15.md."
   },
   "D16": {
     "status": "Backlog",

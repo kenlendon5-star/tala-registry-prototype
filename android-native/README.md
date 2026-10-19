@@ -6,6 +6,14 @@ Household add/edit and member add/edit screens save through `RoomHouseholdReposi
 
 ## Build and run
 
+D15 adds foreground location capture and validated manual coordinates on each
+household's Overview. Coarse/fine permission is requested when Capture device
+location is chosen. Denial, unavailable location and timeout leave the questionnaire
+usable. Manual drafts restore through SavedStateHandle; device fixes retain measured
+accuracy/time, while manual entries have no measured accuracy and use entry time.
+Storage reuses Room v3. See [D15 evidence](../planning/03-evidence/D15.md) for current
+verification and device limitations. Map rendering remains the D16 package.
+
 Open this directory in Android Studio. Install Android SDK platform 37 and use the project's pinned Gradle/AGP versions. The current build uses Java 17. Set `sdk.dir` in your local, ignored `local.properties`, or configure `ANDROID_HOME`.
 
 On Windows, escape the drive colon in the properties file, for example `sdk.dir=C\:/Users/you/AppData/Local/Android/Sdk`. The checked-in Gradle settings use one worker and in-process Kotlin compilation to keep memory use manageable on an 8 GB development machine.

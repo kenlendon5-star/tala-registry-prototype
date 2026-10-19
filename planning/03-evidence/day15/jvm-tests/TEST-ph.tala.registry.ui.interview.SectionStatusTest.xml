@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.ui.interview.SectionStatusTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:42.905Z" hostname="KEN" time="0.158">
+  <properties/>
+  <testcase name="null record has no statuses" classname="ph.tala.registry.ui.interview.SectionStatusTest" time="0.004"/>
+  <testcase name="invalid answers report needs attention even when something was answered" classname="ph.tala.registry.ui.interview.SectionStatusTest" time="0.098"/>
+  <testcase name="member scope counts one complete member" classname="ph.tala.registry.ui.interview.SectionStatusTest" time="0.003"/>
+  <testcase name="empty record leaves every section not started" classname="ph.tala.registry.ui.interview.SectionStatusTest" time="0.017"/>
+  <testcase name="consent refusal stays needs attention like the review gate" classname="ph.tala.registry.ui.interview.SectionStatusTest" time="0.005"/>
+  <testcase name="no members means every member section reports needs attention" classname="ph.tala.registry.ui.interview.SectionStatusTest" time="0.002"/>
+  <testcase name="fully answered household scope is ready" classname="ph.tala.registry.ui.interview.SectionStatusTest" time="0.021"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

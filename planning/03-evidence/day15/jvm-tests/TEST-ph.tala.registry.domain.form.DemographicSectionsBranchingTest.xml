@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.DemographicSectionsBranchingTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:38.606Z" hostname="KEN" time="0.028">
+  <properties/>
+  <testcase name="unregisteringPwdClearsOnlyId" classname="ph.tala.registry.domain.form.DemographicSectionsBranchingTest" time="0.003"/>
+  <testcase name="migrationReversalClearsResidenceAndYearButPreservesOverseas" classname="ph.tala.registry.domain.form.DemographicSectionsBranchingTest" time="0.003"/>
+  <testcase name="disabilityReversalClearsTheWholeCascadeAndDoesNotResurrectIt" classname="ph.tala.registry.domain.form.DemographicSectionsBranchingTest" time="0.01"/>
+  <testcase name="soloParentReversalClearsOptionalId" classname="ph.tala.registry.domain.form.DemographicSectionsBranchingTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

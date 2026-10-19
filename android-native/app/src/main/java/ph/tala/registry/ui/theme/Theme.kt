@@ -9,13 +9,14 @@ import androidx.compose.ui.graphics.Color
 
 // Native Tala palette, shared with the Android delivery board.
 // Dynamic colour is deliberately not used: the barangay sees one brand, not the device wallpaper.
+// Muted and Warn are tuned for WCAG AAA on white (>= 7:1): enumerators read these in direct sun.
 private val Teal = Color(0xFF006B65)
 private val TealSoft = Color(0xFFDCEEE9)
 private val Ink = Color(0xFF183449)
 private val Paper = Color(0xFFEDF3F7)
 private val Line = Color(0xFFCBD8E1)
-private val Muted = Color(0xFF536B7A)
-private val Warn = Color(0xFF9C442E)
+private val Muted = Color(0xFF42535D)
+private val Warn = Color(0xFF83341F)
 
 private val LightColors = lightColorScheme(
     primary = Teal,

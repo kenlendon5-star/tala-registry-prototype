@@ -1,6 +1,6 @@
 # Data Models & Schemas — Tala
 
-Updated 18 October 2026. **Current** means checked-in Room version 3. **Target** means a design proposal requiring implementation/migration. No database is modified by this specification.
+Updated 19 October 2026. **Current** means checked-in Room version 3. **Target** means a design proposal requiring implementation/migration. No database is modified by this specification.
 
 ## 1. Sources of truth
 
@@ -43,6 +43,17 @@ All String columns use SQLite TEXT; Double uses REAL; Long uses INTEGER. Fields 
 | attachments | id:String; householdId:String; memberId:String?; kind:String; relativePath:String; mimeType:String | PK id; household FK and optional composite member FK CASCADE; path validated as attachments/name.extension; PhotoStore stages private JPEG pictures and PNG signatures before committing references, then removes old files and recovers unreferenced copies |
 
 Kotlin constructor defaults are not necessarily SQL DEFAULT clauses. Use the exported schema when constructing SQL fixtures. Current save replaces the household's complete child graph transactionally; partial snapshots are unsafe unless merged before save.
+
+D15 reuses the existing coordinate table, without a schema increment. New coordinate
+writes validate finite bounds, finite nonnegative measured accuracy and a positive
+capture timestamp. Device fixes preserve their original measured accuracy and fix
+time. Manual entries have null accuracy and use their entry time; the current domain
+model infers manual/unmeasured versus device provenance from accuracy nullability.
+This convention adds no source column and does not reconstruct unknown legacy
+provenance. Legacy rows remain intact during unrelated full-snapshot writes.
+Coordinate writes load the latest household under the repository write mutex,
+preserve its graph and refuse archived households. The native location workflow's
+verification status is recorded in [D15 evidence](../../03-evidence/D15.md).
 
 ## 4. Answer encoding and identity
 

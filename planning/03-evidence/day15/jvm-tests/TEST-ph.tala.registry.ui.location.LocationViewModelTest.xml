@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.ui.location.LocationViewModelTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:43.216Z" hostname="KEN" time="0.613">
+  <properties/>
+  <testcase name="readFailurePreservesManualDraftAndCanRetry" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.178"/>
+  <testcase name="manualEditAndLatePermissionCannotRestartCapture" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.015"/>
+  <testcase name="revokedPermissionAndStaleFixAreNotSaved" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.047"/>
+  <testcase name="twoHouseholdsStayIsolated" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.018"/>
+  <testcase name="timeoutRejectsCallbackEvenFromIgnoringClient" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.033"/>
+  <testcase name="newerRequestRejectsOldFixAndDuplicateDelivery" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.023"/>
+  <testcase name="aLateFixCannotOverwriteAnOpenManualDraft" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.018"/>
+  <testcase name="coarseOnlySavesOriginalAccuracyAndTime" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.022"/>
+  <testcase name="invalidAndFutureFixesAreRejected" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.022"/>
+  <testcase name="navigationRejectsLateFixAndPermission" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.033"/>
+  <testcase name="offNeverRequests" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.022"/>
+  <testcase name="manualBoundsAndSourceReplaceMeasuredFix" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.051"/>
+  <testcase name="missingProviderAndModelDisposalNeverSave" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.036"/>
+  <testcase name="acceptedWriteCompletesAcrossNavigationWithoutStuckSaving" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.034"/>
+  <testcase name="manualDraftSurvivesRestorationAndFailureRetry" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.026"/>
+  <testcase name="denialAndPermanentDenialRemainRetryable" classname="ph.tala.registry.ui.location.LocationViewModelTest" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

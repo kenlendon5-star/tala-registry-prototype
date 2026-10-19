@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.EducationEmploymentBranchingTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:40.069Z" hostname="KEN" time="0.129">
+  <properties/>
+  <testcase name="employment hours validation respects visibility" classname="ph.tala.registry.domain.form.EducationEmploymentBranchingTest" time="0.03"/>
+  <testcase name="education attending branch clearing" classname="ph.tala.registry.domain.form.EducationEmploymentBranchingTest" time="0.005"/>
+  <testcase name="employment worked branch clearing" classname="ph.tala.registry.domain.form.EducationEmploymentBranchingTest" time="0.003"/>
+  <testcase name="education attending No branch clearing" classname="ph.tala.registry.domain.form.EducationEmploymentBranchingTest" time="0.014"/>
+  <testcase name="employment looking branch clearing" classname="ph.tala.registry.domain.form.EducationEmploymentBranchingTest" time="0.007"/>
+  <testcase name="employment worked No branch clearing" classname="ph.tala.registry.domain.form.EducationEmploymentBranchingTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

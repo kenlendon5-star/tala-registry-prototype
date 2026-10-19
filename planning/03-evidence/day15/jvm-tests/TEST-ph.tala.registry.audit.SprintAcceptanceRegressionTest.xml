@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.audit.SprintAcceptanceRegressionTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:37.341Z" hostname="KEN" time="0.234">
+  <properties/>
+  <testcase name="archivedHouseholdsAndMembersMustLeaveActiveDashboardCounts" classname="ph.tala.registry.audit.SprintAcceptanceRegressionTest" time="0.027"/>
+  <testcase name="aNewMemberMustNotBeShownAsMissingBeforeItsFirstSave" classname="ph.tala.registry.audit.SprintAcceptanceRegressionTest" time="0.129"/>
+  <testcase name="changingASavedDraftMustClearItsSavedAcknowledgement" classname="ph.tala.registry.audit.SprintAcceptanceRegressionTest" time="0.072"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

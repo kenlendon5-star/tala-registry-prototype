@@ -1,5 +1,6 @@
 package ph.tala.registry.data
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -7,6 +8,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ph.tala.registry.data.local.AnswerCodec
 import ph.tala.registry.data.local.AttachmentRow
+import ph.tala.registry.data.local.CoordinateRow
 import ph.tala.registry.data.local.HouseholdAnswerRow
 import ph.tala.registry.data.local.HouseholdRow
 import ph.tala.registry.data.local.HouseholdWithMembers
@@ -26,9 +28,12 @@ import ph.tala.registry.domain.edit.HouseholdDraft
 import ph.tala.registry.domain.edit.MemberDraft
 import ph.tala.registry.domain.model.AnswerState
 import ph.tala.registry.domain.model.AnswerValue
+import ph.tala.registry.domain.model.Coordinate
+import ph.tala.registry.domain.model.CoordinateSource
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.HouseholdStatus
+import ph.tala.registry.domain.model.LocationRules
 import ph.tala.registry.domain.model.Member
 import ph.tala.registry.domain.model.MemberId
 import ph.tala.registry.domain.model.SectionSpec
@@ -80,6 +85,16 @@ interface HouseholdRepository {
 
     /** Adds a member when [memberId] is new, otherwise renames the existing member. */
     suspend fun saveMember(householdId: HouseholdId, memberId: MemberId, draft: MemberDraft): WriteResult
+
+    /** Observes the stored household coordinate, or null when none was captured yet. */
+    fun observeCoordinate(householdId: HouseholdId): Flow<Coordinate?> = kotlinx.coroutines.flow.flowOf(null)
+
+    /**
+     * Saves one household coordinate as a full-snapshot write: a device fix keeps its
+     * measured accuracy and fix time; a manual correction stores null accuracy and the
+     * entry time (see [CoordinateSource] for the provenance semantics).
+     */
+    suspend fun saveCoordinate(householdId: HouseholdId, coordinate: Coordinate): WriteResult = WriteResult.Failed("Location saving is unavailable.")
 
     /** Saves the drawn consent signature as the record's signature attachment, replacing any previous one. */
     suspend fun saveSignatureAttachment(householdId: HouseholdId, relativePath: String, mimeType: String): WriteResult =
@@ -212,6 +227,30 @@ class RoomHouseholdRepository(
 
     override val memberSex: Flow<Map<String, String>> = store.memberSex
 
+    override fun observeCoordinate(householdId: HouseholdId): Flow<Coordinate?> =
+        store.observeCoordinate(householdId.value).map { it?.toCoordinate() }
+
+    override suspend fun saveCoordinate(householdId: HouseholdId, coordinate: Coordinate): WriteResult {
+        // Validation stays outside the write lock: a malformed coordinate never opens
+        // the write stream, matching how edit drafts are rejected before store access.
+        LocationRules.coordinateProblem(coordinate.latitude, coordinate.longitude, coordinate.accuracyMetres)
+            ?.let { return WriteResult.Failed(it) }
+        if (coordinate.capturedAt <= 0) return WriteResult.Failed("The capture time is missing; capture the location again.")
+        if ((coordinate.source == CoordinateSource.Manual) != (coordinate.accuracyMetres == null))
+            return WriteResult.Failed("Coordinate source and measured accuracy do not agree.")
+        return try {
+            writes.withLock {
+                val record = store.load(householdId.value) ?: return@withLock WriteResult.Failed(MISSING)
+                if (record.household.archivedAt != null) return@withLock WriteResult.Failed("Restore this household before changing its location.")
+                store.save(record.copy(coordinates = coordinate.toRow(householdId.value)))
+            }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            WriteResult.Failed("Could not save coordinates on this device. Retry after checking available storage.")
+        }
+    }
+
     override suspend fun saveHouseholdPhotoAttachment(householdId: HouseholdId, relativePath: String, mimeType: String): WriteResult = writes.withLock {
         val record = store.load(householdId.value) ?: return@withLock WriteResult.Failed(MISSING)
         val kept = record.attachments.filterNot { it.kind == HOUSEHOLD_PHOTO }
@@ -343,6 +382,23 @@ class RoomHouseholdRepository(
         status = HouseholdStatus.entries.find { it.name == household.status } ?: HouseholdStatus.NotStarted,
         members = members.map { Member(MemberId(it.id), HouseholdId(it.householdId), it.displayName) },
         archivedAt = household.archivedAt,
+    )
+
+    /** Provenance is recoverable from the row shape: null accuracy is a manual entry. */
+    private fun CoordinateRow.toCoordinate() = Coordinate(
+        latitude = latitude,
+        longitude = longitude,
+        accuracyMetres = accuracyMetres,
+        capturedAt = capturedAt,
+        source = if (accuracyMetres == null) CoordinateSource.Manual else CoordinateSource.Gps,
+    )
+
+    private fun Coordinate.toRow(householdId: String) = CoordinateRow(
+        householdId = householdId,
+        latitude = latitude,
+        longitude = longitude,
+        accuracyMetres = accuracyMetres,
+        capturedAt = capturedAt,
     )
 
     private companion object {

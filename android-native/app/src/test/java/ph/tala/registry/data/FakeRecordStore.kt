@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import ph.tala.registry.data.local.AnswerCodec
+import ph.tala.registry.data.local.CoordinateRow
 import ph.tala.registry.data.local.HouseholdRow
 import ph.tala.registry.data.local.HouseholdWithMembers
 import ph.tala.registry.data.local.RecordStore
@@ -38,6 +39,9 @@ class FakeRecordStore(seed: List<StoredRecord> = emptyList()) : RecordStore {
                     row.memberId to ((AnswerCodec.decode(row.kind, row.value) as? AnswerValue.Scalar)?.text.orEmpty())
                 }
         }
+
+    override fun observeCoordinate(id: String): Flow<CoordinateRow?> =
+        state.map { records -> records[id]?.coordinates }
 
     override suspend fun load(id: String): StoredRecord? = state.value[id]
 

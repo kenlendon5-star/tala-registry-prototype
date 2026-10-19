@@ -159,7 +159,7 @@ class InterviewLifecycleDeviceTest {
         assertEquals("Callback", record(callback).household.status)
         compose.onNodeWithText("Save & back").performClick()
         await("interview-screen")
-        compose.onNodeWithText("Back").performClick()
+        compose.onNodeWithContentDescription("Back").performClick()
         await("household-search")
         // Filter chips precede the household cards; the badge also says Callback.
         compose.onAllNodesWithText("Callback", useUnmergedTree = true).onFirst().performScrollTo().performClick()
@@ -185,7 +185,7 @@ class InterviewLifecycleDeviceTest {
         capture("refused-interview")
         compose.onNodeWithText("Save & back").performClick()
         await("interview-screen")
-        compose.onNodeWithText("Back").performClick()
+        compose.onNodeWithContentDescription("Back").performClick()
         open(callback); section("visit")
         compose.onNodeWithTag("field-visitResult").performScrollTo().assertTextContains("Refused")
         section("consent")

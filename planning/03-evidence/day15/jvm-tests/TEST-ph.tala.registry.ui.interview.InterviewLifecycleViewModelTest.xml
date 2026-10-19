@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:42.293Z" hostname="KEN" time="0.456">
+  <properties/>
+  <testcase name="clear queues behind an unacknowledged signature save" classname="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" time="0.068"/>
+  <testcase name="review reports local progress" classname="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" time="0.052"/>
+  <testcase name="refusing consent removes the drawn signature once" classname="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" time="0.035"/>
+  <testcase name="check accepts a drawn signature without a typed name" classname="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" time="0.116"/>
+  <testcase name="clear signature removes the attachment and keeps the answer editable" classname="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" time="0.066"/>
+  <testcase name="queued signature cannot restore a mark after refusal" classname="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" time="0.059"/>
+  <testcase name="refusal cleanup failure blocks leaving and retries with save" classname="ph.tala.registry.ui.interview.InterviewLifecycleViewModelTest" time="0.054"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

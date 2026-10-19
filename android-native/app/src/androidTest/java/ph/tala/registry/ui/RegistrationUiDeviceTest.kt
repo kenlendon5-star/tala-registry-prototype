@@ -198,7 +198,7 @@ class RegistrationUiDeviceTest {
             assertEquals("Cruz", InterviewRules.answers(record, QuestionnaireSections.household).scalar("lastName"))
             assertEquals(1, record.attachments.size)
         }
-        compose.onNodeWithText("Back", useUnmergedTree = true).performClick()
+        compose.onNodeWithContentDescription("Back", useUnmergedTree = true).performClick()
         compose.onNodeWithTag("nav-Home").performClick()
         compose.onNodeWithTag("open-profile").performScrollTo().performClick()
         await("profile-screen")

@@ -21,6 +21,8 @@ interface RecordStore {
     val records: Flow<List<HouseholdWithMembers>>
     /** Member id -> stored demographics sex answer ('' while unrecorded); feeds the home summary counts. */
     val memberSex: Flow<Map<String, String>>
+    /** The stored coordinate of one household, or null while none was captured. */
+    fun observeCoordinate(id: String): Flow<CoordinateRow?>
     suspend fun load(id: String): StoredRecord?
     suspend fun save(record: StoredRecord): WriteResult
 }
@@ -33,6 +35,7 @@ class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
     override val memberSex = dao.observeSexAnswers().map { rows ->
         rows.associate { row -> row.memberId to ((AnswerCodec.decode(row.kind, row.value) as? AnswerValue.Scalar)?.text.orEmpty()) }
     }
+    override fun observeCoordinate(id: String) = dao.observeCoordinate(id)
 
     override suspend fun load(id: String): StoredRecord? = database.withTransaction {
         val household = dao.household(id) ?: return@withTransaction null

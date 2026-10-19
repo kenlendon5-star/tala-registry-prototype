@@ -1,0 +1,21 @@
+﻿{
+    "stayAwake":  "0",
+    "permissions":  [
+                        {
+                            "permission":  "android.permission.ACCESS_FINE_LOCATION",
+                            "granted":  false,
+                            "userSet":  false,
+                            "userFixed":  false
+                        },
+                        {
+                            "permission":  "android.permission.ACCESS_COARSE_LOCATION",
+                            "granted":  false,
+                            "userSet":  false,
+                            "userFixed":  false
+                        }
+                    ],
+    "keyboard":  "0",
+    "shellMockMode":  "default",
+    "locationEnabled":  "true",
+    "timeout":  "1800000"
+}

@@ -126,7 +126,7 @@ class FormDeviceTest {
         scope("household")
         compose.onNodeWithTag("field-firstName").assertTextContains("Household respondent")
         // Toolbar Back avoids ambiguity about whether the IME is open.
-        compose.onNodeWithText("Back", useUnmergedTree = true).performClick()
+        compose.onNodeWithContentDescription("Back", useUnmergedTree = true).performClick()
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("open-practice"))
         compose.onNodeWithTag("open-practice").performClick()
         compose.onNodeWithTag("field-firstName").assertTextContains("Household respondent")

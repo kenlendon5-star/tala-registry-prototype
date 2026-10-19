@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.InterviewLifecycleTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-19T06:44:40.998Z" hostname="KEN" time="0.056">
+  <properties/>
+  <testcase name="every filled household section counts ready once" classname="ph.tala.registry.domain.form.InterviewLifecycleTest" time="0.029"/>
+  <testcase name="an empty interview reports no ready sections" classname="ph.tala.registry.domain.form.InterviewLifecycleTest" time="0.001"/>
+  <testcase name="consent with neither signature nor typed name is not ready" classname="ph.tala.registry.domain.form.InterviewLifecycleTest" time="0.002"/>
+  <testcase name="a member section is ready only when every member passes" classname="ph.tala.registry.domain.form.InterviewLifecycleTest" time="0.014"/>
+  <testcase name="consent accepts a typed name without a drawn signature" classname="ph.tala.registry.domain.form.InterviewLifecycleTest" time="0.003"/>
+  <testcase name="refusal keeps the record a draft and names the rule" classname="ph.tala.registry.domain.form.InterviewLifecycleTest" time="0.001"/>
+  <testcase name="consent accepts a drawn signature without a typed name" classname="ph.tala.registry.domain.form.InterviewLifecycleTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
