@@ -167,7 +167,7 @@ fun SharedField(field: FieldSpec, state: SectionFormState, firstInvalid: Boolean
                 Box {
                     OutlinedButton(onClick = { expanded = true }, modifier = target.semantics { if (message != null) error(message) }) {
                         Text(scalar.ifEmpty { "Choose an answer" }, Modifier.weight(1f))
-                        Text("▾")
+                        Text("▾", Modifier.clearAndSetSemantics { })
                     }
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier.heightIn(max = 320.dp)) {
                         if (field.optional) DropdownMenuItem(text = { Text("Clear selection") }, onClick = { onAnswer(field.key, AnswerValue.Blank); expanded = false })

@@ -12,6 +12,8 @@ sealed interface Destination {
     data object Home : Destination { override val route = "home" }
     data object Households : Destination { override val route = "households" }
     data object Profile : Destination { override val route = "profile" }
+    data object Map : Destination { override val route = "map" }
+    data object Reports : Destination { override val route = "reports" }
     data object HouseholdAdd : Destination { override val route = "household/add" }
     data class Questionnaire(val id: HouseholdId, val section: String = "setup", val member: MemberId? = null) : Destination {
         override val route get() = "questionnaire/${Uri.encode(id.value)}?section=${Uri.encode(section)}" + (member?.let { "&member=${Uri.encode(it.value)}" } ?: "")

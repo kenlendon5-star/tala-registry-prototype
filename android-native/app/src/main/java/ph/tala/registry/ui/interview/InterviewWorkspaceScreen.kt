@@ -22,9 +22,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,31 +44,40 @@ import ph.tala.registry.ui.PhotoPreview
 import ph.tala.registry.data.HouseholdRepository
 
 private val WideLayoutBreakpoint = 840.dp
+/** Two-pane only when the viewport is both wide AND tall enough to keep the form readable (UX-03). */
+private val TwoPaneMinHeight = 560.dp
 
 @Composable
 fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> Unit) {
     val state by model.state.collectAsStateWithLifecycle()
     BackHandler { model.leave(onExit) }
-    Column(Modifier.fillMaxSize().testTag("interview-workspace")) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            TextButton(onClick = { model.leave(onExit) }) { Text("Save & back") }
-            TextButton(onClick = model::review) { Text("Review interview") }
-        }
-        if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
-        if (state.record == null) { Text(state.message, Modifier.padding(20.dp)); return }
-        val statuses = remember(state.record) { sectionStatuses(state.record) }
-        val sections = remember { QuestionnaireSections.all.filter { it.route != "members" } }
-        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-            if (maxWidth >= WideLayoutBreakpoint) {
-                TwoPaneWorkspace(state, model, onExit, sections, statuses)
-            } else {
-                SinglePaneWorkspace(state, model, onExit, sections, statuses)
+    BoxWithConstraints(Modifier.fillMaxSize().testTag("interview-workspace")) {
+        val compact = maxHeight < TwoPaneMinHeight || LocalDensity.current.fontScale >= 1.5f
+        val pageScroll = rememberScrollState()
+        LaunchedEffect(state.route, state.memberId, state.showingReview) { pageScroll.scrollTo(0) }
+        Column(if (compact) Modifier.fillMaxWidth().verticalScroll(pageScroll) else Modifier.fillMaxSize()) {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                TextButton(onClick = { model.leave(onExit) }) { Text("Save & back") }
+                TextButton(onClick = model::review) { Text("Review interview") }
+            }
+            if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return@BoxWithConstraints }
+            if (state.record == null) { Text(state.message, Modifier.padding(20.dp)); return@BoxWithConstraints }
+            val statuses = remember(state.record) { sectionStatuses(state.record) }
+            val sections = remember { QuestionnaireSections.all.filter { it.route != "members" } }
+            BoxWithConstraints(if (compact) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth()) {
+                // Short/large-text pages share one scroll container, including navigation.
+                // No fixed chrome can take the form's height away when the IME opens.
+                if (!compact && maxWidth >= WideLayoutBreakpoint && maxHeight >= TwoPaneMinHeight) {
+                    TwoPaneWorkspace(state, model, onExit, sections, statuses)
+                } else {
+                    SinglePaneWorkspace(state, model, onExit, sections, statuses, compact)
+                }
             }
         }
     }
 }
 
-/** Phone layout: horizontal section chips, then the form, then the sticky navigation bar. */
+/** Phone layout: use a single scrolling page at short heights or large text. */
 @Composable
 private fun SinglePaneWorkspace(
     state: WorkspaceState,
@@ -73,9 +85,10 @@ private fun SinglePaneWorkspace(
     onExit: () -> Unit,
     sections: List<SectionSpec>,
     statuses: Map<String, SectionStatus>,
+    compact: Boolean,
 ) {
     var directoryOpen by remember { mutableStateOf(false) }
-    Column(Modifier.fillMaxSize()) {
+    Column(if (compact) Modifier.fillMaxWidth() else Modifier.fillMaxSize()) {
         Row(
             Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -86,7 +99,7 @@ private fun SinglePaneWorkspace(
             }
             sections.forEach { section ->
                 FilterChip(
-                    modifier = Modifier.testTag("section-${section.route}"),
+                    modifier = Modifier.testTag("section-${section.route}").sectionReadiness(statuses[section.route]),
                     selected = !state.showingReview && state.route == section.route,
                     onClick = { model.select(section.route) },
                     leadingIcon = { SectionStatusIcon(statuses[section.route]) },
@@ -97,13 +110,15 @@ private fun SinglePaneWorkspace(
         if (!state.showingReview && state.section.scopedToMember) {
             MemberChipsRow(state, model)
         }
-        WorkspaceBody(state, model, onExit, Modifier.weight(1f).fillMaxWidth())
+        WorkspaceBody(state, model, onExit,
+            if (compact) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth(),
+            scrollBody = !compact)
         WorkspaceBottomBar(state, model, sections)
     }
     if (directoryOpen) {
         SectionDirectorySheet(
             state, sections, statuses,
-            onSelect = { route -> directoryOpen = false; model.select(route) },
+            onSelect = { route -> directoryOpen = false; if (route == "members") model.leave(onExit) else model.select(route) },
             onDismiss = { directoryOpen = false },
         )
     }
@@ -119,57 +134,107 @@ private fun TwoPaneWorkspace(
     statuses: Map<String, SectionStatus>,
 ) {
     Row(Modifier.fillMaxSize()) {
-        Column(
-            Modifier.width(320.dp).fillMaxHeight().verticalScroll(rememberScrollState()).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Text("Sections", style = MaterialTheme.typography.titleMedium)
-            sections.forEachIndexed { index, section ->
-                val selected = !state.showingReview && state.route == section.route
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
-                ) {
-                    Row(
-                        Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("section-${section.route}")
-                            .selectable(selected = selected, onClick = { model.select(section.route) })
-                            .padding(horizontal = 14.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text((index + 1).toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
-                        Text(section.title, Modifier.weight(1f))
-                        SectionStatusIcon(statuses[section.route])
-                    }
-                }
-            }
+        Column(Modifier.width(320.dp).fillMaxHeight()) {
+            // Member scope is pinned above the scrollable index so the active member and the
+            // switcher stay discoverable without scrolling past the whole list (UX-10).
             if (!state.showingReview && state.section.scopedToMember) {
+                MemberScopeIndex(state, model, Modifier.heightIn(max = 240.dp))
                 HorizontalDivider()
-                Text("Member scope", style = MaterialTheme.typography.titleMedium)
-                state.record!!.members.forEach { member ->
-                    val selected = state.memberId == member.id
+            }
+            Column(
+                Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text("Sections", style = MaterialTheme.typography.titleMedium)
+                sections.forEach { section ->
+                    val selected = !state.showingReview && state.route == section.route
                     Surface(
                         shape = RoundedCornerShape(12.dp),
                         color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
                         border = BorderStroke(1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
                     ) {
                         Row(
-                            Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("member-${member.id}")
-                                .selectable(selected = selected, onClick = { model.select(state.route, member.id) })
+                            Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("section-${section.route}")
+                                .selectable(selected = selected, onClick = { model.select(section.route) })
+                                .sectionReadiness(statuses[section.route])
                                 .padding(horizontal = 14.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(member.displayName, Modifier.weight(1f))
-                            SectionStatusIcon(if (selected) SectionStatus.Ready else null)
+                            Text(canonicalSectionNumber(section.route).toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
+                            Text(section.title, Modifier.weight(1f))
+                            SectionStatusIcon(statuses[section.route])
                         }
                     }
                 }
+                MembersIndexRow(bordered = true, onOpen = { model.leave(onExit) })
             }
         }
         Column(Modifier.weight(1f).fillMaxHeight()) {
             WorkspaceBody(state, model, onExit, Modifier.weight(1f).fillMaxWidth())
             WorkspaceBottomBar(state, model, sections)
+        }
+    }
+}
+
+/** Pinned member switcher for the wide index. Selection is shown with a neutral dot — never a
+ *  readiness check — so a selected member is never read as "done" (UX-02). */
+@Composable
+private fun MemberScopeIndex(state: WorkspaceState, model: InterviewWorkspaceViewModel, modifier: Modifier = Modifier) {
+    Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text("Member scope", style = MaterialTheme.typography.titleMedium)
+        state.record!!.members.forEach { member ->
+            val selected = state.memberId == member.id
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+            ) {
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("member-${member.id}")
+                        .selectable(selected = selected, onClick = { model.select(state.route, member.id) })
+                        .padding(horizontal = 14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(member.displayName, Modifier.weight(1f))
+                    if (selected) SelectionDot()
+                }
+            }
+        }
+    }
+}
+
+/** Neutral "currently selected" cue — deliberately not a check mark, which reads as "done" (UX-02). */
+@Composable
+private fun SelectionDot(modifier: Modifier = Modifier) {
+    val tint = MaterialTheme.colorScheme.primary
+    Canvas(modifier.size(16.dp)) { drawCircle(tint, radius = size.minDimension / 3.5f) }
+}
+
+/** The Members editor is section 04 in the canonical numbering but has no workspace form, so the
+ *  numbered indexes would otherwise jump 03 → 05 with no trace of it. The row names the real
+ *  destination and routes through save-before-exit; it never claims a readiness state. */
+@Composable
+private fun MembersIndexRow(bordered: Boolean, onOpen: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = if (bordered) BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null,
+    ) {
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                .testTag("index-members")
+                .selectable(selected = false, onClick = onOpen)
+                .padding(horizontal = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(canonicalSectionNumber("members").toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
+            Column(Modifier.weight(1f)) {
+                Text("Household members")
+                Text("Saves your draft, then opens the Members tab", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
     }
 }
@@ -195,16 +260,26 @@ private fun WorkspaceBody(
     model: InterviewWorkspaceViewModel,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
+    scrollBody: Boolean = true,
 ) {
     key(state.route, state.memberId, state.showingReview) {
         Column(
-            modifier.verticalScroll(rememberScrollState()).padding(20.dp),
+            modifier.then(if (scrollBody) Modifier.verticalScroll(rememberScrollState()) else Modifier).padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             if (state.showingReview) {
                 ReviewContent(state, model, onExit)
             } else if (state.section.scopedToMember && state.memberId == null) {
-                Text("Add a household member before answering these questions.")
+                Text("This section is answered for each household member.", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "Save your draft, then go back and open the Members tab to add a household member. " +
+                        "Return here and choose a member to answer these questions.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Button(onClick = { model.leave(onExit) }, modifier = Modifier.testTag("leave-to-add-member")) {
+                    Text("Save and go back")
+                }
             } else {
                 Text(state.section.title, style = MaterialTheme.typography.headlineSmall)
                 if (state.route == "consent") Text("Fictional-data demonstration only. Explain the purpose of the demo and ask whether the respondent agrees. Refusal is saved and never marked reviewed. A typed fictional name is a signature for this demo.")
@@ -307,22 +382,37 @@ private fun WorkspaceBottomBar(state: WorkspaceState, model: InterviewWorkspaceV
         Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (!state.showingReview) {
                 val index = sections.indexOfFirst { it.route == state.route }.coerceAtLeast(0)
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedButton(onClick = { model.select(sections[index - 1].route) }, enabled = index > 0, modifier = Modifier.testTag("section-prev")) {
-                        Text("‹ Previous")
-                    }
+                // Reflow the footer at large font (UX-03): the counter gets its own line instead
+                // of squeezing between the buttons and splitting mid-phrase.
+                if (LocalDensity.current.fontScale >= 1.5f) {
                     Text(
-                        "Section ${index + 1} of ${sections.size}",
-                        Modifier.weight(1f).testTag("section-position"),
+                        "Section ${canonicalSectionNumber(state.route)} of ${QuestionnaireSections.all.size}",
+                        Modifier.fillMaxWidth().testTag("section-position"),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.labelLarge,
                     )
-                    Button(onClick = { model.select(sections[index + 1].route) }, enabled = index < sections.lastIndex, modifier = Modifier.testTag("section-next")) {
-                        Text("Next ›")
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        PreviousSectionButton(model, sections, index, Modifier.weight(1f))
+                        NextSectionButton(model, sections, index, Modifier.weight(1f))
+                    }
+                } else {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        PreviousSectionButton(model, sections, index)
+                        Text(
+                            "Section ${canonicalSectionNumber(state.route)} of ${QuestionnaireSections.all.size}",
+                            Modifier.weight(1f).testTag("section-position"),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                        NextSectionButton(model, sections, index)
                     }
                 }
             }
-            if (state.phase == SavePhase.Idle && state.message.isNotBlank()) Text(state.message)
+            if (state.phase == SavePhase.Idle && state.message.isNotBlank()) Text(
+                state.message,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             SaveStatusLine(state.phase, state.message)
             if (state.phase == SavePhase.Failed) TextButton(onClick = model::reload) { Text("Discard unsaved edits and reload saved section") }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -348,7 +438,7 @@ private fun SectionDirectorySheet(
             Text("All sections", style = MaterialTheme.typography.titleLarge)
             Text("Jump straight to any part of the questionnaire.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
-            sections.forEachIndexed { index, section ->
+            sections.forEach { section ->
                 val selected = !state.showingReview && state.route == section.route
                 Surface(
                     shape = RoundedCornerShape(12.dp),
@@ -356,17 +446,20 @@ private fun SectionDirectorySheet(
                 ) {
                     Row(
                         Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                            .testTag("directory-${section.route}")
                             .selectable(selected = selected, onClick = { onSelect(section.route) })
+                            .sectionReadiness(statuses[section.route])
                             .padding(horizontal = 14.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text((index + 1).toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
+                        Text(canonicalSectionNumber(section.route).toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
                         Text(section.title, Modifier.weight(1f))
                         SectionStatusIcon(statuses[section.route])
                     }
                 }
             }
+            MembersIndexRow(bordered = false, onOpen = { onSelect("members") })
         }
     }
 }
@@ -407,6 +500,39 @@ private fun SectionStatusIcon(status: SectionStatus?) {
     }
 }
 
+/** Readiness as a spoken state, kept separate from navigation selection (UX-01). */
+private val SectionStatus.announced: String
+    get() = when (this) {
+        SectionStatus.Ready -> "Ready"
+        SectionStatus.NeedsAttention -> "Needs attention"
+        SectionStatus.NotStarted -> "Not started"
+    }
+
+/** Exposes real section readiness to TalkBack without folding it into the selected state (UX-01). */
+private fun Modifier.sectionReadiness(status: SectionStatus?): Modifier =
+    semantics { status?.let { stateDescription = it.announced } }
+
+/** Canonical 1-based index in the full questionnaire so every list agrees on numbering (UX-04). */
+internal fun canonicalSectionNumber(route: String): Int =
+    QuestionnaireSections.all.indexOfFirst { it.route == route } + 1
+
+/** Previous/next are plain words; the chevron glyphs are hidden from assistive tech (UX-08). */
+@Composable
+private fun PreviousSectionButton(model: InterviewWorkspaceViewModel, sections: List<SectionSpec>, index: Int, modifier: Modifier = Modifier) {
+    OutlinedButton(onClick = { model.select(sections[index - 1].route) }, enabled = index > 0, modifier = modifier.testTag("section-prev")) {
+        Text("‹", Modifier.clearAndSetSemantics { })
+        Text(" Previous")
+    }
+}
+
+@Composable
+private fun NextSectionButton(model: InterviewWorkspaceViewModel, sections: List<SectionSpec>, index: Int, modifier: Modifier = Modifier) {
+    Button(onClick = { model.select(sections[index + 1].route) }, enabled = index < sections.lastIndex, modifier = modifier.testTag("section-next")) {
+        Text("Next ")
+        Text("›", Modifier.clearAndSetSemantics { })
+    }
+}
+
 @Composable
 private fun MenuGlyph(modifier: Modifier = Modifier) {
     val color = LocalContentColor.current
@@ -430,7 +556,11 @@ private fun SignatureColumn(model: InterviewWorkspaceViewModel) {
             onSave = model::saveSignature,
             onClear = model::clearSignature,
         )
-        Text("Or type a fictional name as the signature below.", style = MaterialTheme.typography.bodySmall)
+        Text(
+            "Accessible alternative: type a fictional name in the signature field instead of drawing.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

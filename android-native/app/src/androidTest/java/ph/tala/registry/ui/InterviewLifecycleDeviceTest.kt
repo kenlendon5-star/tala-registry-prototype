@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -70,11 +71,19 @@ class InterviewLifecycleDeviceTest {
     private fun awaitSignature(present: Boolean) = compose.waitUntil(30_000) {
         record(complete).attachments.any { it.kind == HouseholdRepository.SIGNATURE } == present
     }
+    private fun assertSignatureState(saved: Boolean) {
+        val state = if (saved) "Signature saved" else "No signature saved"
+        val matcher = hasTestTag("signature-pad") and
+            SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state)
+        compose.waitUntil(30_000) { compose.onAllNodes(matcher).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNode(matcher).assertExists()
+    }
     private fun draw() {
         compose.onNodeWithTag("signature-pad").performScrollTo().performTouchInput {
             swipe(Offset(width * .15f, height * .6f), Offset(width * .8f, height * .25f), 400)
         }
         awaitSignature(true)
+        assertSignatureState(true)
     }
     private fun assertPng() {
         val path = record(complete).attachments.single { it.kind == HouseholdRepository.SIGNATURE }.relativePath
@@ -108,6 +117,9 @@ class InterviewLifecycleDeviceTest {
         compose.onNodeWithText("Consent & review: 1 missing or invalid answers").performScrollTo().performClick()
         await("option-consent-Yes")
         option("consent", "Yes"); save()
+        compose.onNodeWithText("Accessible alternative: type a fictional name in the signature field instead of drawing.")
+            .performScrollTo().assertIsDisplayed()
+        assertSignatureState(false)
         draw()
         val initialPath = record(complete).attachments.single { it.kind == HouseholdRepository.SIGNATURE }.relativePath
         compose.onNodeWithTag("signature-undo").performScrollTo().performClick()
@@ -118,6 +130,7 @@ class InterviewLifecycleDeviceTest {
         awaitSignature(true); assertPng()
         compose.onNodeWithTag("signature-clear").performScrollTo().performClick()
         awaitSignature(false)
+        assertSignatureState(false)
         draw(); assertPng()
         capture("drawn-signature")
         review()
@@ -157,6 +170,9 @@ class InterviewLifecycleDeviceTest {
         compose.onNodeWithTag("field-callbackDate").performScrollTo().performTextReplacement("2026-10-20T10:30")
         save(); recordVisit()
         assertEquals("Callback", record(callback).household.status)
+        // The UX-03 compact reflow (single-scroll page while the IME is open) scrolls the
+        // workspace header out of view, so close the keyboard first — as a user would tap away.
+        androidx.test.espresso.Espresso.closeSoftKeyboard()
         compose.onNodeWithText("Save & back").performClick()
         await("interview-screen")
         compose.onNodeWithContentDescription("Back").performClick()
@@ -183,6 +199,7 @@ class InterviewLifecycleDeviceTest {
         assertTrue(runBlocking { app.repository.reviewInterview(callback) } is WriteResult.Failed)
         assertEquals("InProgress", record(callback).household.status)
         capture("refused-interview")
+        androidx.test.espresso.Espresso.closeSoftKeyboard()
         compose.onNodeWithText("Save & back").performClick()
         await("interview-screen")
         compose.onNodeWithContentDescription("Back").performClick()

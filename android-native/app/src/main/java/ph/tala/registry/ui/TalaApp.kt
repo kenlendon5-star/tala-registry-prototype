@@ -9,6 +9,7 @@ import androidx.compose.foundation.BorderStroke
 import ph.tala.registry.ui.interview.InterviewWorkspaceScreen
 import ph.tala.registry.ui.interview.InterviewWorkspaceViewModel
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,11 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
@@ -47,6 +50,7 @@ import androidx.navigation.navArgument
 import ph.tala.registry.data.EnumeratorProfileStore
 import ph.tala.registry.data.HouseholdRepository
 import ph.tala.registry.data.PhotoStore
+import ph.tala.registry.domain.form.QuestionnaireSections
 import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdId
 import ph.tala.registry.domain.model.MemberId
@@ -103,13 +107,17 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
         route == Destination.Questionnaire.PATTERN -> "Questionnaire"
         route == Destination.Practice.PATTERN -> "Practice interview"
         route == Destination.Profile.route -> "Enumerator profile"
+        route == Destination.Map.route -> "Map"
+        route == Destination.Reports.route -> "Reports"
         else -> null
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize().imePadding(),
         topBar = {
-            TopAppBar(
+            // The questionnaire owns save-before-exit navigation and its section heading.
+            // Avoid a duplicate fixed app bar consuming the short viewport above the IME.
+            if (route != Destination.Questionnaire.PATTERN) TopAppBar(
                 title = {
                     Column {
                         Text(appBarTitle ?: "Tala", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
@@ -132,14 +140,28 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
         },
         bottomBar = {
             if (!isFullScreen) NavigationBar {
-                listOf(Destination.Home to "Home", Destination.Households to "Households").forEach { (destination, label) ->
+                listOf(
+                    Destination.Home to "Home",
+                    Destination.Households to "Households",
+                    Destination.Map to "Map",
+                    Destination.Reports to "Reports",
+                    Destination.Profile to "Profile",
+                ).forEach { (destination, label) ->
                     NavigationBarItem(
                         selected = route == destination.route,
                         onClick = {
                             if (destination == Destination.Home) nav.popBackStack(Destination.Home.route, inclusive = false)
                             else nav.navigate(destination.route) { launchSingleTop = true }
                         },
-                        icon = { RegistryIcon(house = destination == Destination.Home) },
+                        icon = {
+                            when (destination) {
+                                Destination.Home -> RegistryIcon(house = true)
+                                Destination.Map -> MapIcon()
+                                Destination.Reports -> ReportsIcon()
+                                Destination.Profile -> ProfileIcon()
+                                else -> RegistryIcon(house = false)
+                            }
+                        },
                         label = { Text(label) },
                         modifier = Modifier.testTag("nav-$label"),
                     )
@@ -163,12 +185,22 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                 }
                 composable(Destination.Home.route) {
                     HomeScreen(
-                        state, profileState.copy(name = savedProfile.name, barangay = savedProfile.barangay),
-                        onBrowse = { nav.navigate(Destination.Households.route) { launchSingleTop = true } },
-                        onOpen = openHousehold,
-                        onProfile = { nav.navigate(Destination.Profile.route) { launchSingleTop = true } },
-                        onOpenFilter = openFilteredHouseholds,
+                        state,
+                        profileState.copy(name = savedProfile.name, barangay = savedProfile.barangay),
+                        onOpenEnumeratorProfile = { nav.navigate(Destination.Profile.route) { launchSingleTop = true } },
+                        onOpenHousehold = openHousehold,
+                        onRegisterHousehold = { nav.navigate(Destination.HouseholdAdd.route) { launchSingleTop = true } },
+                        onAddMember = { nav.navigate(Destination.Households.route) { launchSingleTop = true } },
+                        onCaptureLocation = { nav.navigate(Destination.Map.route) { launchSingleTop = true } },
+                        onViewCallbacks = { registry.setFilter(HouseholdFilter.Callback); nav.navigate(Destination.Households.route) { launchSingleTop = true } },
+                        onViewReports = { nav.navigate(Destination.Reports.route) { launchSingleTop = true } },
                     )
+                }
+                composable(Destination.Map.route) {
+                    MapScreen()
+                }
+                composable(Destination.Reports.route) {
+                    ReportsScreen()
                 }
                 composable(Destination.Profile.route) {
                     ProfileScreen(
@@ -328,7 +360,17 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
 }
 
 @Composable
-private fun HomeScreen(state: RegistryUiState, profile: EnumeratorProfileUiState, onBrowse: () -> Unit, onOpen: (HouseholdId) -> Unit, onProfile: () -> Unit, onOpenFilter: (HouseholdFilter) -> Unit) {
+private fun HomeScreen(
+    state: RegistryUiState,
+    profile: EnumeratorProfileUiState,
+    onOpenEnumeratorProfile: () -> Unit,
+    onOpenHousehold: (HouseholdId) -> Unit,
+    onRegisterHousehold: () -> Unit,
+    onAddMember: () -> Unit,
+    onCaptureLocation: () -> Unit,
+    onViewCallbacks: () -> Unit,
+    onViewReports: () -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().testTag("home-screen"),
         contentPadding = PaddingValues(20.dp),
@@ -337,7 +379,35 @@ private fun HomeScreen(state: RegistryUiState, profile: EnumeratorProfileUiState
         item {
             Text("Magandang araw, ${profile.name}.", style = MaterialTheme.typography.titleMedium)
             Text("Your fieldwork workspace · ${profile.barangay}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            OutlinedButton(onClick = onProfile, modifier = Modifier.heightIn(min = 48.dp).testTag("open-profile")) { Text("Edit enumerator profile") }
+            Surface(
+                onClick = onOpenEnumeratorProfile,
+                shape = RoundedCornerShape(14.dp),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                    .testTag("enumerator-row")
+                    .semantics { contentDescription = "Enumerator's Data, ${profile.name}, double tap to edit profile" },
+            ) {
+                Row(
+                    Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        Modifier.size(40.dp).background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        RegistryIcon(house = false, modifier = Modifier.size(20.dp))
+                    }
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(profile.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                        Text(profile.barangay, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    IconButton(onClick = onOpenEnumeratorProfile) {
+                        BackArrowGlyph(Modifier.semantics { contentDescription = "Open enumerator profile" })
+                    }
+                }
+            }
         }
         item {
             Surface(color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(24.dp)) {
@@ -351,25 +421,91 @@ private fun HomeScreen(state: RegistryUiState, profile: EnumeratorProfileUiState
         if (state.loading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
         else {
             item {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    // Tappable metrics drill into the matching household list; counts without
-                    // a matching filter stay informational rather than pretending to filter.
-                    Metric("Households", state.households.size, Modifier.weight(1f), hint = "Browse all", onClick = onBrowse)
-                    Metric("Members", state.memberCount, Modifier.weight(1f))
-                    Metric("Callbacks", state.callbackCount, Modifier.weight(1f), hint = "Filter list", onClick = { onOpenFilter(HouseholdFilter.Callback) })
+                // Adaptive columns keep whole labels readable at large font instead of breaking
+                // words across three narrow columns (UX-09). Counts and actions are unchanged.
+                MetricGrid(
+                    listOf(
+                        MetricSpec("Households", state.households.size, hint = "Browse all", onClick = onRegisterHousehold),
+                        MetricSpec("Members", state.memberCount, onClick = onAddMember),
+                        MetricSpec("Callbacks", state.callbackCount, hint = "Filter list", onClick = onViewCallbacks),
+                        MetricSpec("Male", state.maleCount),
+                        MetricSpec("Female", state.femaleCount),
+                        MetricSpec("Sex not recorded", state.unrecordedSexCount),
+                    ),
+                )
+            }
+            item { Button(onClick = onRegisterHousehold, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("register-household")) { Text(if (state.households.isEmpty()) "Register your first household" else "Register Household") } }
+            if (state.households.isNotEmpty()) {
+                val household = state.households.first()
+                item {
+                    Surface(
+                        onClick = { onOpenHousehold(household.id) },
+                        shape = RoundedCornerShape(14.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                            .testTag("continue-row")
+                            .semantics {
+                                contentDescription = "Continue: ${household.headName}, ${household.displayCode}, ${household.status.label}, double tap to open interview"
+                            },
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth().padding(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(
+                                Modifier.size(44.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(12.dp)),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                RegistryIcon(house = true, modifier = Modifier.size(22.dp))
+                            }
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text("Continue: ${household.headName}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                                Text("${household.displayCode} · ${household.status.label}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            IconButton(onClick = { onOpenHousehold(household.id) }) {
+                                BackArrowGlyph(Modifier.semantics { contentDescription = "Open household interview" })
+                            }
+                        }
+                    }
+                }
+            }
+            if (state.households.isEmpty()) {
+                item {
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text("No households yet.", style = MaterialTheme.typography.titleMedium)
+                        Text("Register your first household to begin fieldwork.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
             item {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Metric("Male", state.maleCount, Modifier.weight(1f))
-                    Metric("Female", state.femaleCount, Modifier.weight(1f))
-                    Metric("Sex not recorded", state.unrecordedSexCount, Modifier.weight(1f))
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    OutlinedButton(
+                        onClick = onAddMember,
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-add-member"),
+                    ) { Text("Add member") }
+                    OutlinedButton(
+                        onClick = onCaptureLocation,
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-capture-location"),
+                    ) { Text("Capture location") }
+                    OutlinedButton(
+                        onClick = onViewCallbacks,
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-view-callbacks"),
+                    ) { Text("View callbacks") }
+                    OutlinedButton(
+                        onClick = onViewReports,
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-view-reports"),
+                    ) { Text("View reports") }
                 }
             }
-            item { Button(onClick = onBrowse, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text("Browse households") } }
-            item { Text("Continue an interview", style = MaterialTheme.typography.titleLarge) }
-            items(state.households.take(2), key = { it.id.value }) { HouseholdCard(it, onOpen) }
-            if (state.households.isEmpty()) item { Text("No households available.") }
         }
         item { DemoNotice() }
     }
@@ -544,10 +680,10 @@ private fun InterviewScreen(
                     Button(onClick = onQuestionnaire, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open-questionnaire-sections")) { Text("Continue questionnaire") }
                 }
                 item {
-                    Text("The questionnaire covers all 18 sections:", style = MaterialTheme.typography.titleMedium)
+                    Text("The questionnaire covers all ${QuestionnaireSections.all.size} sections:", style = MaterialTheme.typography.titleMedium)
                 }
                 items(SectionTitles.withIndex().toList(), key = { "title-" + it.index }) { (index, title) ->
-                    Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Row(Modifier.fillMaxWidth().testTag("overview-section-${index + 1}").padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text((index + 1).toString().padStart(2, '0'), fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.primary)
                         Text(title, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
                     }
@@ -589,6 +725,27 @@ private fun StatusBadge(label: String, archived: Boolean) {
     }
 }
 
+private data class MetricSpec(val label: String, val value: Int, val hint: String? = null, val onClick: (() -> Unit)? = null)
+
+/**
+ * Reflows the metric tiles by font scale so large text keeps whole labels readable instead of
+ * breaking words across three narrow columns (UX-09). Counts and their actions are unchanged.
+ */
+@Composable
+private fun MetricGrid(metrics: List<MetricSpec>) {
+    val columns = if (LocalDensity.current.fontScale >= 1.5f) 2 else 3
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        metrics.chunked(columns).forEach { row ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                row.forEach { metric ->
+                    Metric(metric.label, metric.value, Modifier.weight(1f), hint = metric.hint, onClick = metric.onClick)
+                }
+                repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+            }
+        }
+    }
+}
+
 @Composable
 private fun Metric(label: String, value: Int, modifier: Modifier = Modifier, hint: String? = null, onClick: (() -> Unit)? = null) {
     // Clickable metrics get an enclosed card affordance; plain counts keep the compact layout.
@@ -617,6 +774,95 @@ private fun Metric(label: String, value: Int, modifier: Modifier = Modifier, hin
 @Composable
 private fun DemoNotice() {
     Text("Fictional sample records · Saves stay on this device.\nQuestionnaire answers, pictures, signatures and the enumerator profile save here.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+/** Map screen: placeholder for household location capture (future build). */
+@Composable
+private fun MapScreen() {
+    Column(
+        Modifier.fillMaxSize().padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text("Map", style = MaterialTheme.typography.titleLarge)
+        Text("Household locations appear here once a location is captured.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Box(
+            Modifier.fillMaxWidth().heightIn(min = 300.dp).border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text("No locations recorded yet.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+/** Reports screen: placeholder for export/restore (future build). */
+@Composable
+private fun ReportsScreen() {
+    Column(
+        Modifier.fillMaxSize().padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text("Reports", style = MaterialTheme.typography.titleLarge)
+        Text("Export household records to a file on this device.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Button(
+            onClick = {},
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+        ) { Text("Choose export destination") }
+        Button(
+            onClick = {},
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+        ) { Text("Restore from backup") }
+    }
+}
+
+/** Drawn map pin icon for bottom navigation (no icon font in this build). */
+@Composable
+private fun MapIcon(modifier: Modifier = Modifier) {
+    val color = LocalContentColor.current
+    Canvas(modifier.size(24.dp)) {
+        drawCircle(
+            color = color,
+            radius = size.width / 2 * 0.7f,
+            center = Offset(size.width / 2, size.height / 2),
+            style = Stroke(width = 2.dp.toPx()),
+        )
+        drawLine(color, Offset(size.width / 2, size.height / 2), Offset(size.width * 0.5f, size.height * 0.22f), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
+    }
+}
+
+/** Drawn document icon for bottom navigation (no icon font in this build). */
+@Composable
+private fun ReportsIcon(modifier: Modifier = Modifier) {
+    val color = LocalContentColor.current
+    Canvas(modifier.size(24.dp)) {
+        val sheet = Rect(size.width * 0.2f, size.height * 0.15f, size.width * 0.8f, size.height * 0.85f)
+        drawRect(color = color, topLeft = sheet.topLeft, size = sheet.size, style = Stroke(width = 2.dp.toPx()))
+        drawLine(color, Offset(size.width * 0.35f, size.height * 0.35f), Offset(size.width * 0.65f, size.height * 0.35f), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
+        drawLine(color, Offset(size.width * 0.35f, size.height * 0.5f), Offset(size.width * 0.65f, size.height * 0.5f), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
+    }
+}
+
+/** Drawn person icon for bottom navigation (no icon font in this build). */
+@Composable
+private fun ProfileIcon(modifier: Modifier = Modifier) {
+    val color = LocalContentColor.current
+    Canvas(modifier.size(24.dp)) {
+        drawCircle(
+            color = color,
+            radius = size.width / 2 * 0.4f,
+            center = Offset(size.width / 2, size.height * 0.35f),
+            style = Stroke(width = 2.dp.toPx()),
+        )
+        val shoulders = Rect(size.width * 0.15f, size.height * 0.55f, size.width * 0.85f, size.height * 0.95f)
+        drawArc(
+            color = color,
+            startAngle = 180f,
+            sweepAngle = 180f,
+            useCenter = false,
+            topLeft = shoulders.topLeft,
+            size = shoulders.size,
+            style = Stroke(width = 2.dp.toPx()),
+        )
+    }
 }
 
 /** Editable enumerator profile (plan card D08): name, barangay and an app-private profile picture. */
@@ -665,7 +911,11 @@ private fun ProfileScreen(
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("profile-photo-remove"),
             ) { Text("Remove picture") }
         }
-        if (state.phase == ph.tala.registry.ui.households.SavePhase.Idle && state.message.isNotBlank()) Text(state.message)
+        if (state.phase == ph.tala.registry.ui.households.SavePhase.Idle && state.message.isNotBlank()) Text(
+            state.message,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         SaveStatusLine(state.phase, state.message)
         Button(
             onClick = onSave, enabled = !state.saving,
@@ -699,9 +949,6 @@ private fun BackArrowGlyph(modifier: Modifier = Modifier) {
     }
 }
 
-private val SectionTitles = listOf(
-    "Survey setup", "Visit information", "Household profile", "Household members", "Demographics",
-    "Other demographics", "Migration", "Education", "Employment", "Health", "Food security",
-    "Transport & finance", "Disaster preparedness", "Internet & public safety", "Social protection",
-    "Water & sanitation", "Housing characteristics", "Consent & review",
-)
+// Derived from the generated questionnaire so the Sections tab and the workspace directory
+// always share one canonical order and numbering (UX-04).
+private val SectionTitles = QuestionnaireSections.all.map { it.title }

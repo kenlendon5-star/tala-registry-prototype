@@ -29,6 +29,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import java.io.ByteArrayOutputStream
 
@@ -69,6 +72,13 @@ fun SignaturePad(
                 .fillMaxWidth()
                 .height(if (expanded) 320.dp else 180.dp)
                 .testTag("signature-pad")
+                // Assistive tech gets an explanation of the canvas and its saved/empty state
+                // instead of an unexplained blank surface (UX-07).
+                .semantics {
+                    contentDescription =
+                        "Signature drawing area. Draw with your finger, or use the typed name field as an accessible alternative."
+                    stateDescription = if (saved) "Signature saved" else "No signature saved"
+                }
                 .pointerInput(Unit) {
                     awaitEachGesture {
                         // requireUnconsumed = false: take the pointer even if a parent
