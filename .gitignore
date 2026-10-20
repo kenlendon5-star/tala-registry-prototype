@@ -4,6 +4,8 @@ node_modules/
 # Logs
 *.log
 npm-debug.log*
+# Retained acceptance evidence is tracked even though it is a log
+!planning/03-evidence/**/*.log
 
 # OS files
 .DS_Store
@@ -19,6 +21,11 @@ Thumbs.db
 
 # Local agent settings
 .claude/
+.mcp.json
+
+# Python caches
+__pycache__/
+*.pyc
 
 # Android build caches
 android-native/.kotlin/
