@@ -1,0 +1,10 @@
+Partial Logcat diagnostic excerpt observed 2026-10-17 before the interrupted harness wrote its complete runner log:
+
+10-17 13:29:48.994 26830 26928 E TestRunner: failed: writeBranchesThroughNativeForms(ph.tala.registry.ui.FoundationSectionsDeviceTest)
+10-17 13:29:49.049 26830 26928 E TestRunner: java.lang.RuntimeException: Error while connecting UiAutomation@b42c1aa[id=-1, displayId=0, flags=0]
+10-17 13:29:49.049 26830 26928 E TestRunner: at android.app.UiAutomation.connectWithTimeout(UiAutomation.java:394)
+10-17 13:29:49.049 26830 26928 E TestRunner: at ph.tala.registry.ui.FoundationSectionsDeviceTest.capture(FoundationSectionsDeviceTest.kt:63)
+10-17 13:29:49.049 26830 26928 E TestRunner: at ph.tala.registry.ui.FoundationSectionsDeviceTest.writeBranchesThroughNativeForms(FoundationSectionsDeviceTest.kt:114)
+
+This is a partial excerpt, not a complete instrumentation transcript or passing acceptance result.
+Follow-up: capture now uses compose.onRoot().captureToImage(), matching the existing passing FormDeviceTest method.

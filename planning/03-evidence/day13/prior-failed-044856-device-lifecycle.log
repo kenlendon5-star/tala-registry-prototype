@@ -1,0 +1,131 @@
+﻿INSTRUMENTATION_STATUS: class=ph.tala.registry.data.local.InterviewLifecyclePersistenceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.data.local.InterviewLifecyclePersistenceTest:
+INSTRUMENTATION_STATUS: test=savedSignatureSurvivesReopenAndCompletesConsent
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.data.local.InterviewLifecyclePersistenceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: consent is the one ready section expected:<1> but was:<2>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest$savedSignatureSurvivesReopenAndCompletesConsent$1.invokeSuspend(InterviewLifecyclePersistenceTest.kt:92)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55883:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55884:1)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest.savedSignatureSurvivesReopenAndCompletesConsent(InterviewLifecyclePersistenceTest.kt:70)
+
+INSTRUMENTATION_STATUS: stream=
+Error in savedSignatureSurvivesReopenAndCompletesConsent(ph.tala.registry.data.local.InterviewLifecyclePersistenceTest):
+java.lang.AssertionError: consent is the one ready section expected:<1> but was:<2>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest$savedSignatureSurvivesReopenAndCompletesConsent$1.invokeSuspend(InterviewLifecyclePersistenceTest.kt:92)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55883:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55884:1)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest.savedSignatureSurvivesReopenAndCompletesConsent(InterviewLifecyclePersistenceTest.kt:70)
+
+INSTRUMENTATION_STATUS: test=savedSignatureSurvivesReopenAndCompletesConsent
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=ph.tala.registry.data.local.InterviewLifecyclePersistenceTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=callbackAndRefusedVisitsFollowTheAgreedRules
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.data.local.InterviewLifecyclePersistenceTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: a refused interview is never review-complete expected:<0> but was:<1>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest$callbackAndRefusedVisitsFollowTheAgreedRules$1.invokeSuspend(InterviewLifecyclePersistenceTest.kt:135)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55883:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55884:1)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest.callbackAndRefusedVisitsFollowTheAgreedRules(InterviewLifecyclePersistenceTest.kt:102)
+
+INSTRUMENTATION_STATUS: stream=
+Error in callbackAndRefusedVisitsFollowTheAgreedRules(ph.tala.registry.data.local.InterviewLifecyclePersistenceTest):
+java.lang.AssertionError: a refused interview is never review-complete expected:<0> but was:<1>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest$callbackAndRefusedVisitsFollowTheAgreedRules$1.invokeSuspend(InterviewLifecyclePersistenceTest.kt:135)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55883:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55884:1)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest.callbackAndRefusedVisitsFollowTheAgreedRules(InterviewLifecyclePersistenceTest.kt:102)
+
+INSTRUMENTATION_STATUS: test=callbackAndRefusedVisitsFollowTheAgreedRules
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 12.269
+There were 2 failures:
+1) savedSignatureSurvivesReopenAndCompletesConsent(ph.tala.registry.data.local.InterviewLifecyclePersistenceTest)
+java.lang.AssertionError: consent is the one ready section expected:<1> but was:<2>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest$savedSignatureSurvivesReopenAndCompletesConsent$1.invokeSuspend(InterviewLifecyclePersistenceTest.kt:92)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55883:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55884:1)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest.savedSignatureSurvivesReopenAndCompletesConsent(InterviewLifecyclePersistenceTest.kt:70)
+2) callbackAndRefusedVisitsFollowTheAgreedRules(ph.tala.registry.data.local.InterviewLifecyclePersistenceTest)
+java.lang.AssertionError: a refused interview is never review-complete expected:<0> but was:<1>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest$callbackAndRefusedVisitsFollowTheAgreedRules$1.invokeSuspend(InterviewLifecyclePersistenceTest.kt:135)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55883:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e-55884:1)
+	at ph.tala.registry.data.local.InterviewLifecyclePersistenceTest.callbackAndRefusedVisitsFollowTheAgreedRules(InterviewLifecyclePersistenceTest.kt:102)
+
+FAILURES!!!
+Tests run: 2,  Failures: 2
+
+
+INSTRUMENTATION_CODE: -1

@@ -1,0 +1,56 @@
+Performing Streamed Install
+Success
+Performing Streamed Install
+Success
+INSTRUMENTATION_STATUS: test=allIdentitySectionsAndClearedBranchesSurviveDatabaseReopen
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 2.274
+
+OK (1 test)
+
+
+INSTRUMENTATION_CODE: -1
+INSTRUMENTATION_STATUS: test=writeThroughQuestionnaire
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 48.455
+
+OK (1 test)
+
+
+INSTRUMENTATION_CODE: -1
+INSTRUMENTATION_STATUS: test=verifyAfterForceStop
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 10.395
+
+OK (1 test)
+
+
+INSTRUMENTATION_CODE: -1
+INSTRUMENTATION_STATUS: test=savedSnapshotReopensAfterCloseWithScopedAnswersAndAttachmentsIntact
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 16.071
+
+OK (15 tests)
+
+
+INSTRUMENTATION_CODE: -1
+INSTRUMENTATION_STATUS: test=memberAddEditAndArchiveRestoreRoundTrip
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 83.012
+
+OK (10 tests)
+
+
+INSTRUMENTATION_CODE: -1
+/sdcard/Android/data/ph.tala.registry.d08test/files/day09/: 4 files pulled, 0 skipped. 8.8 MB/s (587704 bytes in 0.064s)
+Day 9 device acceptance passed.

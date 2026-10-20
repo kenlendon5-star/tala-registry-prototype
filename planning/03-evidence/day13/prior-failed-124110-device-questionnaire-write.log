@@ -1,0 +1,74 @@
+﻿INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.FoundationSectionsDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.ui.FoundationSectionsDeviceTest:
+INSTRUMENTATION_STATUS: test=writeBranchesThroughNativeForms
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.FoundationSectionsDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest$assertStored$1.invokeSuspend(FoundationSectionsDeviceTest.kt:159)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e:1)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest.assertStored(FoundationSectionsDeviceTest.kt:142)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest.writeBranchesThroughNativeForms(FoundationSectionsDeviceTest.kt:139)
+
+INSTRUMENTATION_STATUS: stream=
+Error in writeBranchesThroughNativeForms(ph.tala.registry.ui.FoundationSectionsDeviceTest):
+java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest$assertStored$1.invokeSuspend(FoundationSectionsDeviceTest.kt:159)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e:1)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest.assertStored(FoundationSectionsDeviceTest.kt:142)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest.writeBranchesThroughNativeForms(FoundationSectionsDeviceTest.kt:139)
+
+INSTRUMENTATION_STATUS: test=writeBranchesThroughNativeForms
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 33.793
+There was 1 failure:
+1) writeBranchesThroughNativeForms(ph.tala.registry.ui.FoundationSectionsDeviceTest)
+java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertTrue(Assert.java:53)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest$assertStored$1.invokeSuspend(FoundationSectionsDeviceTest.kt:159)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(dex-id-adaa821b181bb5fc50c94737b55bc09870a6195e:1)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest.assertStored(FoundationSectionsDeviceTest.kt:142)
+	at ph.tala.registry.ui.FoundationSectionsDeviceTest.writeBranchesThroughNativeForms(FoundationSectionsDeviceTest.kt:139)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

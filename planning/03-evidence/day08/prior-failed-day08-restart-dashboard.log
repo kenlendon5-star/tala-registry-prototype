@@ -1,0 +1,44 @@
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.RegistrationUiDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.ui.RegistrationUiDeviceTest:
+INSTRUMENTATION_STATUS: test=dashboardAfterRestartDisplaysPersistedCounts
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.RegistrationUiDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to perform checkIsDisplayed check: Expected at most 1 node but found 3 nodes that satisfy ((Text + InputText + EditableText contains '1' (ignoreCase: false)) && (hasAnySiblingThat(Text + InputText + EditableText contains 'Male' (ignoreCase: false))))
+	at androidx.compose.ui.test.AndroidAssertions_androidKt.checkIsDisplayed(AndroidAssertions.android.kt:35)
+	at androidx.compose.ui.test.AssertionsKt.isDisplayed(Assertions.kt:351)
+	at androidx.compose.ui.test.AssertionsKt.assertIsDisplayed(Assertions.kt:33)
+	at ph.tala.registry.ui.RegistrationUiDeviceTest.dashboardAfterRestartDisplaysPersistedCounts(RegistrationUiDeviceTest.kt:138)
+
+INSTRUMENTATION_STATUS: stream=
+Error in dashboardAfterRestartDisplaysPersistedCounts(ph.tala.registry.ui.RegistrationUiDeviceTest):
+java.lang.AssertionError: Failed to perform checkIsDisplayed check: Expected at most 1 node but found 3 nodes that satisfy ((Text + InputText + EditableText contains '1' (ignoreCase: false)) && (hasAnySiblingThat(Text + InputText + EditableText contains 'Male' (ignoreCase: false))))
+	at androidx.compose.ui.test.AndroidAssertions_androidKt.checkIsDisplayed(AndroidAssertions.android.kt:35)
+	at androidx.compose.ui.test.AssertionsKt.isDisplayed(Assertions.kt:351)
+	at androidx.compose.ui.test.AssertionsKt.assertIsDisplayed(Assertions.kt:33)
+	at ph.tala.registry.ui.RegistrationUiDeviceTest.dashboardAfterRestartDisplaysPersistedCounts(RegistrationUiDeviceTest.kt:138)
+
+INSTRUMENTATION_STATUS: test=dashboardAfterRestartDisplaysPersistedCounts
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 2.114
+There was 1 failure:
+1) dashboardAfterRestartDisplaysPersistedCounts(ph.tala.registry.ui.RegistrationUiDeviceTest)
+java.lang.AssertionError: Failed to perform checkIsDisplayed check: Expected at most 1 node but found 3 nodes that satisfy ((Text + InputText + EditableText contains '1' (ignoreCase: false)) && (hasAnySiblingThat(Text + InputText + EditableText contains 'Male' (ignoreCase: false))))
+	at androidx.compose.ui.test.AndroidAssertions_androidKt.checkIsDisplayed(AndroidAssertions.android.kt:35)
+	at androidx.compose.ui.test.AssertionsKt.isDisplayed(Assertions.kt:351)
+	at androidx.compose.ui.test.AssertionsKt.assertIsDisplayed(Assertions.kt:33)
+	at ph.tala.registry.ui.RegistrationUiDeviceTest.dashboardAfterRestartDisplaysPersistedCounts(RegistrationUiDeviceTest.kt:138)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1
