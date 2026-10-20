@@ -1,0 +1,17 @@
+﻿[
+    {
+        "namespace":  "global",
+        "key":  "stay_on_while_plugged_in",
+        "value":  "0"
+    },
+    {
+        "namespace":  "system",
+        "key":  "screen_off_timeout",
+        "value":  "2147483647"
+    },
+    {
+        "namespace":  "secure",
+        "key":  "show_ime_with_hard_keyboard",
+        "value":  "0"
+    }
+]

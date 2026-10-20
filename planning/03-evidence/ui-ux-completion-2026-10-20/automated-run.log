@@ -1,0 +1,16 @@
+OK
+Performing Streamed Install
+Success
+Performing Streamed Install
+Success
+java.lang.AssertionError: Semantic Node has no parent layout with a Scroll SemanticsAction
+	at androidx.compose.ui.test.ActionsKt.scrollToNode(Actions.kt:96)
+	at androidx.compose.ui.test.ActionsKt.performScrollTo(Actions.kt:81)
+	at ph.tala.registry.ui.WorkspaceSemanticsDeviceTest.emptyMemberGuidanceAllowsAddAndReturnWithoutLosingDrafts(WorkspaceSemanticsDeviceTest.kt:121)
+
+FAILURES!!!
+Tests run: 15,  Failures: 3
+
+
+INSTRUMENTATION_CODE: -1
+Retained failure: ui-regression.log

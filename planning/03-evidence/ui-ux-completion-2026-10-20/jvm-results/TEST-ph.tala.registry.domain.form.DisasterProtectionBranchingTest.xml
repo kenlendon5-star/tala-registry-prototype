@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-20T07:31:51.494Z" hostname="KEN" time="0.005">
+  <properties/>
+  <testcase name="hazards none is exclusive" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.002"/>
+  <testcase name="nested evacuation other clears when parent choice changes" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.0"/>
+  <testcase name="evacuation branch clearing" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.001"/>
+  <testcase name="protection programs none and prefer-not-to-answer are exclusive" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.0"/>
+  <testcase name="late answer for hidden evacuation other must not appear" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.001"/>
+  <testcase name="unconditional protection answers survive branch flips" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.0"/>
+  <testcase name="fixed point clearing is order independent for disaster branches" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.0"/>
+  <testcase name="hazards normal options accumulate" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.001"/>
+  <testcase name="evacuation branch restores when known again" classname="ph.tala.registry.domain.form.DisasterProtectionBranchingTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

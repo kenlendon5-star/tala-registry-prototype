@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.domain.model.LocationRulesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-20T07:31:51.623Z" hostname="KEN" time="0.003">
+  <properties/>
+  <testcase name="outOfRangeCoordinatesAreRejected" classname="ph.tala.registry.domain.model.LocationRulesTest" time="0.002"/>
+  <testcase name="accuracyMustBeFiniteAndNonNegative" classname="ph.tala.registry.domain.model.LocationRulesTest" time="0.0"/>
+  <testcase name="validGpsFixPasses" classname="ph.tala.registry.domain.model.LocationRulesTest" time="0.0"/>
+  <testcase name="manualProblemsNameTheFirstBadField" classname="ph.tala.registry.domain.model.LocationRulesTest" time="0.001"/>
+  <testcase name="manualTextParsesStrictly" classname="ph.tala.registry.domain.model.LocationRulesTest" time="0.0"/>
+  <testcase name="nonFiniteValuesAreRejected" classname="ph.tala.registry.domain.model.LocationRulesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

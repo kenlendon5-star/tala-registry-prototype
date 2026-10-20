@@ -1,0 +1,8 @@
+android.widget.TextView	text='Magandang araw, Jamie Dela Cruz.'	desc=''	selected=false	bounds=[53,317][1232,428]
+android.widget.TextView	text='Your fieldwork workspace · Barangay Cogon'	desc=''	selected=false	bounds=[53,428][1421,526]
+android.widget.TextView	text='Edit enumerator profile'	desc=''	selected=false	bounds=[116,547][823,645]
+android.widget.TextView	text='Tala'	desc=''	selected=false	bounds=[43,63][215,180]
+android.widget.TextView	text='Barangay Cogon'	desc=''	selected=false	bounds=[43,180][497,264]
+android.widget.TextView	text='LOCAL DEMO'	desc=''	selected=false	bounds=[1839,121][2210,205]
+android.widget.TextView	text='Home'	desc=''	selected=false	bounds=[473,975][652,1059]
+android.widget.TextView	text='Households'	desc=''	selected=false	bounds=[1529,975][1891,1059]

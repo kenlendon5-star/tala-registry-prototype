@@ -1,0 +1,13 @@
+{
+  "image": "https://dl.google.com/android/repository/sys-img/android/x86_64-35_r02.zip",
+  "official_sha1": "2d857d170c0d1b827149565da34b3383e5306f7f",
+  "avd": "Tala_UI_API_35",
+  "api": 35,
+  "cores": 2,
+  "existing_avd_modified": false,
+  "requested_ram_mib": 1536,
+  "effective_guest_memory_kib": 2532900,
+  "initial_avd_requested_ram_mib": 8192,
+  "initial_host_memory_kib": 8085560,
+  "initial_host_free_memory_kib": 490064
+}

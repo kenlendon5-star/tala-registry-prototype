@@ -1,0 +1,56 @@
+﻿[
+    {
+        "classes":  "ph.tala.registry.ui.ShellDeviceTest,ph.tala.registry.ui.FormDeviceTest,ph.tala.registry.ui.EditingDeviceTest,ph.tala.registry.ui.WorkspaceRestorationDeviceTest",
+        "log":  "ui-regression.log",
+        "expected":  11,
+        "passed":  true,
+        "successfulChecks":  11,
+        "unsuccessfulChecks":  0,
+        "error":  null
+    },
+    {
+        "classes":  "ph.tala.registry.ui.FullCoverageDeviceTest#fullInterviewThroughAllSectionsWithTwoMembers",
+        "log":  "full-interview.log",
+        "expected":  1,
+        "passed":  true,
+        "successfulChecks":  1,
+        "unsuccessfulChecks":  0,
+        "error":  null
+    },
+    {
+        "classes":  "ph.tala.registry.ui.FullCoverageDeviceTest#verifyFullInterviewAfterForceStop",
+        "log":  "full-interview-restart.log",
+        "expected":  1,
+        "passed":  true,
+        "successfulChecks":  1,
+        "unsuccessfulChecks":  0,
+        "error":  null
+    },
+    {
+        "classes":  "ph.tala.registry.ui.InterviewLifecycleDeviceTest#completeThroughReviewWithDrawUndoRedoAndClear",
+        "log":  "signature-review.log",
+        "expected":  1,
+        "passed":  true,
+        "successfulChecks":  1,
+        "unsuccessfulChecks":  0,
+        "error":  null
+    },
+    {
+        "classes":  "ph.tala.registry.ui.InterviewLifecycleDeviceTest#signatureAndReviewedStatusSurviveForceStop",
+        "log":  "signature-restart.log",
+        "expected":  1,
+        "passed":  true,
+        "successfulChecks":  1,
+        "unsuccessfulChecks":  0,
+        "error":  null
+    },
+    {
+        "classes":  "ph.tala.registry.ui.InterviewLifecycleDeviceTest#callbackNoRespondentRefusalAndPartialResume",
+        "log":  "callback-refusal-resume.log",
+        "expected":  1,
+        "passed":  true,
+        "successfulChecks":  1,
+        "unsuccessfulChecks":  0,
+        "error":  null
+    }
+]

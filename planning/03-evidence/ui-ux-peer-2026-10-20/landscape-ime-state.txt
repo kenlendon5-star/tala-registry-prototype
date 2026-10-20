@@ -1,0 +1,2 @@
+  mInputShown=false
+  mIsInputViewShown=true mStatusIcon=0

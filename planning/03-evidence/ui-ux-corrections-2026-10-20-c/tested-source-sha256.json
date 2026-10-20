@@ -1,0 +1,470 @@
+﻿[
+    {
+        "path":  "android-native/app/build.gradle.kts",
+        "sha256":  "668374B4A5265FAA1E4E3C91A75F9A54DDB8C6D6AAE6B8C22B2B888F6D5CC9F5"
+    },
+    {
+        "path":  "android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/1.json",
+        "sha256":  "C223F5A7191AF9CDFDE3A6052992590698765751909457536AC9C134B8F42951"
+    },
+    {
+        "path":  "android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/2.json",
+        "sha256":  "353D4312270D22631DD0AA26A4E52550E23D5C2D29D181C38615AFB154D4846B"
+    },
+    {
+        "path":  "android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/3.json",
+        "sha256":  "E2B83BA1AA4E4A047319C0389FD661ADAAB01872D5056B42964109E0720F7712"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/CoordinatePersistenceDeviceTest.kt",
+        "sha256":  "716A8103EB89CCDD12850548DC695A124BDB05F863ACB08D9FA42DCFD806C4AF"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/DemographicSectionsPersistenceTest.kt",
+        "sha256":  "47A15A938EBDBD2322B857EAAF61C2FB8D107160C6125D53735FFBC06E6F368E"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/DisasterProtectionPersistenceTest.kt",
+        "sha256":  "BF0F98B888F88F64222873745F887823C7C1C39FBE36E3273E18238CB86B86A1"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/DurableSaveTest.kt",
+        "sha256":  "004545E5091136D108102D53D7E30992BC942AB3EFDAB2754BA9ABB3363DBC91"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/EditingPersistenceDeviceTest.kt",
+        "sha256":  "DE897DF0E5EA3A34A7F893EE74CA3CF1D0AE9C71D0557A52C9E573CFC2FD13C1"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/EducationEmploymentPersistenceTest.kt",
+        "sha256":  "218C5C14C3EB35C1B155AD57EB7756142959C0DF561F173574561D9E6A62F35E"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/HouseholdServicesPersistenceTest.kt",
+        "sha256":  "1D5D6F7647480FB98FE33D9DBEA4D58E1EDA476F6567BF5081C1F4E985C25033"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/InterviewLifecyclePersistenceTest.kt",
+        "sha256":  "3BF83AEC1C8AB99A240F88B25F38ED20DA8105DA3E95FFC9EB2DEA4DB12F50AF"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/RecordStoreDeviceTest.kt",
+        "sha256":  "98A6F1101ABB9570FC69100AFAA3D9440E3A9323324AE062B0F79FA77CC06755"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/SampleRecords.kt",
+        "sha256":  "073C28478903E487A69ECFFCC0A485AE2CF400B652B9D1CB1500C3887C987019"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/local/SchemaMigrationTest.kt",
+        "sha256":  "5211CE8DFD0FFC1483E8C104607EE6CA397330C88EDD68D37B1CD9073DF4DEFA"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/RegistrationDeviceTest.kt",
+        "sha256":  "CE041F99CE6759807E9C07E45209598D02F41B59D94EFF873785240F476985C2"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/data/RegistrationRestartProbe.kt",
+        "sha256":  "5590469A904FA1513550274CAFF8C7FA1533B5058253E6559C4806802A24A20E"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/testing/CompleteInterviewFixture.kt",
+        "sha256":  "D810CAA310FC4FF87EB7E30DDBD71FFD655BF901A43EAE4E1A7E75C0FF83B9B6"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/DiagProbe.kt",
+        "sha256":  "02A3E0F94E79BD35C4ACC4B5A5FA04D9E341198D737A9DC89CD410E421224534"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/EditingDeviceTest.kt",
+        "sha256":  "BEF853B3450F4E752F0B483D1FB53CA0263DBDDD7662561D4218F447E9D11856"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/FormDeviceTest.kt",
+        "sha256":  "C9E36543145C48481E8D5439978E872ACE06E9D7DE047CE0B78EE8084E8AAD60"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/FoundationSectionsDeviceTest.kt",
+        "sha256":  "C70707DCE9DDB9EE1E10B8E937EF7305B340D16D581A4074125862F02AB34C31"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/FullCoverageDeviceTest.kt",
+        "sha256":  "0356D98FD67B1512E1E350AEB9154E4899CA56C3C6A69111D0F1488C62608763"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/IdentityDeviceTest.kt",
+        "sha256":  "D198C5B70BCEEA8F1087C0BA7A857649CB0A6BDA28789A7736EA5E2046FD7A20"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/InterviewLifecycleDeviceTest.kt",
+        "sha256":  "45629BDF239E93B30D4FC1A61D8DE5BDB3CA86CBD118D48BEC56F956466AFEBA"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/LocationDeviceTest.kt",
+        "sha256":  "0A6AC367086DC53A2FF755D7440C15C9FE82407D243C0A1BC9DCC97998D17563"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/RegistrationUiDeviceTest.kt",
+        "sha256":  "F91B5E95D2C6F057A674A0E720DDBFD7382EBA6D10ED029817E8541AEAF7C6FA"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/ShellDeviceTest.kt",
+        "sha256":  "E8C0E2128A9721A422479228A79EC788826A2304B118185EDBE060A6FB4A8F99"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/WorkspaceRestorationDeviceTest.kt",
+        "sha256":  "D90F32E1C9890C65D54E1D120EF1CF03570003C7C5F061A78FCA317736D51121"
+    },
+    {
+        "path":  "android-native/app/src/androidTest/java/ph/tala/registry/ui/WorkspaceSemanticsDeviceTest.kt",
+        "sha256":  "E8F43010BF71C009F1DE0C4C092C15A66951FB675D27B9E07DDBEF7AC8433F82"
+    },
+    {
+        "path":  "android-native/app/src/main/AndroidManifest.xml",
+        "sha256":  "D83C24E584A9445C0414049C8081BE006566BFE30BBC616D42132151CC5F88B7"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/DataStoreEnumeratorProfileStore.kt",
+        "sha256":  "C107765E280C51C559E2573ABA5B9B8A6B13D438D2B355BE33CBB230E0C434DE"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/DemoFixtures.kt",
+        "sha256":  "FA11C7BBAF0CD4FFF28AD7A231B8EDD19FBA5CD28BEC3406489A47B4045C4C47"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/EnumeratorProfileStore.kt",
+        "sha256":  "04E6E910839B9E52D67DDA80F34144705CB44C3D8BB59B245948DB40FF26373C"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/HouseholdRepository.kt",
+        "sha256":  "173E781DCB1FFD121E4E886CECD99859C9CFD70F2A36D8926807E73B3A105EE1"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/local/Entities.kt",
+        "sha256":  "EFB8172E5D93C43DFAA4E86B2DAF439D9BF960E5074961B5BAFA2AB317C3C60B"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/local/RecordStore.kt",
+        "sha256":  "57337E5A702DF0757D4A41D34A2E3681046F46483ECF4CE45112BD9798A6EB18"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/local/RegistryDao.kt",
+        "sha256":  "DCB4AA841B609C10F78ED105BE0D415162AA24AF33274E9ACBF78BBBBAF54134"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/local/RegistryDatabase.kt",
+        "sha256":  "181C0C1C00925DE01F08C393B1D93A6BA3B915AA5E146441B37626AF8D4DFACE"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/data/PhotoStore.kt",
+        "sha256":  "6152DFB84DB8169F2D72A4A0EEDCB35555C685FE7040C0B21D18D761BEF6B2BB"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/edit/EditRules.kt",
+        "sha256":  "22984DFF3C3DD694D4E52655120C8AEA7FB1403BD85BADD07D5D162A6D3B9446"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/form/FormRules.kt",
+        "sha256":  "B4B2DA864C855CEE0803DA15058C208701C5CA114C440A3E03C0EC82F549FC84"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/form/InterviewRules.kt",
+        "sha256":  "7822DEB66E6BAAE626ED38087C02FDB75EB045993D4D68E03B5925C6B482EF80"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/form/PracticeSection.kt",
+        "sha256":  "08C73415799189ACAC2D9017D7EAB112394A2F0CA1FC64042D8E2DC0FF7720A4"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/form/QuestionnaireSections.kt",
+        "sha256":  "DC119ECB233121AD3CCC8506A54462CF20051EB8155D05DFB335B9B14E819DBF"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/model/Answers.kt",
+        "sha256":  "85F31E1942D063089636602592DEA0CA7E97BCD0C8E0537BC25CC184AA8B315C"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/model/Coordinate.kt",
+        "sha256":  "248BAE3DE9B43D194A828330ED20A5FAF478527DFCC42B1A737F30078BE54653"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/model/FieldSpec.kt",
+        "sha256":  "6D5264DDCD8C3A6237B72533FC714F8CF2AA7588B2DF55DB5814432090B5FB48"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/model/InterviewData.kt",
+        "sha256":  "2943111A79B580ED0532503A752E6634647F9C411CC9BCD60FC4D92E9D2C02FB"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/model/RecordIds.kt",
+        "sha256":  "3414B8B91A66C164042A48F9550A77861D99A3136BEF479D5A6B05419E27D33B"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/model/Records.kt",
+        "sha256":  "4462A9C8345CC9BBF589578EC36FA6112A928D6E6A533E482AE69D45503AE5DA"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/domain/model/RecordTextLimits.kt",
+        "sha256":  "033D85B8ABF3B287C814E0161BB04DA7F70DC39ED49B2EBB0B3DCCC35F1DB923"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/location/AndroidLocationClient.kt",
+        "sha256":  "7E4CB50AD6FFED2295AE90FB867AF9C9A3C52F4746B1A69AB4A64177CF2C3EBE"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/location/AndroidLocationPermissions.kt",
+        "sha256":  "5145A9D22E1BBAAEE6E543F1536E1C4597095462FCA3A1A27936BC300E65B567"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/location/LocationClient.kt",
+        "sha256":  "B52DCE00F62B8EC4119C4F491464811D17F9992C5BB22E1FDE13940C83F2EE3B"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/MainActivity.kt",
+        "sha256":  "4627F6BD9ED91F550EBBE04ABFD5A8004C8B5FC81B0D65920B69B1E764C009D8"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/TalaApplication.kt",
+        "sha256":  "D7B391708B7709E87153E6EF9177D8D841F814CD35A3447FC77638A795468616"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/form/FormSessionViewModel.kt",
+        "sha256":  "F89D94393E18FB929FCEDB91A14F7EF7C88A795F23428D9CA69A5C4CD15C2D79"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/form/PracticeFormScreen.kt",
+        "sha256":  "21A733B2F04421A0E20F6D40D16F2E5AEB6BE0CE9BEAF3CCACFE65403E6F1E35"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/form/SectionForm.kt",
+        "sha256":  "5AD66BC70B526D850B89D92981C08A72C0C69AC94A14B2FC19A1C5F693E49031"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/households/EditScreens.kt",
+        "sha256":  "46961247ADB64752EE368CE6BD026A62F27FF7D3AF9C415B3135A4A585FAF5ED"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/households/HouseholdEditViewModel.kt",
+        "sha256":  "EF1C10DD97E4741793AECF37EC0C0F61390B8C68643503139831B1ED6E42F77F"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/households/MemberEditViewModel.kt",
+        "sha256":  "C7DBB5B41F7EE4DC56DBCFCD953F6C6538C20F1C0E236F11319C70466B3EB9A8"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/interview/InterviewWorkspaceScreen.kt",
+        "sha256":  "1B4451E14E25D91993EAF09FD9E9B1D9D9E4C91FD25538D2EB2D24E1D786C49B"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/interview/InterviewWorkspaceViewModel.kt",
+        "sha256":  "29995DB7F05C9A8F63A510CF48861F72738BB33F899F5DFE6E8A88F8276F148B"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/interview/SectionStatus.kt",
+        "sha256":  "6520B196B3639E05BE6F7E54C9A1E7ADA63DC54A21E0D0D32EFFA62E8E0B6899"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/interview/SignaturePad.kt",
+        "sha256":  "27ECDC37E443643D2B503818881B2BC42D2215A5E96FFC7AB8A7F7F53CF4BBC7"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/InterviewViewModel.kt",
+        "sha256":  "F28074C94834273FD357EC13A7D7BE9D770184EA032EE9651CAF4F86F85540AF"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/location/LocationCard.kt",
+        "sha256":  "6755A25562C9CDE0EB1632F78DFA818A6ED9AAEEE21F0C1C0137E9BB0DDF28E1"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/location/LocationViewModel.kt",
+        "sha256":  "AA5A10FE7149B28DACFA3E6D45AF4F173F3D4570E3C9D5F24854CA3D35A56949"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/PhotoPreview.kt",
+        "sha256":  "EDD2E4D40DEDE4DF31F7E6BD017C84A0105CA6771315561A90545F5C76D7050D"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/profile/EnumeratorProfileUiState.kt",
+        "sha256":  "B6A426FF5294EDBBBB2215AEB9515871BDE746474BC3268AB28F9DBC82BF81A9"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/profile/EnumeratorProfileViewModel.kt",
+        "sha256":  "528719FD178DEF2DF220ABC4FD2234BE09FEB0DD487047A85276F565831B0412"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/RegistryViewModel.kt",
+        "sha256":  "987495552617FDAB08E0E1874D4CC8AC09FCB94DD692F367EE978B75028186E0"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/Routes.kt",
+        "sha256":  "D8C4378E6183F40699BBFB96E976BE37B6A937B03F97DE16257E75672443DE8E"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/TalaApp.kt",
+        "sha256":  "F44D6704EE00CA7E46E03F5E474DEAE35AFC2DEB61E48A56E4255ECA47467DC5"
+    },
+    {
+        "path":  "android-native/app/src/main/java/ph/tala/registry/ui/theme/Theme.kt",
+        "sha256":  "530E0313F4639FC40A45440DE88CAB7F92C029D4756E82A2AD207748C427305E"
+    },
+    {
+        "path":  "android-native/app/src/main/res/values/strings.xml",
+        "sha256":  "3A1C0FC9B04E66C4CFBCF1B35BCBA7BFD8FE32E7EB92817055B120A75BB430A2"
+    },
+    {
+        "path":  "android-native/app/src/main/res/values/themes.xml",
+        "sha256":  "021848BA9828D2583B6619CA7C18BBC532C945B989217313CEC5AFCE5094D12B"
+    },
+    {
+        "path":  "android-native/app/src/main/res/xml/data_extraction_rules.xml",
+        "sha256":  "CB029B35DB0E976C087100424E16E14A6256B46962398887520E51508C3B5842"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/audit/FoundationFixesTest.kt",
+        "sha256":  "F1334EC61E39FF881DF322E3B90804CCD399E200BE22EB588A4AD849320AE2F2"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/audit/RegistrationRegressionTest.kt",
+        "sha256":  "7E33122A0F0F89BAAE2FDA42A678E8FAB53A8568A6F08541EE7B5E0282B3BD77"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/audit/SprintAcceptanceRegressionTest.kt",
+        "sha256":  "E1919A959F0C7C18D1D83FE4EC43D702773455C254E24BC97A2BB78BB0EDF79A"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/data/FakeRecordStore.kt",
+        "sha256":  "15CB2CA7709B2F610D26A60D02D8A6D0C54EBFCF41F28648DA8164043CF75ED1"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/data/HouseholdRepositoryTest.kt",
+        "sha256":  "C1CBC03DDCCF20712E76DB9782D130B3B05C33D13BE1A5842664D80D6B70050E"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/data/InMemoryEnumeratorProfileStore.kt",
+        "sha256":  "A627CAB63531937E822E9D13BF246B95D2990515AC2028E8C6CF02123F11295A"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/data/InMemoryPhotoStore.kt",
+        "sha256":  "F62496B516A3EBCE1AD99FDFCB9064ECF916EEF4FDE47033D9EE2D4B78C08EDF"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/data/MemoryHouseholdRepository.kt",
+        "sha256":  "6C13D7EDF24AF34084A20220BCA976B8A7C743761FC6048AA7D30489AA7E9165"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/DemographicSectionsBranchingTest.kt",
+        "sha256":  "6BD807B532F6DACA06796053AD1C80B34D248F997873DF2F20D08CE31565CD9B"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/DemographicSectionsMemberIsolationTest.kt",
+        "sha256":  "3B09E74004EEA28D5B928FC0E8F3787DA578BD018744255896CE110B83AA1787"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/DemographicSectionsValidationTest.kt",
+        "sha256":  "68C3C3F6BFB3428E4C7FB2EB1100BE45EEC4FFE246B1199CCBA67B4AE7D68FC0"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/DisasterProtectionBranchingTest.kt",
+        "sha256":  "534FDE2CB11C4EB9FE0694F2E2660903769C48B78A951ED27C152F37E10318EF"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/DisasterProtectionScopingTest.kt",
+        "sha256":  "94D4CB6BEB37FD7EAF7159E2F453349BA197C7ACB6DB4057405E34F93955F022"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/DisasterProtectionValidationTest.kt",
+        "sha256":  "90EC6EB8305CE11AD2C033F369EF293CD62CFA1937364A453CB926FB63EEE874"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/EducationEmploymentBranchingTest.kt",
+        "sha256":  "8F5C016C5043C9A7EA23C8F49D935BAE867B976B8269B44C6168B5C23414117C"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/EducationEmploymentMemberIsolationTest.kt",
+        "sha256":  "2EBD721389EB4A6B8C93B995E0911C54FF746FE7E66F464C83430B04971DD6EA"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/EducationEmploymentValidationTest.kt",
+        "sha256":  "2F52003556DD218A4A5CE52475CE59B36F434D23E0C9DBD51ACD71D52C4AE88D"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/EmploymentValidationTest.kt",
+        "sha256":  "795A0DEA79F617686907F1DB59CBFFFF3E7E629E118CDA8E4C829DD8D0C9EA20"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/FormRulesTest.kt",
+        "sha256":  "0ED6BC7E958917DCE6378AB322299F8D98FA829FE2935958D2CC5B488912AC27"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/HouseholdServicesBranchingTest.kt",
+        "sha256":  "770D3F044BA16DD0C2E50D803541CAD0D7CBD1667220B14E33081AE8212B02F7"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/HouseholdServicesScopingTest.kt",
+        "sha256":  "DED8BEEEEEA496A0FE11D814EC6D34D296233C070B00AABCA2652804868C88F2"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/HouseholdServicesValidationTest.kt",
+        "sha256":  "68A15025AB9ACD87387E25D3F59B44B3571A04D898E804BE5004E19F6C89E17C"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/InterviewLifecycleTest.kt",
+        "sha256":  "91B8EA6889B4B5C59C1B36BEC70A24A09EB2778EB2B7D6A9F4323E60DA77D343"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/form/QuestionnaireSectionsTest.kt",
+        "sha256":  "84B5299D7F93815F9FC8EEB9671CDE2635A21721FAFBF44DF58E62FD6E8C2A20"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/domain/model/LocationRulesTest.kt",
+        "sha256":  "F68749709C44E7CD03B22F115DBF057B31573EC34F0B372D9C1DD4D40E9951AD"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/location/FakeLocationClient.kt",
+        "sha256":  "AF5108032A2483A82EC4A8743CAAF69D248B4BEC5B4D191C63BD310CFA46FD3D"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/EditScreensViewModelTest.kt",
+        "sha256":  "14A77A4432ADF87830A87FBD3E41C2B6B407CA84221EEF478EB3204E2102CBDD"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/FormSessionViewModelTest.kt",
+        "sha256":  "EDEB8E376A5E6D3234DF72B24006647F544E78F290352AB8AB3D58D714104A5E"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/interview/InterviewAnswersRepositoryTest.kt",
+        "sha256":  "395C12292A2FC24C6101CB9560DF92F01D0928C95C9688FA7F6C683468B1619E"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/interview/InterviewLifecycleViewModelTest.kt",
+        "sha256":  "0770B0D388D8941524570BE19E49AB660EB04E598A97CAE26BA758A5F977E43A"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/interview/InterviewSectionsViewModelTest.kt",
+        "sha256":  "6BC528D353727CAA8FE2565CF1D9BC469A571D45834C9E9B936557D529B357C6"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/interview/SectionNumberingTest.kt",
+        "sha256":  "44A30643E01C3F1A727E88779B6BB59A34247D06A620A8AB0BEEF7F2D1955C36"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/interview/SectionStatusTest.kt",
+        "sha256":  "79E2135087CFE3C72B997BAAF9B70B6941591E0043F011F8D1B0FBF5FAE5C39C"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/interview/VisitHistoryTest.kt",
+        "sha256":  "001126ADAEBC91E1118E003B03F4B928684E3F5513A54E864AC70E763CF98A17"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/location/LocationViewModelTest.kt",
+        "sha256":  "0AC86F099024B1966F333163CDB3C88E488CC1FAAC09A0D07943DEA3838B274D"
+    },
+    {
+        "path":  "android-native/app/src/test/java/ph/tala/registry/ui/ShellViewModelTest.kt",
+        "sha256":  "A73BBD6C7E468AAF06501D36544C605CC89DEC42DD9339EE89C6BB59F0612F5F"
+    },
+    {
+        "path":  "android-native/gradle/libs.versions.toml",
+        "sha256":  "40A6CAF0B6EAAFD1B3D17927BE3E7A469881072B3622C96D29AD4CE234A00471"
+    }
+]

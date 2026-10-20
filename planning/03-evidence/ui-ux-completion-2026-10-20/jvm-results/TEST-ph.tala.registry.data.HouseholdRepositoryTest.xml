@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.data.HouseholdRepositoryTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-20T07:31:51.392Z" hostname="KEN" time="0.017">
+  <properties/>
+  <testcase name="creatingTwoHouseholdsKeepsBothRecordsAndTheirOwnValues" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.003"/>
+  <testcase name="archivingAndRestoringOnlyTouchTheTargetHousehold" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.002"/>
+  <testcase name="editingAMissingRecordFailsWithAPlainMessage" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.002"/>
+  <testcase name="addingRenamingAndRemovingMembersKeepsTheRestOfTheRecord" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.002"/>
+  <testcase name="seedingFixturesIsIdempotentAndKeepsUserEdits" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.003"/>
+  <testcase name="retriedCreateKeepsTheSameIdentityAndDisplayCode" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.001"/>
+  <testcase name="blankDraftsAreRejectedBeforeAnyWrite" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.002"/>
+  <testcase name="aFailedWriteReportsFailureAndLeavesTheSavedRecordUnchanged" classname="ph.tala.registry.data.HouseholdRepositoryTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

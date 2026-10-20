@@ -1,0 +1,3 @@
+android.widget.TextView	text='Demographics'	desc=''	selected=false	bounds=[53,149][458,233]
+android.widget.EditText	text='UXSample'	desc=''	selected=false	bounds=[53,286][2221,496]
+android.widget.TextView	text='First Name'	desc=''	selected=false	bounds=[95,286][258,328]

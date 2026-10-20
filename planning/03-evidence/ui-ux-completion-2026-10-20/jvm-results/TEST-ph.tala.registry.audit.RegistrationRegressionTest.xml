@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.audit.RegistrationRegressionTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-20T07:31:51.231Z" hostname="KEN" time="0.132">
+  <properties/>
+  <testcase name="memberIdentityAndAnswersStayWithTheirOwnIds" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.012"/>
+  <testcase name="failedDraftSavePreventsPhotoMutationAndKeepsTheDraftForRetry" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.018"/>
+  <testcase name="photoFailureDoesNotLoseTheAlreadyFlushedDraft" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.006"/>
+  <testcase name="aFailedPhotoOperationCanBeRetriedWithoutChangingTheSavedDraft" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.008"/>
+  <testcase name="answersTypedDuringAPhotoWriteRemainInTheDraftAndReachStorage" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.043"/>
+  <testcase name="liveCountsFollowSexEditsMemberRemovalArchiveAndRestore" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.017"/>
+  <testcase name="structuredIdentityCannotBeOverwrittenByTheLegacyEditorAndAddressStaysInSync" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.005"/>
+  <testcase name="removingPhotoFlushesEditsDuringDebounce" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.004"/>
+  <testcase name="profileRemovalCommitsBeforeSuccessAndEditsClearSavedAcknowledgement" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.004"/>
+  <testcase name="answersTypedDuringADraftWriteArePreservedAndSavedNext" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.008"/>
+  <testcase name="attributionIsCapturedAtCreationAndNeverRestampedByOpeningOrEditing" classname="ph.tala.registry.audit.RegistrationRegressionTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

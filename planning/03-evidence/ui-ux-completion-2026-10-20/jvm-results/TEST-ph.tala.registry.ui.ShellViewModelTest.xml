@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.ui.ShellViewModelTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-20T07:31:51.733Z" hostname="KEN" time="0.121">
+  <properties/>
+  <testcase name="blankIdentityIsRejected" classname="ph.tala.registry.ui.ShellViewModelTest" time="0.0"/>
+  <testcase name="interviewTracksIdentityAcrossReorderingAndRemoval" classname="ph.tala.registry.ui.ShellViewModelTest" time="0.03"/>
+  <testcase name="homeSexCountsComeFromStoredDemographicsAnswers" classname="ph.tala.registry.ui.ShellViewModelTest" time="0.028"/>
+  <testcase name="searchAndStatusCombineWithoutChangingHomeTotals" classname="ph.tala.registry.ui.ShellViewModelTest" time="0.047"/>
+  <testcase name="savedInputsRestoreAndNewRepositoryEmissionsRefreshResults" classname="ph.tala.registry.ui.ShellViewModelTest" time="0.014"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

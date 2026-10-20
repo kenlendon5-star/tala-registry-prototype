@@ -1,0 +1,7 @@
+android.widget.TextView	text='Choose picture'	desc=''	selected=false	bounds=[463,63][711,86]
+android.widget.TextView	text='Remove picture'	desc=''	selected=false	bounds=[1560,63][1815,86]
+android.widget.TextView	text=' Previous'	desc=''	selected=false	bounds=[107,244][260,297]
+android.widget.TextView	text='Section 5 of 18'	desc=''	selected=false	bounds=[344,244][1996,297]
+android.widget.TextView	text='Next '	desc=''	selected=false	bounds=[2080,244][2167,297]
+android.widget.TextView	text='Check answers'	desc=''	selected=false	bounds=[95,391][346,444]
+android.widget.TextView	text='Save draft'	desc=''	selected=false	bounds=[504,391][671,444]

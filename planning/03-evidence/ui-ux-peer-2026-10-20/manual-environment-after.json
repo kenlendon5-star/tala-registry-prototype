@@ -1,0 +1,27 @@
+{
+  "settings": [
+    {
+      "namespace": "system",
+      "key": "font_scale",
+      "value": "2.0"
+    },
+    {
+      "namespace": "system",
+      "key": "accelerometer_rotation",
+      "value": "0"
+    },
+    {
+      "namespace": "system",
+      "key": "user_rotation",
+      "value": "1"
+    },
+    {
+      "namespace": "secure",
+      "key": "show_ime_with_hard_keyboard",
+      "value": "1"
+    }
+  ],
+  "night": "Night mode: no",
+  "size": "Physical size: 1080x2400",
+  "density": "Physical density: 420"
+}

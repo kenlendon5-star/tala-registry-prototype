@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ph.tala.registry.ui.EditScreensViewModelTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-20T07:31:51.631Z" hostname="KEN" time="0.094">
+  <properties/>
+  <testcase name="blankDraftReportsFailureAndWritesNothing" classname="ph.tala.registry.ui.EditScreensViewModelTest" time="0.017"/>
+  <testcase name="aFailedWriteIsNeverReportedAsSaved" classname="ph.tala.registry.ui.EditScreensViewModelTest" time="0.011"/>
+  <testcase name="memberIdentityIsStableAcrossSavesAndRemovalIsReported" classname="ph.tala.registry.ui.EditScreensViewModelTest" time="0.016"/>
+  <testcase name="typingDoesNotWaitForAnotherPersistedIdentityRead" classname="ph.tala.registry.ui.EditScreensViewModelTest" time="0.026"/>
+  <testcase name="unsavedDraftsAndIdentitySurviveProcessDeath" classname="ph.tala.registry.ui.EditScreensViewModelTest" time="0.023"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

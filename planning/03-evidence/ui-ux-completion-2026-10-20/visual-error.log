@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "C:\Users\kenle\Documents\ChatGPT\Capstone\tools\verify-ui-ux-visual.py", line 314, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\kenle\Documents\ChatGPT\Capstone\tools\verify-ui-ux-visual.py", line 205, in main
+    wait_tap(text="Browse all", scrolls=12, timeout=90)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\kenle\Documents\ChatGPT\Capstone\tools\verify-ui-ux-visual.py", line 91, in wait_tap
+    root = dump(CUR)
+  File "C:\Users\kenle\Documents\ChatGPT\Capstone\tools\verify-ui-ux-visual.py", line 45, in dump
+    raise RuntimeError("uiautomator dump failed repeatedly")
+RuntimeError: uiautomator dump failed repeatedly

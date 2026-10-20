@@ -1,0 +1,1 @@
+Stopped by Codex after captures showed wrong orientation. Settings restored from the pre-run snapshot. Virtual AC restored off. No display override had been applied. Not an acceptance run.

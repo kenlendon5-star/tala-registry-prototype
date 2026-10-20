@@ -1,0 +1,32 @@
+[
+  {
+    "namespace": "system",
+    "key": "font_scale",
+    "value": "1.0"
+  },
+  {
+    "namespace": "system",
+    "key": "accelerometer_rotation",
+    "value": "0"
+  },
+  {
+    "namespace": "system",
+    "key": "user_rotation",
+    "value": "0"
+  },
+  {
+    "namespace": "secure",
+    "key": "show_ime_with_hard_keyboard",
+    "value": "1"
+  },
+  {
+    "namespace": "global",
+    "key": "stay_on_while_plugged_in",
+    "value": "15"
+  },
+  {
+    "namespace": "system",
+    "key": "screen_off_timeout",
+    "value": "1800000"
+  }
+]

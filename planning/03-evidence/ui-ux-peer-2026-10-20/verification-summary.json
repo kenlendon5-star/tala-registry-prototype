@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-20",
+  "baselineCommit": "8849a54",
+  "device": "emulator-5554, API 35 AOSP",
+  "build": "BUILD SUCCESSFUL in 5m 13s; 85 actionable tasks: 8 executed, 1 from cache, 76 up-to-date",
+  "jvmTask": "UP-TO-DATE; retained XML counted independently",
+  "jvm": {
+    "suites": 31,
+    "tests": 175,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "apkSha256": {
+    "android-native/app/build/outputs/apk/debug/app-debug.apk": "b2d1f0b769dbf5fb8c083a224cf7a0a55e6be1cdb7b1aa19a8192d3e1d8d23c0",
+    "android-native/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk": "d86c771d0a0c788967d17edd485f15256d07c8e0ba7a803b048c9fd6480cd991"
+  },
+  "semantics": {
+    "initial": "2 setup timeouts; display found asleep",
+    "unchangedApkAwakeRetry": "2 passed"
+  },
+  "full16Regression": "not rerun on changed build"
+}
