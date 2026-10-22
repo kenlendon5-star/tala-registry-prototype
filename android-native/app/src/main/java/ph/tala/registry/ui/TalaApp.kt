@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -67,12 +69,23 @@ import ph.tala.registry.ui.location.HouseholdLocationCard
 import ph.tala.registry.ui.location.LocationCapture
 import ph.tala.registry.ui.location.LocationUiState
 import ph.tala.registry.ui.location.LocationViewModel
+import ph.tala.registry.ui.map.ConnectivityMonitor
+import ph.tala.registry.ui.map.MapScreen
+import ph.tala.registry.ui.map.MapViewModel
 import ph.tala.registry.ui.profile.EnumeratorProfileUiState
 import ph.tala.registry.ui.profile.EnumeratorProfileViewModel
+import ph.tala.registry.data.InterviewResume
+import ph.tala.registry.data.InterviewResumeStore
+import ph.tala.registry.ui.home.HomeInsightsViewModel
+import ph.tala.registry.ui.home.HomeScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: EnumeratorProfileStore) {
+fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: EnumeratorProfileStore, resumes: InterviewResumeStore) {
+    val homeInsights: HomeInsightsViewModel = viewModel(factory = viewModelFactory {
+        initializer { HomeInsightsViewModel(repository, resumes) }
+    })
+    val insights by homeInsights.state.collectAsStateWithLifecycle()
     val registry: RegistryViewModel = viewModel(factory = viewModelFactory {
         initializer { RegistryViewModel(repository, createSavedStateHandle()) }
     })
@@ -92,7 +105,10 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
     val isFullScreen = route == Destination.Questionnaire.PATTERN || route == Destination.Interview.PATTERN || route == Destination.Practice.PATTERN ||
         route == Destination.HouseholdAdd.route || route == Destination.HouseholdEdit.PATTERN ||
         route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN || route == Destination.Profile.route
-    val openHousehold: (HouseholdId) -> Unit = { nav.navigate(Destination.Interview(it).route) { launchSingleTop = true } }
+    val openHousehold: (HouseholdId) -> Unit = {
+        homeInsights.opened(it)
+        nav.navigate(Destination.Interview(it).route) { launchSingleTop = true }
+    }
     val openFilteredHouseholds: (HouseholdFilter) -> Unit = { filter ->
         registry.setFilter(filter)
         nav.navigate(Destination.Households.route) { launchSingleTop = true }
@@ -117,7 +133,7 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
         topBar = {
             // The questionnaire owns save-before-exit navigation and its section heading.
             // Avoid a duplicate fixed app bar consuming the short viewport above the IME.
-            if (route != Destination.Questionnaire.PATTERN) TopAppBar(
+            if (route != Destination.Questionnaire.PATTERN && route != Destination.Home.route) TopAppBar(
                 title = {
                     Column {
                         Text(appBarTitle ?: "Tala", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
@@ -139,7 +155,7 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
             )
         },
         bottomBar = {
-            if (!isFullScreen) NavigationBar {
+            if (!isFullScreen) NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 0.dp) {
                 listOf(
                     Destination.Home to "Home",
                     Destination.Households to "Households",
@@ -162,8 +178,8 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                                 else -> RegistryIcon(house = false)
                             }
                         },
-                        label = { Text(label) },
-                        modifier = Modifier.testTag("nav-$label"),
+                        label = if (LocalDensity.current.fontScale >= 1.5f) null else ({ Text(label) }),
+                        modifier = Modifier.testTag("nav-$label").semantics { contentDescription = label },
                     )
                 }
             }
@@ -181,23 +197,49 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                         initializer { InterviewWorkspaceViewModel(id, repository, photos, profiles,
                             backStack.arguments?.getString("section") ?: "setup", backStack.arguments?.getString("member"), createSavedStateHandle()) }
                     })
+                    val workspaceState by workspace.state.collectAsStateWithLifecycle()
+                    LaunchedEffect(id, workspaceState.loading, workspaceState.route, workspaceState.memberId) {
+                        if (!workspaceState.loading && workspaceState.record != null) {
+                            homeInsights.remember(InterviewResume(id, workspaceState.route, workspaceState.memberId))
+                        }
+                    }
                     InterviewWorkspaceScreen(workspace) { nav.popBackStack() }
                 }
                 composable(Destination.Home.route) {
                     HomeScreen(
                         state,
+                        insights,
                         profileState.copy(name = savedProfile.name, barangay = savedProfile.barangay),
-                        onOpenEnumeratorProfile = { nav.navigate(Destination.Profile.route) { launchSingleTop = true } },
-                        onOpenHousehold = openHousehold,
-                        onRegisterHousehold = { nav.navigate(Destination.HouseholdAdd.route) { launchSingleTop = true } },
-                        onAddMember = { nav.navigate(Destination.Households.route) { launchSingleTop = true } },
-                        onCaptureLocation = { nav.navigate(Destination.Map.route) { launchSingleTop = true } },
-                        onViewCallbacks = { registry.setFilter(HouseholdFilter.Callback); nav.navigate(Destination.Households.route) { launchSingleTop = true } },
-                        onViewReports = { nav.navigate(Destination.Reports.route) { launchSingleTop = true } },
+                        onOpenProfile = { nav.navigate(Destination.Profile.route) { launchSingleTop = true } },
+                        onContinue = { reference -> nav.navigate(Destination.Questionnaire(reference.householdId, reference.section, reference.memberId?.let(::MemberId)).route) { launchSingleTop = true } },
+                        onRegister = { nav.navigate(Destination.HouseholdAdd.route) { launchSingleTop = true } },
+                        onBrowse = { registry.clearSearch(); nav.navigate(Destination.Households.route) { launchSingleTop = true } },
+                        onCallbacks = { registry.setQuery(""); openFilteredHouseholds(HouseholdFilter.Callback) },
                     )
                 }
                 composable(Destination.Map.route) {
-                    MapScreen()
+                    val context = LocalContext.current
+                    val connectivity = remember { ConnectivityMonitor(context) }
+                    DisposableEffect(connectivity) {
+                        connectivity.start()
+                        onDispose { connectivity.stop() }
+                    }
+                    val mapModel: MapViewModel = viewModel(factory = viewModelFactory {
+                        initializer { MapViewModel(repository, connectivity.online, savedState = createSavedStateHandle()) }
+                    })
+                    val mapState by mapModel.state.collectAsStateWithLifecycle()
+                    MapScreen(
+                        state = mapState,
+                        onOpenHousehold = openHousehold,
+                        onSelect = mapModel::select,
+                        onStartAdjust = mapModel::startAdjust,
+                        onPlacePin = mapModel::placePin,
+                        onEditLatitude = mapModel::editLatitude,
+                        onEditLongitude = mapModel::editLongitude,
+                        onSaveAdjust = mapModel::saveAdjust,
+                        onCancelAdjust = mapModel::cancelAdjust,
+                        onExternalMapUnavailable = mapModel::reportExternalMapUnavailable,
+                    )
                 }
                 composable(Destination.Reports.route) {
                     ReportsScreen()
@@ -356,158 +398,6 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun HomeScreen(
-    state: RegistryUiState,
-    profile: EnumeratorProfileUiState,
-    onOpenEnumeratorProfile: () -> Unit,
-    onOpenHousehold: (HouseholdId) -> Unit,
-    onRegisterHousehold: () -> Unit,
-    onAddMember: () -> Unit,
-    onCaptureLocation: () -> Unit,
-    onViewCallbacks: () -> Unit,
-    onViewReports: () -> Unit,
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().testTag("home-screen"),
-        contentPadding = PaddingValues(20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        item {
-            Text("Magandang araw, ${profile.name}.", style = MaterialTheme.typography.titleMedium)
-            Text("Your fieldwork workspace · ${profile.barangay}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Surface(
-                onClick = onOpenEnumeratorProfile,
-                shape = RoundedCornerShape(14.dp),
-                color = MaterialTheme.colorScheme.surface,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
-                    .testTag("enumerator-row")
-                    .semantics { contentDescription = "Enumerator's Data, ${profile.name}, double tap to edit profile" },
-            ) {
-                Row(
-                    Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        Modifier.size(40.dp).background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(12.dp)),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        RegistryIcon(house = false, modifier = Modifier.size(20.dp))
-                    }
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(profile.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                        Text(profile.barangay, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                    IconButton(onClick = onOpenEnumeratorProfile) {
-                        BackArrowGlyph(Modifier.semantics { contentDescription = "Open enumerator profile" })
-                    }
-                }
-            }
-        }
-        item {
-            Surface(color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(24.dp)) {
-                Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    RegistryIcon(house = true, modifier = Modifier.size(34.dp))
-                    Text("Small visits.\nA fuller picture.", fontFamily = FontFamily.Serif, style = MaterialTheme.typography.headlineLarge)
-                    Text("Find a household and pick up where you left off.", style = MaterialTheme.typography.bodyMedium)
-                }
-            }
-        }
-        if (state.loading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
-        else {
-            item {
-                // Adaptive columns keep whole labels readable at large font instead of breaking
-                // words across three narrow columns (UX-09). Counts and actions are unchanged.
-                MetricGrid(
-                    listOf(
-                        MetricSpec("Households", state.households.size, hint = "Browse all", onClick = onRegisterHousehold),
-                        MetricSpec("Members", state.memberCount, onClick = onAddMember),
-                        MetricSpec("Callbacks", state.callbackCount, hint = "Filter list", onClick = onViewCallbacks),
-                        MetricSpec("Male", state.maleCount),
-                        MetricSpec("Female", state.femaleCount),
-                        MetricSpec("Sex not recorded", state.unrecordedSexCount),
-                    ),
-                )
-            }
-            item { Button(onClick = onRegisterHousehold, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("register-household")) { Text(if (state.households.isEmpty()) "Register your first household" else "Register Household") } }
-            if (state.households.isNotEmpty()) {
-                val household = state.households.first()
-                item {
-                    Surface(
-                        onClick = { onOpenHousehold(household.id) },
-                        shape = RoundedCornerShape(14.dp),
-                        color = MaterialTheme.colorScheme.surface,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
-                            .testTag("continue-row")
-                            .semantics {
-                                contentDescription = "Continue: ${household.headName}, ${household.displayCode}, ${household.status.label}, double tap to open interview"
-                            },
-                    ) {
-                        Row(
-                            Modifier.fillMaxWidth().padding(16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Box(
-                                Modifier.size(44.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(12.dp)),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                RegistryIcon(house = true, modifier = Modifier.size(22.dp))
-                            }
-                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text("Continue: ${household.headName}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                                Text("${household.displayCode} · ${household.status.label}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            IconButton(onClick = { onOpenHousehold(household.id) }) {
-                                BackArrowGlyph(Modifier.semantics { contentDescription = "Open household interview" })
-                            }
-                        }
-                    }
-                }
-            }
-            if (state.households.isEmpty()) {
-                item {
-                    Column(
-                        Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Text("No households yet.", style = MaterialTheme.typography.titleMedium)
-                        Text("Register your first household to begin fieldwork.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            }
-            item {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    OutlinedButton(
-                        onClick = onAddMember,
-                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-add-member"),
-                    ) { Text("Add member") }
-                    OutlinedButton(
-                        onClick = onCaptureLocation,
-                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-capture-location"),
-                    ) { Text("Capture location") }
-                    OutlinedButton(
-                        onClick = onViewCallbacks,
-                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-view-callbacks"),
-                    ) { Text("View callbacks") }
-                    OutlinedButton(
-                        onClick = onViewReports,
-                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("quick-view-reports"),
-                    ) { Text("View reports") }
-                }
-            }
-        }
-        item { DemoNotice() }
     }
 }
 
@@ -725,73 +615,9 @@ private fun StatusBadge(label: String, archived: Boolean) {
     }
 }
 
-private data class MetricSpec(val label: String, val value: Int, val hint: String? = null, val onClick: (() -> Unit)? = null)
-
-/**
- * Reflows the metric tiles by font scale so large text keeps whole labels readable instead of
- * breaking words across three narrow columns (UX-09). Counts and their actions are unchanged.
- */
-@Composable
-private fun MetricGrid(metrics: List<MetricSpec>) {
-    val columns = if (LocalDensity.current.fontScale >= 1.5f) 2 else 3
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        metrics.chunked(columns).forEach { row ->
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                row.forEach { metric ->
-                    Metric(metric.label, metric.value, Modifier.weight(1f), hint = metric.hint, onClick = metric.onClick)
-                }
-                repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun Metric(label: String, value: Int, modifier: Modifier = Modifier, hint: String? = null, onClick: (() -> Unit)? = null) {
-    // Clickable metrics get an enclosed card affordance; plain counts keep the compact layout.
-    if (onClick == null) {
-        Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(value.toString(), modifier = Modifier.testTag("metric-$label"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    } else {
-        Surface(
-            onClick = onClick,
-            shape = RoundedCornerShape(14.dp),
-            color = MaterialTheme.colorScheme.surface,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            modifier = modifier,
-        ) {
-            Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(value.toString(), modifier = Modifier.testTag("metric-$label"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(hint ?: "", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-            }
-        }
-    }
-}
-
 @Composable
 private fun DemoNotice() {
     Text("Fictional sample records · Saves stay on this device.\nQuestionnaire answers, pictures, signatures and the enumerator profile save here.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-}
-
-/** Map screen: placeholder for household location capture (future build). */
-@Composable
-private fun MapScreen() {
-    Column(
-        Modifier.fillMaxSize().padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text("Map", style = MaterialTheme.typography.titleLarge)
-        Text("Household locations appear here once a location is captured.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Box(
-            Modifier.fillMaxWidth().heightIn(min = 300.dp).border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text("No locations recorded yet.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    }
 }
 
 /** Reports screen: placeholder for export/restore (future build). */

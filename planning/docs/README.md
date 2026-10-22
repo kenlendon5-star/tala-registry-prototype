@@ -13,6 +13,8 @@ Start with the six specifications below. They share the offline native Android r
 
 Supporting artifacts:
 
+- [Tala Registry Home implementation and agent handoff](design/HOME-REDESIGN-2026-10-21.md): approved design, live-data contracts, responsive behavior, source ownership and verification.
+- [Portrait and landscape UI/UX implementation guide](design/UI-UX-IMPLEMENTATION-PLAN-2026-10-21.md): accepted recommendations, agent instructions, and verification checklist for the upcoming native UI changes.
 - [Linked wireframe gallery](design/wireframes.html): 12 target screens, local/offline HTML.
 - [Requirements traceability](traceability.md): features → screens → code/tests → remaining acceptance.
 - [Native acceptance matrix](reference/native-acceptance-matrix.md): every PR/TR requirement mapped to implementation, tests and outstanding gates.

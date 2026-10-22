@@ -1,0 +1,12 @@
+# Dashboard with household purok breakdown
+
+Created 21 October 2026 using built-in image generation. [Updated mockup](tala-dashboard-purok-2026-10-21.png).
+
+User-directed revision: remove Quick actions and categorize households by purok. Retain the resident breakdown. This supersedes the quick-action tiles in earlier visual drafts. App code is unchanged in this revision.
+
+All counts are illustrative: 39 households distributed as Purok 1: 12, Purok 2: 9, Purok 3: 8, Purok 4: 7, Not recorded: 3. These labels are examples, not a verified list of Cogon's puroks. Implementation must derive groups and counts from authoritative recorded purok values, include missing values, exclude archived households, and compute chart proportions numerically. Generated chart geometry is illustrative. Do not infer purok from arbitrary address substrings without a defined parsing/data contract.
+
+## Edit prompt
+
+Edit this Tala mini dashboard mockup. Keep the premium flat mobile UI aesthetic: mist background, white rounded cards, deep teal numeric accents, navy text, subtle borders, crisp readable typography. Remove the entire 'Quick actions' section and both 'Add household member' and 'View map' tiles. Instead add a new full-width white card titled exactly 'Households by purok', beneath the existing Recorded residents card. Inside use a compact beautifully spaced horizontal bar chart: left labels 'Purok 1', 'Purok 2', 'Purok 3', 'Purok 4', 'Not recorded'; right-aligned counts '12', '9', '8', '7', '3' respectively. These illustrative counts sum to the 39 total households. Use restrained teal bars on very pale teal tracks, gray for Not recorded. Bar lengths relative to maximum 12: 100%,75%,66.67%,58.33%,25%. Small subtitle '39 active households' and discreet footer 'Illustrative purok counts'. Keep all five rows easy to scan, labels and counts directly readable without a legend. Retain top Registry overview heading with Browse all, top 39 Households and 4 Callbacks summary cards, the existing Recorded residents card with total32 and Male5 Female6 Sex not recorded21, and small closing slogan. Preserve resident classification as recorded sex. If showing resident segmented bar, proportion its segments 5:6:21 (15.625%,18.75%,65.625%). No Quick actions anywhere, no new shortcuts, no extra demographic categories, no invented completion percentage. Expand canvas height as necessary to fit elegant compact dashboard composition without cramped labels. One complete redesigned UI crop only, no phone frame or presentation background.
+

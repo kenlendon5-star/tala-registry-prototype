@@ -1,0 +1,107 @@
+﻿INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.ShellDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.ui.ShellDeviceTest:
+INSTRUMENTATION_STATUS: test=launchRequestsOnlyDeclaredPermissionsAndContentRespectsSystemBars
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.ShellDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Undeclared permission requested: [ph.tala.registry.d08test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION]
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at ph.tala.registry.ui.ShellDeviceTest.launchRequestsOnlyDeclaredPermissionsAndContentRespectsSystemBars(ShellDeviceTest.kt:105)
+
+INSTRUMENTATION_STATUS: stream=
+Error in launchRequestsOnlyDeclaredPermissionsAndContentRespectsSystemBars(ph.tala.registry.ui.ShellDeviceTest):
+java.lang.AssertionError: Undeclared permission requested: [ph.tala.registry.d08test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION]
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at ph.tala.registry.ui.ShellDeviceTest.launchRequestsOnlyDeclaredPermissionsAndContentRespectsSystemBars(ShellDeviceTest.kt:105)
+
+INSTRUMENTATION_STATUS: test=launchRequestsOnlyDeclaredPermissionsAndContentRespectsSystemBars
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.ShellDeviceTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=navigationKeyboardBackAndRecreation
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.ShellDeviceTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stack=androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 10000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.ShellDeviceTest.awaitSeededFixtures(ShellDeviceTest.kt:23)
+	at ph.tala.registry.ui.ShellDeviceTest.navigationKeyboardBackAndRecreation(ShellDeviceTest.kt:29)
+
+INSTRUMENTATION_STATUS: stream=
+Error in navigationKeyboardBackAndRecreation(ph.tala.registry.ui.ShellDeviceTest):
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 10000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.ShellDeviceTest.awaitSeededFixtures(ShellDeviceTest.kt:23)
+	at ph.tala.registry.ui.ShellDeviceTest.navigationKeyboardBackAndRecreation(ShellDeviceTest.kt:29)
+
+INSTRUMENTATION_STATUS: test=navigationKeyboardBackAndRecreation
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.ShellDeviceTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=restoredFilterAndEmptySearchHaveRecovery
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.ShellDeviceTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=3
+INSTRUMENTATION_STATUS: stack=androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 10000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.ShellDeviceTest.awaitSeededFixtures(ShellDeviceTest.kt:23)
+	at ph.tala.registry.ui.ShellDeviceTest.restoredFilterAndEmptySearchHaveRecovery(ShellDeviceTest.kt:78)
+
+INSTRUMENTATION_STATUS: stream=
+Error in restoredFilterAndEmptySearchHaveRecovery(ph.tala.registry.ui.ShellDeviceTest):
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 10000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.ShellDeviceTest.awaitSeededFixtures(ShellDeviceTest.kt:23)
+	at ph.tala.registry.ui.ShellDeviceTest.restoredFilterAndEmptySearchHaveRecovery(ShellDeviceTest.kt:78)
+
+INSTRUMENTATION_STATUS: test=restoredFilterAndEmptySearchHaveRecovery
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 64.852
+There were 3 failures:
+1) launchRequestsOnlyDeclaredPermissionsAndContentRespectsSystemBars(ph.tala.registry.ui.ShellDeviceTest)
+java.lang.AssertionError: Undeclared permission requested: [ph.tala.registry.d08test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION]
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at ph.tala.registry.ui.ShellDeviceTest.launchRequestsOnlyDeclaredPermissionsAndContentRespectsSystemBars(ShellDeviceTest.kt:105)
+2) navigationKeyboardBackAndRecreation(ph.tala.registry.ui.ShellDeviceTest)
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 10000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.ShellDeviceTest.awaitSeededFixtures(ShellDeviceTest.kt:23)
+	at ph.tala.registry.ui.ShellDeviceTest.navigationKeyboardBackAndRecreation(ShellDeviceTest.kt:29)
+3) restoredFilterAndEmptySearchHaveRecovery(ph.tala.registry.ui.ShellDeviceTest)
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 10000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.ShellDeviceTest.awaitSeededFixtures(ShellDeviceTest.kt:23)
+	at ph.tala.registry.ui.ShellDeviceTest.restoredFilterAndEmptySearchHaveRecovery(ShellDeviceTest.kt:78)
+
+FAILURES!!!
+Tests run: 3,  Failures: 3
+
+
+INSTRUMENTATION_CODE: -1

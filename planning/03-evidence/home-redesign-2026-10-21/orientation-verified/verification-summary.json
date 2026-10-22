@@ -1,0 +1,34 @@
+{
+  "jvm_tests": 202,
+  "jvm_failures": 0,
+  "successful_device_logs": {
+    "landscape-1.0.log": 1,
+    "landscape-1.5.log": 1,
+    "landscape-2.0.log": 1,
+    "live-counts.log": 1,
+    "persistence-and-room.log": 2,
+    "portrait-1.0.log": 1,
+    "portrait-1.5.log": 1,
+    "portrait-2.0.log": 1
+  },
+  "device_tests": 9,
+  "portrait_pixels": [
+    720,
+    1600
+  ],
+  "landscape_pixels": [
+    1600,
+    720
+  ],
+  "density": 280,
+  "font_scales": [
+    1.0,
+    1.5,
+    2.0
+  ],
+  "restored_size": [
+    1080,
+    2400
+  ],
+  "restored_density": 420
+}

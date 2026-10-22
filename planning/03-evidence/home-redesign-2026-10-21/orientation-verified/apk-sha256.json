@@ -1,0 +1,10 @@
+[
+    {
+        "Hash":  "8D506A65ADC779D14031917B9B460E0F78ADC41A91AFDF3D2870B0FC25C48768",
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\build\\outputs\\apk\\debug\\app-debug.apk"
+    },
+    {
+        "Hash":  "2E3C491A24A155324E4D15F351A52C833FAEC3C157DE4D85492892E1EBA94DFC",
+        "Path":  "C:\\Users\\kenle\\Documents\\ChatGPT\\Capstone\\android-native\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk"
+    }
+]

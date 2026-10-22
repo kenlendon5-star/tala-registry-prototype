@@ -69,6 +69,8 @@ data class StoredRecord(
 }
 
 /** Read model for lists and screens: one household row with its members, no answers. */
+data class HouseholdPurokAnswer(val householdId: String, val kind: String, val value: String)
+
 data class HouseholdWithMembers(
     @Embedded val household: HouseholdRow,
     @Relation(parentColumn = "id", entityColumn = "householdId")

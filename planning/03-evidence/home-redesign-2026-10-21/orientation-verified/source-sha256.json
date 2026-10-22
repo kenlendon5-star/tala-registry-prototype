@@ -1,0 +1,17 @@
+{
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\home\\HomeInsightsViewModel.kt": "e704eba1da38ad4022ba6cd0e5311dd0068c649145347edf05e717547318135d",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\home\\HomeScreen.kt": "da0f52032372393437df989816cb5aa2b85ab78971f792576cd775905bbe5645",
+  "android-native\\app\\src\\test\\java\\ph\\tala\\registry\\ui\\home\\HomeDashboardRulesTest.kt": "4bbe7989024a61a6d4c89a29710121ebd32904b066ac3c5fb3471b934168d45d",
+  "android-native\\app\\src\\test\\java\\ph\\tala\\registry\\ui\\home\\HomeInsightsViewModelTest.kt": "a598ffaeb3e697a46eb438902bf918d17731cf3acdedb2c2389441ef8dbe0a1b",
+  "android-native\\app\\src\\test\\java\\ph\\tala\\registry\\ui\\home\\HomePurokRepositoryTest.kt": "ee19631e7905997320c6647617e9745da06816c9a59b59acfeee73bc83880756",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\InterviewResumeStore.kt": "46f46e73dfaa02e1a818e27e5d7f4d3695377c5a16df5c171d930069d6f68a7e",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\ui\\TalaApp.kt": "66931093998bd1f51342263d826428dfdfb235aab74468c61cceb12fb77bfed0",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\HouseholdRepository.kt": "f23968c93abf7af627f16525f1aa347d5d3bbe324d3fe2672e69362fb4301cd9",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\local\\RegistryDao.kt": "6732ccc0e613858460039a326d50904013ee60a4acdc648302f8757df8ce7e90",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\local\\RecordStore.kt": "b642bc60c8c125d316dbbf831ffad91cfe89ffe4ef6d172060c96c022fa736c6",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\data\\local\\Entities.kt": "9ffec3e28d5e664bf238dfd7d22755895f19b79b6e3c8c6663e95197968ecd86",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\MainActivity.kt": "5e74c2c11c841e451de0a9c6ef1b0400d78f72493491909586a3e7761ba78d62",
+  "android-native\\app\\src\\main\\java\\ph\\tala\\registry\\TalaApplication.kt": "9a65b02912b5d24ff15447979d23ce1d52482d6c68b7cdeaa794de7daf388d00",
+  "android-native\\app\\src\\androidTest\\java\\ph\\tala\\registry\\ui\\HomeDashboardDeviceTest.kt": "c850359ee57071bf48da59a2b67102f08f477ef327571868d0026d8da5bb4a86",
+  "android-native\\app\\src\\main\\res\\drawable-nodpi\\tala_registry_logo.png": "19f77a6d27135177c0a4a7d8e832237b1f2a16e6c6810bc5f107a8ca39765a3a"
+}

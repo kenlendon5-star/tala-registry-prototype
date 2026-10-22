@@ -40,8 +40,18 @@ class FakeRecordStore(seed: List<StoredRecord> = emptyList()) : RecordStore {
                 }
         }
 
+    override val householdPuroks: Flow<Map<String, String>> = state.map { records ->
+        records.values.associate { record ->
+            record.household.id to ((record.householdAnswers.firstOrNull { it.section == "setup" && it.field == "purok" }
+                ?.let { AnswerCodec.decode(it.kind, it.value) } as? AnswerValue.Scalar)?.text.orEmpty())
+        }
+    }
+
     override fun observeCoordinate(id: String): Flow<CoordinateRow?> =
         state.map { records -> records[id]?.coordinates }
+
+    override val allCoordinates: Flow<List<CoordinateRow>> =
+        state.map { records -> records.values.mapNotNull { it.coordinates } }
 
     override suspend fun load(id: String): StoredRecord? = state.value[id]
 

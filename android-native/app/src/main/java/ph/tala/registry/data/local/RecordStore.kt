@@ -21,8 +21,13 @@ interface RecordStore {
     val records: Flow<List<HouseholdWithMembers>>
     /** Member id -> stored demographics sex answer ('' while unrecorded); feeds the home summary counts. */
     val memberSex: Flow<Map<String, String>>
+    /** Raw setup.purok answers keyed by household UUID; no address parsing. */
+    val householdPuroks: Flow<Map<String, String>> get() = kotlinx.coroutines.flow.flowOf(emptyMap())
     /** The stored coordinate of one household, or null while none was captured. */
     fun observeCoordinate(id: String): Flow<CoordinateRow?>
+
+    /** Every stored coordinate; the map joins it with the active household list. */
+    val allCoordinates: Flow<List<CoordinateRow>>
     suspend fun load(id: String): StoredRecord?
     suspend fun save(record: StoredRecord): WriteResult
 }
@@ -32,10 +37,14 @@ class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
     private val dao = database.records()
     override val households = dao.observeHouseholds()
     override val records = dao.observeRecords()
+    override val householdPuroks = dao.observePurokAnswers().map { rows ->
+        rows.associate { it.householdId to ((AnswerCodec.decode(it.kind, it.value) as? AnswerValue.Scalar)?.text.orEmpty()) }
+    }
     override val memberSex = dao.observeSexAnswers().map { rows ->
         rows.associate { row -> row.memberId to ((AnswerCodec.decode(row.kind, row.value) as? AnswerValue.Scalar)?.text.orEmpty()) }
     }
     override fun observeCoordinate(id: String) = dao.observeCoordinate(id)
+    override val allCoordinates = dao.observeAllCoordinates()
 
     override suspend fun load(id: String): StoredRecord? = database.withTransaction {
         val household = dao.household(id) ?: return@withTransaction null

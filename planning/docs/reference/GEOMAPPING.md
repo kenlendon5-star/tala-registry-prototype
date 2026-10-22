@@ -83,3 +83,16 @@ The prototype uses a configurable rectangular working extent: southwest 11.0116,
 New pins outside the configured extent are rejected, including out-of-area device captures. Existing out-of-area saved coordinates are retained and flagged for correction, and do not pull the registry map away from Cogon. Google address searches include the complete locality. Profile and setup barangay fields are fixed to Cogon.
 
 Both browser regression suites pass after the update, including Home on reload, saved-answer persistence, map center/minimum zoom, and rejection of coordinates outside the configured area. Map animations were disabled to prevent callbacks accessing a removed map during navigation.
+
+## Native implementation (Day 16)
+
+The native app (`android-native/`) implements the same location workflow with a different map surface, chosen under DEC-07:
+
+- **SDK**: osmdroid 6.1.20 (Apache-2.0), no API key and no Play Services dependency, rendering OpenStreetMap Mapnik tiles over HTTPS. "© OpenStreetMap contributors" stays visible on the map. The tile provider sends an identifying User-Agent (`applicationId`) and caches tiles only in the app-private cache directory; no offline tile packs are bundled or downloaded.
+- **Network surface**: INTERNET and ACCESS_NETWORK_STATE exist solely for the tile fetch and offline detection. There is no backend, no analytics, and no record data in any URL; external map links embed only the saved coordinates, and the shell device test now enforces that exact permission allow-list.
+- **Offline behavior**: airplane mode switches the same screen to an extent-accurate Web Mercator plot of every saved pin (graticule, accuracy circles, selection) labeled "Basemap unavailable offline — saved coordinates stay plotted and editable." Reads always come from Room, so no missing tile can make a saved coordinate inaccessible.
+- **Pins and extent**: the working extent matches the prototype (southwest 11.0116, 124.5971; northeast 11.0236, 124.6091; zoom 16–19, center 11.0176, 124.6031) and keeps the approximate-boundary label. New pins placed on the map must land inside the extent; existing out-of-area coordinates are retained, flagged in the list and never re-center the map.
+- **Manual pin adjustment**: select a household, tap "Adjust pin on map", then tap or drag to reposition; the draft fields always show the exact value a save would store, the draft survives activity recreation through SavedStateHandle, and saving records Manual provenance (accuracy cleared, entry time recorded) through the same repository write path as the location card.
+- **External hand-off**: "Open in Google Maps" and "Directions" reuse the prototype's `google.com/maps/search|dir?api=1` URL contract with coordinates only; when no map application resolves the intent, the screen says so and the coordinates stay saved.
+
+The browser prototype remains the behavior reference; its Leaflet interaction set (tap to place, drag to adjust, extent rejection, external links) is what the native map ports.

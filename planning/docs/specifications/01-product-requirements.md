@@ -100,7 +100,7 @@ The exact current browser keys, options, optional flags and conditional expressi
 | DEC-04 Evacuation list and service boundary | Sample areas and approximate demo rectangle | Barangay representative; before claiming local accuracy |
 | DEC-05 Covered assistance field / unclear ID/program | No invented question or inferred program | Product owner; before adding fields |
 | DEC-06 Official notice, questionnaire and retention | Fictional-data demo wording; no official approval claimed | Project sponsor; before resident-data deployment |
-| DEC-07 Native embedded map SDK/provider | No SDK selected/pinned yet; coordinates and external map URL contract fixed | Developer; before map implementation |
+| DEC-07 Native embedded map SDK/provider | Resolved 2026-10-20 (D16): osmdroid 6.1.20 (Apache-2.0) rendering OpenStreetMap Mapnik tiles over HTTPS with visible "© OpenStreetMap contributors" attribution; no API key and no Play Services dependency; INTERNET/ACCESS_NETWORK_STATE added solely for the tile fetch; offline state renders an extent-accurate local plot; no offline tile packs | Developer; OSM tile-policy compliance (User-Agent, no bulk download, app-private cache) re-checked before public deployment |
 
 ## 7. Definition of release completion
 

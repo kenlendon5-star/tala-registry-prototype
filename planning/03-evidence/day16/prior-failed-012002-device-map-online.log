@@ -1,0 +1,71 @@
+﻿INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.MapDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.ui.MapDeviceTest:
+INSTRUMENTATION_STATUS: test=mapListsPinsFlagsOutsidersAndOpensRecords
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.MapDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to assert the following: (Text + InputText + EditableText contains 'OpenStreetMap' (ignoreCase: false))
+Semantics of the node:
+Node #148 at (l=90.0, t=1320.0, r=645.0, b=1362.0)px, Tag: 'map-attribution'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 6.0.dp), topEnd = CornerSize(size = 6.0.dp), bottomEnd = CornerSize(size = 6.0.dp), bottomStart = CornerSize(size = 6.0.dp))'
+Text = '[Basemap © OpenStreetMap contributors]'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, SetTextSubstitution, ShowTextSubstitution]
+Has 2 siblings
+Selector used: (TestTag = 'map-attribution')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:264)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:254)
+	at androidx.compose.ui.test.AssertionsKt.assertTextContains(Assertions.kt:208)
+	at androidx.compose.ui.test.AssertionsKt.assertTextContains$default(Assertions.kt:204)
+	at ph.tala.registry.ui.MapDeviceTest.mapListsPinsFlagsOutsidersAndOpensRecords(MapDeviceTest.kt:94)
+
+INSTRUMENTATION_STATUS: stream=
+Error in mapListsPinsFlagsOutsidersAndOpensRecords(ph.tala.registry.ui.MapDeviceTest):
+java.lang.AssertionError: Failed to assert the following: (Text + InputText + EditableText contains 'OpenStreetMap' (ignoreCase: false))
+Semantics of the node:
+Node #148 at (l=90.0, t=1320.0, r=645.0, b=1362.0)px, Tag: 'map-attribution'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 6.0.dp), topEnd = CornerSize(size = 6.0.dp), bottomEnd = CornerSize(size = 6.0.dp), bottomStart = CornerSize(size = 6.0.dp))'
+Text = '[Basemap © OpenStreetMap contributors]'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, SetTextSubstitution, ShowTextSubstitution]
+Has 2 siblings
+Selector used: (TestTag = 'map-attribution')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:264)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:254)
+	at androidx.compose.ui.test.AssertionsKt.assertTextContains(Assertions.kt:208)
+	at androidx.compose.ui.test.AssertionsKt.assertTextContains$default(Assertions.kt:204)
+	at ph.tala.registry.ui.MapDeviceTest.mapListsPinsFlagsOutsidersAndOpensRecords(MapDeviceTest.kt:94)
+
+INSTRUMENTATION_STATUS: test=mapListsPinsFlagsOutsidersAndOpensRecords
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 45.719
+There was 1 failure:
+1) mapListsPinsFlagsOutsidersAndOpensRecords(ph.tala.registry.ui.MapDeviceTest)
+java.lang.AssertionError: Failed to assert the following: (Text + InputText + EditableText contains 'OpenStreetMap' (ignoreCase: false))
+Semantics of the node:
+Node #148 at (l=90.0, t=1320.0, r=645.0, b=1362.0)px, Tag: 'map-attribution'
+Shape = 'RoundedCornerShape(topStart = CornerSize(size = 6.0.dp), topEnd = CornerSize(size = 6.0.dp), bottomEnd = CornerSize(size = 6.0.dp), bottomStart = CornerSize(size = 6.0.dp))'
+Text = '[Basemap © OpenStreetMap contributors]'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, SetTextSubstitution, ShowTextSubstitution]
+Has 2 siblings
+Selector used: (TestTag = 'map-attribution')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:264)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:254)
+	at androidx.compose.ui.test.AssertionsKt.assertTextContains(Assertions.kt:208)
+	at androidx.compose.ui.test.AssertionsKt.assertTextContains$default(Assertions.kt:204)
+	at ph.tala.registry.ui.MapDeviceTest.mapListsPinsFlagsOutsidersAndOpensRecords(MapDeviceTest.kt:94)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

@@ -15,8 +15,8 @@ android {
         applicationId = "ph.tala.registry"
         minSdk = 26
         targetSdk = 37
-        versionCode = 5
-        versionName = "0.5.0"
+        versionCode = 6
+        versionName = "0.6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.osmdroid.android)
     ksp(libs.androidx.room.compiler)
     androidTestImplementation(libs.androidx.room.testing)
     // Aligns serialization with Room 2.8.5 so schema helpers can decode exported schemas.

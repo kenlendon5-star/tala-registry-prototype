@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         val profiles = dependencies.profiles
         setContent {
             TalaTheme {
-                TalaApp(repository, photos, profiles)
+                TalaApp(repository, photos, profiles, dependencies.resumes)
             }
         }
     }

@@ -118,6 +118,12 @@ class RegistrationUiDeviceTest {
         } finally { image.recycle() }
     }
     private fun await(tag: String) = compose.waitUntil(30_000) { compose.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty() }
+    private fun awaitHomeFixtures() {
+        await("register-household")
+        compose.onNodeWithTag("nav-Households").performClick()
+        await("household-HH-00452")
+        compose.onNodeWithTag("nav-Home").performClick()
+    }
     private fun saved() = compose.waitUntil(30_000) {
         compose.onAllNodesWithTag("save-status").fetchSemanticsNodes().any {
             it.config[androidx.compose.ui.semantics.SemanticsProperties.Text].any { text -> text.text.contains("saved", true) }
@@ -126,26 +132,26 @@ class RegistrationUiDeviceTest {
 
     @Test fun dashboardAfterRestartDisplaysPersistedCounts() {
         check(context.packageName.endsWith(".d08test"))
-        await("household-HH-00452")
+        awaitHomeFixtures()
         val expected = runBlocking {
             RegistryUiState(loading = false, households = app.repository.households.first().filterNot { it.archived }, memberSex = app.repository.memberSex.first())
         }
-        for ((label, count) in listOf("Households" to expected.households.size, "Members" to expected.memberCount,
-            "Male" to expected.maleCount, "Female" to expected.femaleCount, "Sex not recorded" to expected.unrecordedSexCount)) {
+        for ((label, count) in listOf("Households" to expected.households.size, "Residents" to expected.memberCount,
+            "Male" to expected.maleCount, "Female" to expected.femaleCount, "Sex Not Recorded" to expected.unrecordedSexCount)) {
             val tag = "metric-$label"
-            compose.onNodeWithTag("home-screen").performScrollToNode(hasTestTag(tag))
+            compose.onNodeWithTag("home-screen", useUnmergedTree = true).performScrollToNode(hasTestTag(tag))
             compose.waitUntil(10_000) {
-                compose.onAllNodesWithTag(tag).fetchSemanticsNodes().any {
+                compose.onAllNodesWithTag(tag, useUnmergedTree = true).fetchSemanticsNodes().any {
                     it.config[androidx.compose.ui.semantics.SemanticsProperties.Text].any { text -> text.text == count.toString() }
                 }
             }
-            compose.onNodeWithTag(tag).assertTextEquals(count.toString()).assertIsDisplayed()
+            compose.onNodeWithTag(tag, useUnmergedTree = true).assertTextEquals(count.toString()).assertIsDisplayed()
         }
     }
 
     @Test fun registrationNameDetailsPicturesAndProfileSurviveActivityRecreation() {
         check(context.packageName.endsWith(".d08test"))
-        await("household-HH-00452")
+        awaitHomeFixtures()
         compose.onNodeWithTag("nav-Households").performClick()
         compose.onNodeWithTag("add-household").performScrollTo().performClick()
         compose.onNodeWithTag("field-headName").performTextInput("UI Registration Family")

@@ -71,6 +71,7 @@ interface HouseholdRepository {
 
     /** Member id -> stored demographics sex answer ('' while unrecorded); feeds the home summary counts. */
     val memberSex: Flow<Map<String, String>>
+    val householdPuroks: Flow<Map<String, String>> get() = kotlinx.coroutines.flow.flowOf(emptyMap())
 
     /** Saves the household picture as the record's photo attachment, replacing any previous one. */
     suspend fun saveHouseholdPhotoAttachment(householdId: HouseholdId, relativePath: String, mimeType: String): WriteResult
@@ -88,6 +89,12 @@ interface HouseholdRepository {
 
     /** Observes the stored household coordinate, or null when none was captured yet. */
     fun observeCoordinate(householdId: HouseholdId): Flow<Coordinate?> = kotlinx.coroutines.flow.flowOf(null)
+
+    /**
+     * Every stored household coordinate keyed by household UUID, so the D16 map can
+     * plot all saved pins reactively without one flow per household.
+     */
+    val householdCoordinates: Flow<Map<String, Coordinate>> get() = kotlinx.coroutines.flow.flowOf(emptyMap())
 
     /**
      * Saves one household coordinate as a full-snapshot write: a device fix keeps its
@@ -226,9 +233,13 @@ class RoomHouseholdRepository(
     }
 
     override val memberSex: Flow<Map<String, String>> = store.memberSex
+    override val householdPuroks: Flow<Map<String, String>> = store.householdPuroks
 
     override fun observeCoordinate(householdId: HouseholdId): Flow<Coordinate?> =
         store.observeCoordinate(householdId.value).map { it?.toCoordinate() }
+
+    override val householdCoordinates: Flow<Map<String, Coordinate>> =
+        store.allCoordinates.map { rows -> rows.associate { it.householdId to it.toCoordinate() } }
 
     override suspend fun saveCoordinate(householdId: HouseholdId, coordinate: Coordinate): WriteResult {
         // Validation stays outside the write lock: a malformed coordinate never opens
