@@ -1,0 +1,41 @@
+﻿INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.MapDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.ui.MapDeviceTest:
+INSTRUMENTATION_STATUS: test=airplaneModeKeepsCoordinatesAccessibleOnTheOfflinePlot
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.MapDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stack=androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 30000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.MapDeviceTest.airplaneModeKeepsCoordinatesAccessibleOnTheOfflinePlot(MapDeviceTest.kt:192)
+
+INSTRUMENTATION_STATUS: stream=
+Error in airplaneModeKeepsCoordinatesAccessibleOnTheOfflinePlot(ph.tala.registry.ui.MapDeviceTest):
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 30000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.MapDeviceTest.airplaneModeKeepsCoordinatesAccessibleOnTheOfflinePlot(MapDeviceTest.kt:192)
+
+INSTRUMENTATION_STATUS: test=airplaneModeKeepsCoordinatesAccessibleOnTheOfflinePlot
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 38.658
+There was 1 failure:
+1) airplaneModeKeepsCoordinatesAccessibleOnTheOfflinePlot(ph.tala.registry.ui.MapDeviceTest)
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 30000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:887)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:482)
+	at ph.tala.registry.ui.MapDeviceTest.airplaneModeKeepsCoordinatesAccessibleOnTheOfflinePlot(MapDeviceTest.kt:192)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

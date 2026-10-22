@@ -1,0 +1,95 @@
+﻿INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.MapDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+ph.tala.registry.ui.MapDeviceTest:
+INSTRUMENTATION_STATUS: test=adjustPinSavesManualProvenanceAndSurvivesRecreation
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ph.tala.registry.ui.MapDeviceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to assert the following: (Text + EditableText = [11.022500])
+Semantics of the node:
+Node #339 at (l=51.0, t=1535.0, r=530.0, b=1740.0)px, Tag: 'adjust-lat'
+ContentDataType = 'AndroidContentDataType(androidAutofillType=1)'
+EditableText = '11.022500'
+FillableData = 'androidx.compose.ui.autofill.AndroidFillableData@4e40b37'
+Focused = 'false'
+ImeAction = 'Default'
+InputText = '11.022500'
+IsEditable = 'true'
+Text = '[Latitude]'
+TextSelectionRange = 'TextRange(0, 0)'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, InsertTextAtCursor, OnClick, OnFillData, OnLongClick, PasteText, PerformImeAction, RequestFocus, SetSelection, SetText, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 10 siblings
+Selector used: (TestTag = 'adjust-lat')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:264)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:254)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals(Assertions.kt:185)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals$default(Assertions.kt:181)
+	at ph.tala.registry.ui.MapDeviceTest.adjustPinSavesManualProvenanceAndSurvivesRecreation(MapDeviceTest.kt:136)
+
+INSTRUMENTATION_STATUS: stream=
+Error in adjustPinSavesManualProvenanceAndSurvivesRecreation(ph.tala.registry.ui.MapDeviceTest):
+java.lang.AssertionError: Failed to assert the following: (Text + EditableText = [11.022500])
+Semantics of the node:
+Node #339 at (l=51.0, t=1535.0, r=530.0, b=1740.0)px, Tag: 'adjust-lat'
+ContentDataType = 'AndroidContentDataType(androidAutofillType=1)'
+EditableText = '11.022500'
+FillableData = 'androidx.compose.ui.autofill.AndroidFillableData@4e40b37'
+Focused = 'false'
+ImeAction = 'Default'
+InputText = '11.022500'
+IsEditable = 'true'
+Text = '[Latitude]'
+TextSelectionRange = 'TextRange(0, 0)'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, InsertTextAtCursor, OnClick, OnFillData, OnLongClick, PasteText, PerformImeAction, RequestFocus, SetSelection, SetText, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 10 siblings
+Selector used: (TestTag = 'adjust-lat')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:264)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:254)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals(Assertions.kt:185)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals$default(Assertions.kt:181)
+	at ph.tala.registry.ui.MapDeviceTest.adjustPinSavesManualProvenanceAndSurvivesRecreation(MapDeviceTest.kt:136)
+
+INSTRUMENTATION_STATUS: test=adjustPinSavesManualProvenanceAndSurvivesRecreation
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 6.307
+There was 1 failure:
+1) adjustPinSavesManualProvenanceAndSurvivesRecreation(ph.tala.registry.ui.MapDeviceTest)
+java.lang.AssertionError: Failed to assert the following: (Text + EditableText = [11.022500])
+Semantics of the node:
+Node #339 at (l=51.0, t=1535.0, r=530.0, b=1740.0)px, Tag: 'adjust-lat'
+ContentDataType = 'AndroidContentDataType(androidAutofillType=1)'
+EditableText = '11.022500'
+FillableData = 'androidx.compose.ui.autofill.AndroidFillableData@4e40b37'
+Focused = 'false'
+ImeAction = 'Default'
+InputText = '11.022500'
+IsEditable = 'true'
+Text = '[Latitude]'
+TextSelectionRange = 'TextRange(0, 0)'
+Actions = [ClearTextSubstitution, GetTextLayoutResult, InsertTextAtCursor, OnClick, OnFillData, OnLongClick, PasteText, PerformImeAction, RequestFocus, SetSelection, SetText, SetTextSubstitution, ShowTextSubstitution]
+MergeDescendants = 'true'
+Has 10 siblings
+Selector used: (TestTag = 'adjust-lat')
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:264)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:254)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals(Assertions.kt:185)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals$default(Assertions.kt:181)
+	at ph.tala.registry.ui.MapDeviceTest.adjustPinSavesManualProvenanceAndSurvivesRecreation(MapDeviceTest.kt:136)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

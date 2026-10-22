@@ -135,13 +135,13 @@
     "notes": "2026-10-19: Full device acceptance after ADB permission control became available on the OPPO: 50 device checks across 13 invocations on CPH2529 API35, plus 173 JVM tests, isolated app/test builds and lint (0 errors/18 warnings). Permission matrix complete: real denial/permanent-denial dialogs with manual fallback and questionnaire save; precise and approximate dialogs accepting explicitly-mocked shell test-provider fixes (labelled, no live GPS claimed); fix force-stop reopen with manual correction removing measured accuracy; location-off fallback; 20-second timeout rejecting a stale fix. Matching build/device fingerprints, matching restored environment, empty restoration errors, all eight screenshots inspected. Coordinate writes preserve graph/rollback/isolation and archived refusal. D16 unstarted. Evidence: planning/03-evidence/D15.md."
   },
   "D16": {
-    "status": "Backlog",
+    "status": "Done",
     "checks": [
-      false,
-      false,
-      false
+      true,
+      true,
+      true
     ],
-    "notes": "2026-10-12 audit: no map SDK is integrated (no map dependency, no INTERNET permission, and a device test asserts the absence of network access); coordinates persist without a map surface. Card reset to Backlog."
+    "notes": "2026-10-23: Full device acceptance on the API 37 emulator (isolated ph.tala.registry.d08test, version 0.6.0/6): all six map device tests passed — online pins with out-of-area flagging and record open, airplane-mode offline plot with selection/read/open retained, manual pin adjustment surviving recreation with Manual provenance, out-of-extent rejection keeping the draft, untagged households reachable, external hand-off coordinates-only — plus the shell permission allow-list and coordinate persistence regression. 202 JVM tests (0 failures) and lint (0 errors/16 warnings) in the same build; matching source fingerprints, empty restoration errors, airplane mode restored, 7 screenshots inspected. osmdroid 6.1.20 (Apache-2.0, no API key), OSM attribution asserted, tiles cached app-private only, no offline tile packs. Earlier emulator failures (shell AIRPLANE_MODE broadcast denied on API 33+, unconfirmed toggle, bottom-nav misstep) were test-harness defects, retained as prior-failed logs. Evidence: planning/03-evidence/D16.md."
   },
   "D17": {
     "status": "Backlog",

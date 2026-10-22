@@ -1,6 +1,6 @@
 ﻿{
-    "keyboard":  "1",
-    "timeout":  "1800000",
+    "keyboard":  "0",
+    "timeout":  "2147483647",
     "airplaneModeOn":  "0",
-    "stayAwake":  "2"
+    "stayAwake":  "1"
 }

@@ -54,7 +54,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D13: Done. [Implementation evidence](../03-evidence/D13.md).
 - D14: Done. [Implementation evidence](../03-evidence/D14.md).
 - D15: Done. [Implementation evidence](../03-evidence/D15.md).
-- D16: Backlog. [Implementation evidence](../03-evidence/D16.md).
+- D16: Done. [Implementation evidence](../03-evidence/D16.md).
 - D17: Backlog. [Implementation evidence](../03-evidence/D17.md).
 - D18: Backlog. [Implementation evidence](../03-evidence/D18.md).
 - D19: Backlog. [Implementation evidence](../03-evidence/D19.md).
@@ -338,19 +338,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Keep mapping useful when connectivity disappears.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D15
 
-- [ ] Integrate a native Android map SDK selected for licensing, availability and budget; port Leaflet behavior into markers, selection and manual pin adjustment. Configure any map credential restrictions.
-- [ ] Show a clear unavailable-basemap state while retaining coordinates and forms offline; keep the existing boundary labeled approximate.
-- [ ] Keep map attribution visible and verify provider terms; do not add offline tile downloads without a permitted source.
+- [x] Integrate a native Android map SDK selected for licensing, availability and budget; port Leaflet behavior into markers, selection and manual pin adjustment. Configure any map credential restrictions.
+- [x] Show a clear unavailable-basemap state while retaining coordinates and forms offline; keep the existing boundary labeled approximate.
+- [x] Keep map attribution visible and verify provider terms; do not add offline tile downloads without a permitted source.
 
 **Done when:** Airplane mode leaves saved coordinates accessible; no missing tiles or external-map return loses household edits.
 
 **Evidence/deliverable:** Online/offline map evidence
 
-**Implementation evidence:** 2026-10-12 audit: no map SDK is integrated (no map dependency, no INTERNET permission, and a device test asserts the absence of network access); coordinates persist without a map surface. Card reset to Backlog.
+**Implementation evidence:** 2026-10-23: Full device acceptance on the API 37 emulator (isolated ph.tala.registry.d08test, version 0.6.0/6): all six map device tests passed — online pins with out-of-area flagging and record open, airplane-mode offline plot with selection/read/open retained, manual pin adjustment surviving recreation with Manual provenance, out-of-extent rejection keeping the draft, untagged households reachable, external hand-off coordinates-only — plus the shell permission allow-list and coordinate persistence regression. 202 JVM tests (0 failures) and lint (0 errors/16 warnings) in the same build; matching source fingerprints, empty restoration errors, airplane mode restored, 7 screenshots inspected. osmdroid 6.1.20 (Apache-2.0, no API key), OSM attribution asserted, tiles cached app-private only, no offline tile packs. Earlier emulator failures (shell AIRPLANE_MODE broadcast denied on API 33+, unconfirmed toggle, bottom-nav misstep) were test-harness defects, retained as prior-failed logs. Evidence: planning/03-evidence/D16.md.
 
 ### D17 · 2026-10-15 · Export records on Android
 

@@ -112,6 +112,24 @@ class MapDeviceTest {
             .config.getOrNull(SemanticsProperties.Text).orEmpty().joinToString(separator = "")
     }
 
+    /**
+     * `cmd connectivity` applies airplane mode through ConnectivityService (the
+     * AIRPLANE_MODE broadcast is denied to the shell uid on API 33+). The service
+     * confirmation is polled because a silently failed toggle strands the test
+     * online and reads as a mysterious offline-plot timeout.
+     */
+    private fun setAirplaneMode(enabled: Boolean) {
+        val want = if (enabled) "enabled" else "disabled"
+        repeat(10) {
+            if (shell("cmd connectivity airplane-mode").trim() == want) return
+            shell("cmd connectivity airplane-mode ${if (enabled) "enable" else "disable"}")
+            Thread.sleep(1_000)
+        }
+        check(shell("cmd connectivity airplane-mode").trim() == want) {
+            "Device never reported airplane mode $want"
+        }
+    }
+
     /** Checks EditableText semantics (used by OutlinedTextField for input values). */
     private fun assertEditableTextEquals(tag: String, expected: String) {
         await(tag)
@@ -178,9 +196,10 @@ class MapDeviceTest {
         // Verify we're online first
         compose.onNodeWithTag("map-online-note").assertIsDisplayed()
         compose.onNodeWithTag("map-pin-HH-00452").performScrollTo().assertIsDisplayed()
-        // Now enable airplane mode while the map is open - use traditional commands for reliability
-        shell("settings put global airplane_mode_on 1")
-        shell("am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true")
+        // Now enable airplane mode while the map is open. `cmd connectivity` applies
+        // the mode through ConnectivityService, unlike the AIRPLANE_MODE broadcast,
+        // which API 33+ denies to the shell uid and which leaves the network up.
+        setAirplaneMode(enabled = true)
         try {
             // Navigate away and back to force a new ConnectivityMonitor to be created,
             // which will detect the offline state on startup.
@@ -202,10 +221,13 @@ class MapDeviceTest {
             await("record-id")
             compose.onNodeWithTag("record-id").assertTextEquals("HH-00452")
         } finally {
-            shell("settings put global airplane_mode_on 0")
-            shell("am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false")
+            setAirplaneMode(enabled = false)
         }
         // Restoration is part of acceptance: the online basemap note must return.
+        // The record screen is a full-screen destination without the NavigationBar,
+        // so pop back to the map before touching the bottom navigation again.
+        Espresso.pressBack()
+        await("selected-household")
         compose.onNodeWithTag("nav-Households").performClick()
         await("households-screen", 30_000)
         compose.onNodeWithTag("nav-Map").performClick()

@@ -43,7 +43,7 @@ INSTRUMENTATION_STATUS: test=coordinateWritesPreserveGraphAndOtherHouseholdAcros
 INSTRUMENTATION_STATUS_CODE: 0
 INSTRUMENTATION_RESULT: stream=
 
-Time: 0.622
+Time: 0.666
 
 OK (3 tests)
 
