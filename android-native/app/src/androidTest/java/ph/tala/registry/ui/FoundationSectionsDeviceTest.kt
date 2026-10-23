@@ -56,7 +56,7 @@ class FoundationSectionsDeviceTest {
         compose.onNodeWithTag("option-$key-$text").performScrollTo().performClick()
     }
     private fun save() {
-        compose.onNodeWithText("Save draft").performClick()
+        compose.onNodeWithText("Save Draft").performClick()
         compose.waitUntil(30_000) { compose.onAllNodesWithText("Saved on this device.").fetchSemanticsNodes().isNotEmpty() }
     }
     private fun open() {
@@ -114,7 +114,7 @@ class FoundationSectionsDeviceTest {
         section("employment", maria)
         option("worked", "Yes"); input("occupation", "Teacher"); input("industry", "Education")
         select("employmentType", "Employee"); input("hours", "169")
-        compose.onNodeWithText("Check answers").performClick()
+        compose.onNodeWithText("Check Answers").performClick()
         compose.onNodeWithTag("hint-hours", useUnmergedTree = true).performScrollTo().assertTextEquals("Enter no more than 168.")
         compose.onNodeWithTag("field-hours").assertIsFocused()
         input("hours", "40"); save()

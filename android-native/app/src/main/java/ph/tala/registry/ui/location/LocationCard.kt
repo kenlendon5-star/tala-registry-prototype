@@ -38,7 +38,7 @@ fun HouseholdLocationCard(
 ) {
     Surface(shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
         Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("Household location", style = MaterialTheme.typography.titleLarge, modifier = Modifier.testTag("location-card"))
+            Text("Household Location", style = MaterialTheme.typography.titleLarge, modifier = Modifier.testTag("location-card"))
             when (val coordinate = state.coordinate) {
                 null -> Text(
                     "No coordinates recorded yet.",
@@ -72,26 +72,26 @@ fun HouseholdLocationCard(
                         onClick = onCapture,
                         enabled = state.capture !in listOf(LocationCapture.Acquiring, LocationCapture.AwaitingPermission) && state.writePhase != LocationWritePhase.Saving && !state.loading,
                         modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("capture-location"),
-                    ) { Text(if (state.capture == LocationCapture.Acquiring) "Acquiring…" else "Capture device location") }
+                    ) { Text(if (state.capture == LocationCapture.Acquiring) "Acquiring…" else "Capture Device Location") }
                     OutlinedButton(
                         onClick = onOpenManual,
                         enabled = state.writePhase != LocationWritePhase.Saving,
                         modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("correct-location"),
-                    ) { Text("Correct manually") }
+                    ) { Text("Correct Manually") }
                 }
                 when (state.capture) {
                     LocationCapture.Denied -> OutlinedButton(
                         onClick = onRetry,
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("retry-location"),
-                    ) { Text("Retry location permission") }
+                    ) { Text("Retry Location Permission") }
                     LocationCapture.PermanentlyDenied -> OutlinedButton(
                         onClick = onOpenSettings,
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("open-location-settings"),
-                    ) { Text("Open app settings") }
+                    ) { Text("Open App Settings") }
                     LocationCapture.LocationOff -> OutlinedButton(
                         onClick = onRetry,
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("retry-location"),
-                    ) { Text("Check location again") }
+                    ) { Text("Check Location Again") }
                     else -> {}
                 }
             } else {
@@ -134,7 +134,7 @@ fun HouseholdLocationCard(
                         onClick = onSaveManual,
                         enabled = state.writePhase != LocationWritePhase.Saving,
                         modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("save-manual-location"),
-                    ) { Text(if (state.writePhase == LocationWritePhase.Saving) "Saving…" else "Save coordinates") }
+                    ) { Text(if (state.writePhase == LocationWritePhase.Saving) "Saving…" else "Save Coordinates") }
                     OutlinedButton(
                         onClick = onCancelManual,
                         enabled = state.writePhase != LocationWritePhase.Saving,

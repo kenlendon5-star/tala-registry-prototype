@@ -57,8 +57,8 @@ fun InterviewWorkspaceScreen(model: InterviewWorkspaceViewModel, onExit: () -> U
         LaunchedEffect(state.route, state.memberId, state.showingReview) { pageScroll.scrollTo(0) }
         Column(if (compact) Modifier.fillMaxWidth().verticalScroll(pageScroll) else Modifier.fillMaxSize()) {
             Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                TextButton(onClick = { model.leave(onExit) }) { Text("Save & back") }
-                TextButton(onClick = model::review) { Text("Review interview") }
+                TextButton(onClick = { model.leave(onExit) }) { Text("Save & Back") }
+                TextButton(onClick = model::review) { Text("Review Interview") }
             }
             if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return@BoxWithConstraints }
             if (state.record == null) { Text(state.message, Modifier.padding(20.dp)); return@BoxWithConstraints }
@@ -182,7 +182,7 @@ private fun TwoPaneWorkspace(
 @Composable
 private fun MemberScopeIndex(state: WorkspaceState, model: InterviewWorkspaceViewModel, modifier: Modifier = Modifier) {
     Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text("Member scope", style = MaterialTheme.typography.titleMedium)
+        Text("Member Scope", style = MaterialTheme.typography.titleMedium)
         state.record!!.members.forEach { member ->
             val selected = state.memberId == member.id
             Surface(
@@ -278,7 +278,7 @@ private fun WorkspaceBody(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Button(onClick = { model.leave(onExit) }, modifier = Modifier.testTag("leave-to-add-member")) {
-                    Text("Save and go back")
+                    Text("Save and Go Back")
                 }
             } else {
                 Text(state.section.title, style = MaterialTheme.typography.headlineSmall)
@@ -306,9 +306,9 @@ private fun WorkspaceBody(
                     }
                 }
                 if (state.route == "visit") {
-                    Button(onClick = model::recordVisit, enabled = state.phase != SavePhase.Saving) { Text("Record visit result") }
+                    Button(onClick = model::recordVisit, enabled = state.phase != SavePhase.Saving) { Text("Record Visit Result") }
                     Text("Save draft keeps your edits. Record visit result adds a dated entry to the visit history.", style = MaterialTheme.typography.bodySmall)
-                    Text("Visit history", style = MaterialTheme.typography.titleMedium)
+                    Text("Visit History", style = MaterialTheme.typography.titleMedium)
                     if (state.record!!.visits.isEmpty()) Text("No recorded visits yet.")
                     state.record!!.visits.sortedByDescending { it.recordedAt }.forEach { visit ->
                         Column(Modifier.fillMaxWidth().testTag("visit-${visit.id}")) {
@@ -346,7 +346,7 @@ private fun ErrorSummary(state: WorkspaceState) {
 /** Review issues grouped the way enumerators fix them: whole-household answers first, then per member. */
 @Composable
 private fun ReviewContent(state: WorkspaceState, model: InterviewWorkspaceViewModel, onExit: () -> Unit) {
-    Text("Review interview", style = MaterialTheme.typography.headlineSmall)
+    Text("Review Interview", style = MaterialTheme.typography.headlineSmall)
     Text("${state.progress.ready} of ${state.progress.total} sections ready. This records local completion only.")
     LinearProgressIndicator(
         progress = { if (state.progress.total == 0) 0f else state.progress.ready.toFloat() / state.progress.total },
@@ -355,17 +355,17 @@ private fun ReviewContent(state: WorkspaceState, model: InterviewWorkspaceViewMo
     val householdIssues = state.issues.filter { it.memberId == null }
     val memberIssues = state.issues.filter { it.memberId != null }
     if (householdIssues.isNotEmpty()) {
-        Text("Household scope", style = MaterialTheme.typography.titleMedium)
+        Text("Household Scope", style = MaterialTheme.typography.titleMedium)
         householdIssues.forEach { issue -> IssueButton(issue) { if (issue.route == "members") model.leave(onExit) else model.select(issue.route, issue.memberId) } }
     }
     if (memberIssues.isNotEmpty()) {
-        Text("Member scope", style = MaterialTheme.typography.titleMedium)
+        Text("Member Scope", style = MaterialTheme.typography.titleMedium)
         memberIssues.forEach { issue -> IssueButton(issue) { if (issue.route == "members") model.leave(onExit) else model.select(issue.route, issue.memberId) } }
     }
     if (state.issues.isEmpty()) {
         Text("Every section is ready. Marking the interview reviewed records local completion only.", style = MaterialTheme.typography.bodyMedium)
     }
-    Button(onClick = model::complete, enabled = state.issues.isEmpty() && state.phase != SavePhase.Saving) { Text("Mark interview reviewed") }
+    Button(onClick = model::complete, enabled = state.issues.isEmpty() && state.phase != SavePhase.Saving) { Text("Mark Interview Reviewed") }
 }
 
 @Composable
@@ -416,8 +416,8 @@ private fun WorkspaceBottomBar(state: WorkspaceState, model: InterviewWorkspaceV
             SaveStatusLine(state.phase, state.message)
             if (state.phase == SavePhase.Failed) TextButton(onClick = model::reload) { Text("Discard unsaved edits and reload saved section") }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedButton(onClick = model::check, enabled = !state.showingReview) { Text("Check answers") }
-                Button(onClick = model::save, enabled = state.phase != SavePhase.Saving) { Text("Save draft") }
+                OutlinedButton(onClick = model::check, enabled = !state.showingReview) { Text("Check Answers") }
+                Button(onClick = model::save, enabled = state.phase != SavePhase.Saving) { Text("Save Draft") }
             }
         }
     }
@@ -435,7 +435,7 @@ private fun SectionDirectorySheet(
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("All sections", style = MaterialTheme.typography.titleLarge)
+            Text("All Sections", style = MaterialTheme.typography.titleLarge)
             Text("Jump straight to any part of the questionnaire.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
             sections.forEach { section ->
@@ -504,8 +504,8 @@ private fun SectionStatusIcon(status: SectionStatus?) {
 private val SectionStatus.announced: String
     get() = when (this) {
         SectionStatus.Ready -> "Ready"
-        SectionStatus.NeedsAttention -> "Needs attention"
-        SectionStatus.NotStarted -> "Not started"
+        SectionStatus.NeedsAttention -> "Needs Attention"
+        SectionStatus.NotStarted -> "Not Started"
     }
 
 /** Exposes real section readiness to TalkBack without folding it into the selected state (UX-01). */
@@ -549,7 +549,7 @@ private fun SignatureColumn(model: InterviewWorkspaceViewModel) {
     val state by model.state.collectAsStateWithLifecycle()
     val saved = state.record?.attachments?.find { it.kind == HouseholdRepository.SIGNATURE }?.relativePath
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Respondent signature (drawn)", style = MaterialTheme.typography.titleSmall)
+        Text("Respondent Signature (Drawn)", style = MaterialTheme.typography.titleSmall)
         PhotoPreview(saved, "Saved drawn signature")
         SignaturePad(
             hasSavedSignature = model.hasSignature,
@@ -584,12 +584,12 @@ private fun HouseholdPhotoSlot(model: InterviewWorkspaceViewModel) {
                 onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
                 enabled = state.phase != SavePhase.Saving,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("photo-choose"),
-            ) { Text(if (model.hasHouseholdPhoto) "Replace picture" else "Choose picture") }
+            ) { Text(if (model.hasHouseholdPhoto) "Replace Picture" else "Choose Picture") }
             OutlinedButton(
                 onClick = model::removePhoto,
                 enabled = model.hasHouseholdPhoto && state.phase != SavePhase.Saving,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("photo-remove"),
-            ) { Text("Remove picture") }
+            ) { Text("Remove Picture") }
         }
     }
 }
@@ -619,12 +619,12 @@ private fun MemberPhotoSlot(model: InterviewWorkspaceViewModel) {
                 onClick = { pickerMember = state.memberId; picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
                 enabled = state.phase != SavePhase.Saving,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("member-photo-choose"),
-            ) { Text(if (model.hasMemberPhoto) "Replace picture" else "Choose picture") }
+            ) { Text(if (model.hasMemberPhoto) "Replace Picture" else "Choose Picture") }
             OutlinedButton(
                 onClick = model::removeMemberPhoto,
                 enabled = model.hasMemberPhoto && state.phase != SavePhase.Saving,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("member-photo-remove"),
-            ) { Text("Remove picture") }
+            ) { Text("Remove Picture") }
         }
     }
 }

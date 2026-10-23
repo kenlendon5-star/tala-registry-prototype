@@ -164,12 +164,12 @@ class EditingDeviceTest {
             compose.onAllNodesWithTag("household-edit-screen").fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNodeWithTag("archive-household").performScrollTo().performClick()
-        compose.onNodeWithText("Confirm archive", useUnmergedTree = true).performClick()
+        compose.onNodeWithText("Confirm Archive", useUnmergedTree = true).performClick()
         waitUntilStatusContains("Archived")
 
         // Archiving is reversible and keeps the same record identity.
         compose.onNodeWithTag("archive-household").performScrollTo().performClick()
-        compose.onNodeWithText("Confirm restore", useUnmergedTree = true).performClick()
+        compose.onNodeWithText("Confirm Restore", useUnmergedTree = true).performClick()
         waitUntilStatusContains("Restored")
         assertEquals("HH-00452", recordCode())
     }

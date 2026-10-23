@@ -385,7 +385,7 @@ private fun AdjustPanel(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            "Adjust pin · ${draft.displayCode}",
+            "Adjust Pin · ${draft.displayCode}",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.testTag("adjust-title"),
         )
@@ -429,7 +429,7 @@ private fun AdjustPanel(
                 onClick = onSave,
                 enabled = writePhase != LocationWritePhase.Saving,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("save-adjust-pin"),
-            ) { Text(if (writePhase == LocationWritePhase.Saving) "Saving…" else "Save pin position") }
+            ) { Text(if (writePhase == LocationWritePhase.Saving) "Saving…" else "Save Pin Position") }
             OutlinedButton(
                 onClick = onCancel,
                 enabled = writePhase != LocationWritePhase.Saving,
@@ -489,11 +489,11 @@ private fun SelectedCard(
             Button(
                 onClick = { onOpenHousehold(pin.householdId) },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("open-household-from-map"),
-            ) { Text("Open household record") }
+            ) { Text("Open Household Record") }
             OutlinedButton(
                 onClick = { onStartAdjust(pin.householdId) },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("start-adjust-pin"),
-            ) { Text("Adjust pin on map") }
+            ) { Text("Adjust Pin on Map") }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(
                     onClick = { openExternal(directions = false) },
@@ -524,7 +524,7 @@ private fun PinLists(
     LazyColumn(modifier.fillMaxWidth().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         item {
             Text(
-                "Households with saved pins (${state.pins.size} · ${state.plottedCount} in the working area)",
+                "Households with Saved Pins (${state.pins.size} · ${state.plottedCount} in the working area)",
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(top = 8.dp).testTag("pin-list-title"),
             )
@@ -535,7 +535,7 @@ private fun PinLists(
         if (state.untagged.isNotEmpty()) {
             item {
                 Text(
-                    "Not plotted yet (${state.untagged.size})",
+                    "Not Plotted Yet (${state.untagged.size})",
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 12.dp).testTag("untagged-title"),
                 )
@@ -550,9 +550,9 @@ private fun PinLists(
                     Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f)) {
                             Text("${household.displayCode} · ${household.headName}", style = MaterialTheme.typography.bodyMedium)
-                            Text("No coordinates recorded yet", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("No Coordinates Recorded Yet", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        Text("Open record", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                        Text("Open Record", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }

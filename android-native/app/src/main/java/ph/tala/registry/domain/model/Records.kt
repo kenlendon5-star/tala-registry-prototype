@@ -28,10 +28,10 @@ data class Member(
 )
 
 enum class HouseholdStatus(val label: String) {
-    NotStarted("Not started"),
-    InProgress("In progress"),
+    NotStarted("Not Started"),
+    InProgress("In Progress"),
     Callback("Callback"),
-    Reviewed("Demo reviewed"),
+    Reviewed("Demo Reviewed"),
     ;
 
     companion object {

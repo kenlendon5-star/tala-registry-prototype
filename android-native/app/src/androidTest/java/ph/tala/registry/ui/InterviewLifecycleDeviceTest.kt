@@ -57,15 +57,15 @@ class InterviewLifecycleDeviceTest {
         option(key, value)
     }
     private fun save() {
-        compose.onNodeWithText("Save draft").performClick()
+        compose.onNodeWithText("Save Draft").performClick()
         compose.waitUntil(30_000) { compose.onAllNodesWithText("Saved on this device.").fetchSemanticsNodes().isNotEmpty() }
     }
     private fun recordVisit() {
-        compose.onNodeWithText("Record visit result").performScrollTo().performClick()
+        compose.onNodeWithText("Record Visit Result").performScrollTo().performClick()
         compose.waitUntil(30_000) { compose.onAllNodesWithText("Visit result recorded on this device.").fetchSemanticsNodes().isNotEmpty() }
     }
     private fun review() {
-        compose.onNodeWithText("Review interview").performClick()
+        compose.onNodeWithText("Review Interview").performClick()
         await("review-progress")
     }
     private fun awaitSignature(present: Boolean) = compose.waitUntil(30_000) {
@@ -112,7 +112,7 @@ class InterviewLifecycleDeviceTest {
         section("visit"); recordVisit()
         review()
         compose.onNodeWithText("17 of 18 sections ready. This records local completion only.", useUnmergedTree = true).performScrollTo().assertExists()
-        compose.onNodeWithText("Mark interview reviewed").performScrollTo().assertIsNotEnabled()
+        compose.onNodeWithText("Mark Interview Reviewed").performScrollTo().assertIsNotEnabled()
         // Review jumps to the missing consent form instead of losing the household context.
         compose.onNodeWithText("Consent & review: 1 missing or invalid answers").performScrollTo().performClick()
         await("option-consent-Yes")
@@ -135,7 +135,7 @@ class InterviewLifecycleDeviceTest {
         capture("drawn-signature")
         review()
         compose.onNodeWithText("18 of 18 sections ready. This records local completion only.", useUnmergedTree = true).performScrollTo().assertExists()
-        compose.onNodeWithText("Mark interview reviewed").performScrollTo().performClick()
+        compose.onNodeWithText("Mark Interview Reviewed").performScrollTo().performClick()
         compose.waitUntil(30_000) { record(complete).household.status == "Reviewed" }
         compose.waitUntil(30_000) { compose.onAllNodesWithText("Interview reviewed on this device.").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Interview reviewed on this device.").assertExists()
@@ -157,7 +157,7 @@ class InterviewLifecycleDeviceTest {
         compose.onNodeWithTag("field-signedName").performScrollTo().performTextReplacement("Maria Sample")
         save()
         review()
-        compose.onNodeWithText("Mark interview reviewed").performScrollTo().performClick()
+        compose.onNodeWithText("Mark Interview Reviewed").performScrollTo().performClick()
         compose.waitUntil(30_000) { record(complete).household.status == "Reviewed" }
     }
 
@@ -173,7 +173,7 @@ class InterviewLifecycleDeviceTest {
         // The UX-03 compact reflow (single-scroll page while the IME is open) scrolls the
         // workspace header out of view, so close the keyboard first — as a user would tap away.
         androidx.test.espresso.Espresso.closeSoftKeyboard()
-        compose.onNodeWithText("Save & back").performClick()
+        compose.onNodeWithText("Save & Back").performClick()
         await("interview-screen")
         compose.onNodeWithContentDescription("Back").performClick()
         await("household-search")
@@ -195,12 +195,12 @@ class InterviewLifecycleDeviceTest {
         assertTrue(history.all { it.visitedOn == "2026-10-18" })
         section("consent"); option("consent", "No"); save()
         review()
-        compose.onNodeWithText("Mark interview reviewed").performScrollTo().assertIsNotEnabled()
+        compose.onNodeWithText("Mark Interview Reviewed").performScrollTo().assertIsNotEnabled()
         assertTrue(runBlocking { app.repository.reviewInterview(callback) } is WriteResult.Failed)
         assertEquals("InProgress", record(callback).household.status)
         capture("refused-interview")
         androidx.test.espresso.Espresso.closeSoftKeyboard()
-        compose.onNodeWithText("Save & back").performClick()
+        compose.onNodeWithText("Save & Back").performClick()
         await("interview-screen")
         compose.onNodeWithContentDescription("Back").performClick()
         open(callback); section("visit")

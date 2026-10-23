@@ -116,13 +116,13 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
     // Contextual titles: the app bar names the screen the enumerator is on, not just the app.
     val appBarTitle = when {
         route == Destination.Households.route -> "Households"
-        route == Destination.HouseholdAdd.route -> "Register household"
-        route == Destination.HouseholdEdit.PATTERN -> "Edit household"
-        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN -> "Household member"
+        route == Destination.HouseholdAdd.route -> "Register Household"
+        route == Destination.HouseholdEdit.PATTERN -> "Edit Household"
+        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN -> "Household Member"
         route == Destination.Interview.PATTERN -> "Interview"
         route == Destination.Questionnaire.PATTERN -> "Questionnaire"
-        route == Destination.Practice.PATTERN -> "Practice interview"
-        route == Destination.Profile.route -> "Enumerator profile"
+        route == Destination.Practice.PATTERN -> "Practice Interview"
+        route == Destination.Profile.route -> "Enumerator Profile"
         route == Destination.Map.route -> "Map"
         route == Destination.Reports.route -> "Reports"
         else -> null
@@ -416,12 +416,12 @@ private fun HouseholdsScreen(
         contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item {
-            Text("Your households", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+            Text("Your Households", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
             Text("Find the right record before you begin.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         item {
             Button(onClick = onAdd, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("add-household")) {
-                Text("Register a household")
+                Text("Register a Household")
             }
         }
         item {
@@ -446,9 +446,9 @@ private fun HouseholdsScreen(
             items(state.visibleHouseholds, key = { it.id.value }) { HouseholdCard(it, onOpen) }
             if (state.visibleHouseholds.isEmpty()) item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("No matching households", style = MaterialTheme.typography.titleMedium)
+                    Text("No Matching Households", style = MaterialTheme.typography.titleMedium)
                     Text("Try another name, household ID or status.")
-                    OutlinedButton(onClick = onClear) { Text("Clear search and filters") }
+                    OutlinedButton(onClick = onClear) { Text("Clear Search and Filters") }
                 }
             }
         }
@@ -482,7 +482,7 @@ private fun InterviewScreen(
         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text("Household unavailable", style = MaterialTheme.typography.headlineSmall)
             Text("This record is no longer in the local household list.")
-            Button(onClick = onBack) { Text("Back to households") }
+            Button(onClick = onBack) { Text("Back to Households") }
         }
         return
     }
@@ -511,14 +511,14 @@ private fun InterviewScreen(
                 item {
                     Surface(shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surface) {
                         Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text("Household overview", style = MaterialTheme.typography.titleLarge)
+                            Text("Household Overview", style = MaterialTheme.typography.titleLarge)
                             Text("Status · ${household.status.label}")
                             Text("${household.members.size} household members")
                             Text("Enumerator · ${state.enumeratorName ?: "Not recorded yet"}")
                         }
                     }
                 }
-                item { Button(onClick = onEditHousehold, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("edit-household")) { Text("Edit household profile") } }
+                item { Button(onClick = onEditHousehold, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("edit-household")) { Text("Edit Household Profile") } }
                 item {
                     HouseholdLocationCard(
                         state = locationState,
@@ -532,13 +532,13 @@ private fun InterviewScreen(
                         onCancelManual = onCancelLocationManual,
                     )
                 }
-                item { Button(onClick = onQuestionnaire, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open-questionnaire")) { Text("Continue questionnaire") } }
-                item { Button(onClick = { onTab(InterviewTab.Members) }, modifier = Modifier.fillMaxWidth()) { Text("View members") } }
-                item { OutlinedButton(onClick = { onTab(InterviewTab.Sections) }, modifier = Modifier.fillMaxWidth()) { Text("View interview sections") } }
-                item { OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().testTag("open-practice")) { Text("Try a practice interview") } }
+                item { Button(onClick = onQuestionnaire, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open-questionnaire")) { Text("Continue Questionnaire") } }
+                item { Button(onClick = { onTab(InterviewTab.Members) }, modifier = Modifier.fillMaxWidth()) { Text("View Members") } }
+                item { OutlinedButton(onClick = { onTab(InterviewTab.Sections) }, modifier = Modifier.fillMaxWidth()) { Text("View Interview Sections") } }
+                item { OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().testTag("open-practice")) { Text("Try a Practice Interview") } }
             }
             InterviewTab.Members -> {
-                item { Text("Household members", style = MaterialTheme.typography.titleLarge) }
+                item { Text("Household Members", style = MaterialTheme.typography.titleLarge) }
                 items(household.members, key = { it.id.value }) { member ->
                     Surface(
                         onClick = { onEditMember(member.id) },
@@ -558,16 +558,16 @@ private fun InterviewScreen(
                 if (household.members.isEmpty()) item { Text("No members in this sample household.") }
                 item {
                     Button(onClick = onAddMember, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("add-member")) {
-                        Text("Add household member")
+                        Text("Add Household Member")
                     }
                 }
             }
             InterviewTab.Sections -> {
                 item {
-                    Text("Interview sections", style = MaterialTheme.typography.titleLarge)
+                    Text("Interview Sections", style = MaterialTheme.typography.titleLarge)
                     Text("Answer every section in the questionnaire workspace. Try the practice interview to check the shared controls.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("open-practice")) { Text("Try a practice interview") }
-                    Button(onClick = onQuestionnaire, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open-questionnaire-sections")) { Text("Continue questionnaire") }
+                    OutlinedButton(onClick = onPractice, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("open-practice")) { Text("Try a Practice Interview") }
+                    Button(onClick = onQuestionnaire, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open-questionnaire-sections")) { Text("Continue Questionnaire") }
                 }
                 item {
                     Text("The questionnaire covers all ${QuestionnaireSections.all.size} sections:", style = MaterialTheme.typography.titleMedium)
@@ -632,11 +632,11 @@ private fun ReportsScreen() {
         Button(
             onClick = {},
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-        ) { Text("Choose export destination") }
+        ) { Text("Choose Export Destination") }
         Button(
             onClick = {},
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-        ) { Text("Restore from backup") }
+        ) { Text("Restore From Backup") }
     }
 }
 
@@ -707,7 +707,7 @@ private fun ProfileScreen(
         Modifier.fillMaxSize().testTag("profile-screen").verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text("Enumerator profile", style = MaterialTheme.typography.titleLarge)
+        Text("Enumerator Profile", style = MaterialTheme.typography.titleLarge)
         Text("Changes stamp new interviews; saved records keep their own attribution.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         OutlinedTextField(
             value = state.name, onValueChange = onName, enabled = !state.saving,
@@ -731,11 +731,11 @@ private fun ProfileScreen(
                 onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
                 enabled = !state.saving,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("profile-photo-choose"),
-            ) { Text(if (state.photoSaved) "Replace picture" else "Choose picture") }
+            ) { Text(if (state.photoSaved) "Replace Picture" else "Choose Picture") }
             OutlinedButton(
                 onClick = onRemovePhoto, enabled = state.photoSaved && !state.saving,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag("profile-photo-remove"),
-            ) { Text("Remove picture") }
+            ) { Text("Remove Picture") }
         }
         if (state.phase == ph.tala.registry.ui.households.SavePhase.Idle && state.message.isNotBlank()) Text(
             state.message,
@@ -746,7 +746,7 @@ private fun ProfileScreen(
         Button(
             onClick = onSave, enabled = !state.saving,
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("save-profile"),
-        ) { Text(if (state.saving) "Saving…" else "Save profile") }
+        ) { Text(if (state.saving) "Saving…" else "Save Profile") }
     }
 }
 

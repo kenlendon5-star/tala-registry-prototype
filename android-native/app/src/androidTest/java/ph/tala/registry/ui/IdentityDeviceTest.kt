@@ -39,7 +39,7 @@ class IdentityDeviceTest {
         compose.onNodeWithTag("option-$key-$text").performScrollTo().performClick()
     }
     private fun save() {
-        compose.onNodeWithText("Save draft").performClick()
+        compose.onNodeWithText("Save Draft").performClick()
         compose.waitUntil(30_000) {
             compose.onAllNodesWithText("Saved on this device.").fetchSemanticsNodes().isNotEmpty()
         }
@@ -85,7 +85,7 @@ class IdentityDeviceTest {
             select("relationship", if (member == maria) "Head" else "Spouse")
             option("sex", if (member == maria) "Female" else "Male")
             input("dob", "2099-01-01")
-            compose.onNodeWithText("Check answers").performClick()
+            compose.onNodeWithText("Check Answers").performClick()
             compose.onNodeWithTag("hint-dob", useUnmergedTree = true).performScrollTo().assertTextEquals("Date cannot be in the future.")
             input("dob", if (member == maria) "1990-05-15" else "1985-08-22")
             option("birth", "Yes"); select("civilStatus", "Married")
@@ -93,7 +93,7 @@ class IdentityDeviceTest {
             section("other", member)
             option("nationalId", "Yes"); option("soloParent", "Yes"); input("soloParentId", "SP-$first")
             option("disability", "Yes"); option("registeredPwd", "Yes")
-            compose.onNodeWithText("Check answers").performClick()
+            compose.onNodeWithText("Check Answers").performClick()
             compose.onNodeWithTag("hint-pwdId", useUnmergedTree = true).performScrollTo().assertTextEquals("Choose or enter an answer.")
             input("pwdId", "PWD-$first"); input("disabilityDetail", "Visual impairment")
             option("seniorId", "Not applicable"); save()
@@ -110,7 +110,7 @@ class IdentityDeviceTest {
             input("citizenship", "Filipino"); option("moved", "Yes")
             input("previousResidence", if (member == maria) "Cebu" else "Davao")
             input("moveYear", "1899")
-            compose.onNodeWithText("Check answers").performClick()
+            compose.onNodeWithText("Check Answers").performClick()
             compose.onNodeWithTag("hint-moveYear", useUnmergedTree = true).performScrollTo().assertTextEquals("Enter at least 1900.")
             input("moveYear", if (member == maria) "2020" else "2021")
             option("overseas", if (member == maria) "Yes" else "No"); save()

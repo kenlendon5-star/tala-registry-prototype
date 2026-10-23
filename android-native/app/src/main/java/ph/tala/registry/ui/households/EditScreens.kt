@@ -63,7 +63,7 @@ fun HouseholdEditScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(
-                if (state.creating) "Register a household" else "Edit household",
+                if (state.creating) "Register a Household" else "Edit Household",
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(
@@ -81,7 +81,7 @@ fun HouseholdEditScreen(
             )
             if (!state.creating) {
                 if (state.structuredName) Text("The full name is built from the saved name details.")
-                OutlinedButton(onClick = onNameDetails, enabled = !state.saving, modifier = Modifier.testTag("edit-name-details")) { Text("Name details") }
+                OutlinedButton(onClick = onNameDetails, enabled = !state.saving, modifier = Modifier.testTag("edit-name-details")) { Text("Name Details") }
             }
             OutlinedTextField(
                 value = state.address, onValueChange = onAddress, enabled = !state.saving,
@@ -109,7 +109,7 @@ fun HouseholdEditScreen(
                     onClick = { confirmArchive = true },
                     enabled = !state.saving,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("archive-household"),
-                ) { Text(if (state.archived) "Restore household" else "Archive household") }
+                ) { Text(if (state.archived) "Restore Household" else "Archive Household") }
                 Text(
                     "Archiving keeps members, answers and pictures; it only removes the record from active counts and stays reversible.",
                     style = MaterialTheme.typography.bodySmall,
@@ -124,13 +124,13 @@ fun HouseholdEditScreen(
                 Button(
                     onClick = onSave, enabled = !state.saving,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("save-household"),
-                ) { Text(if (state.saving) "Saving…" else "Save household") }
+                ) { Text(if (state.saving) "Saving…" else "Save Household") }
             }
         }
     }
     if (confirmArchive) AlertDialog(
         onDismissRequest = { confirmArchive = false },
-        title = { Text(if (state.archived) "Restore this household?" else "Archive this household?") },
+        title = { Text(if (state.archived) "Restore This Household?" else "Archive This Household?") },
         text = {
             Text(
                 if (state.archived) "The record returns to the active household list with its members and answers."
@@ -139,7 +139,7 @@ fun HouseholdEditScreen(
         },
         confirmButton = {
             TextButton(onClick = { confirmArchive = false; onArchive(!state.archived) }, modifier = Modifier.testTag("confirm-archive")) {
-                Text(if (state.archived) "Confirm restore" else "Confirm archive")
+                Text(if (state.archived) "Confirm Restore" else "Confirm Archive")
             }
         },
         dismissButton = { TextButton(onClick = { confirmArchive = false }) { Text("Cancel") } },
@@ -169,7 +169,7 @@ fun MemberEditScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(
-                if (state.creating) "Add household member" else "Edit household member",
+                if (state.creating) "Add Household Member" else "Edit Household Member",
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(state.householdLabel, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
@@ -182,14 +182,14 @@ fun MemberEditScreen(
             )
             if (!state.creating) {
                 if (state.structuredName) Text("The full name is built from the saved name details.")
-                OutlinedButton(onClick = onNameDetails, enabled = !state.saving, modifier = Modifier.testTag("edit-name-details")) { Text("Name details") }
+                OutlinedButton(onClick = onNameDetails, enabled = !state.saving, modifier = Modifier.testTag("edit-name-details")) { Text("Name Details") }
             }
             if (!state.creating) {
                 OutlinedButton(
                     onClick = { confirmRemove = true },
                     enabled = !state.saving,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("remove-member"),
-                ) { Text("Remove member") }
+                ) { Text("Remove Member") }
                 Text(
                     "Removing deletes this member's saved answers with the member. Other members are unchanged.",
                     style = MaterialTheme.typography.bodySmall,
@@ -204,16 +204,16 @@ fun MemberEditScreen(
                 Button(
                     onClick = onSave, enabled = !state.saving,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("save-member"),
-                ) { Text(if (state.saving) "Saving…" else "Save member") }
+                ) { Text(if (state.saving) "Saving…" else "Save Member") }
             }
         }
     }
     if (confirmRemove) AlertDialog(
         onDismissRequest = { confirmRemove = false },
-        title = { Text("Remove this member?") },
+        title = { Text("Remove This Member?") },
         text = { Text("Saved answers for ${state.displayName.ifBlank { "this member" }} are deleted with the member. This cannot be undone from this screen.") },
         confirmButton = {
-            TextButton(onClick = { confirmRemove = false; onRemove() }, modifier = Modifier.testTag("confirm-remove")) { Text("Confirm remove") }
+            TextButton(onClick = { confirmRemove = false; onRemove() }, modifier = Modifier.testTag("confirm-remove")) { Text("Confirm Remove") }
         },
         dismissButton = { TextButton(onClick = { confirmRemove = false }) { Text("Cancel") } },
     )

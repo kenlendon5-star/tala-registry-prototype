@@ -63,23 +63,23 @@ class WorkspaceSemanticsDeviceTest {
 
     @Test fun sectionChipsExposeExactReadinessStates() {
         compose.onNodeWithTag("section-setup").performScrollTo().assert(readiness("Ready"))
-        compose.onNodeWithTag("section-visit").performScrollTo().assert(readiness("Needs attention"))
-        compose.onNodeWithTag("section-water").performScrollTo().assert(readiness("Not started"))
+        compose.onNodeWithTag("section-visit").performScrollTo().assert(readiness("Needs Attention"))
+        compose.onNodeWithTag("section-water").performScrollTo().assert(readiness("Not Started"))
         compose.onNodeWithTag("section-directory").performScrollTo().performClick()
         compose.onNodeWithTag("directory-setup").performScrollTo().assert(readiness("Ready"))
-        compose.onNodeWithTag("directory-visit").performScrollTo().assert(readiness("Needs attention"))
-        compose.onNodeWithTag("directory-water").performScrollTo().assert(readiness("Not started"))
+        compose.onNodeWithTag("directory-visit").performScrollTo().assert(readiness("Needs Attention"))
+        compose.onNodeWithTag("directory-water").performScrollTo().assert(readiness("Not Started"))
     }
 
     @Test fun selectionChangesNeitherReadinessNorStoredAnswers() {
         compose.onNodeWithTag("section-visit").performScrollTo().performClick()
         awaitSelected("visit")
-        compose.onNodeWithTag("section-visit").assertIsSelected().assert(readiness("Needs attention"))
+        compose.onNodeWithTag("section-visit").assertIsSelected().assert(readiness("Needs Attention"))
         compose.onNodeWithTag("section-setup").performScrollTo().assertIsNotSelected().assert(readiness("Ready"))
         compose.onNodeWithTag("section-water").performScrollTo().performClick()
         awaitSelected("water")
-        compose.onNodeWithTag("section-water").assertIsSelected().assert(readiness("Not started"))
-        compose.onNodeWithTag("section-visit").performScrollTo().assertIsNotSelected().assert(readiness("Needs attention"))
+        compose.onNodeWithTag("section-water").assertIsSelected().assert(readiness("Not Started"))
+        compose.onNodeWithTag("section-visit").performScrollTo().assertIsNotSelected().assert(readiness("Needs Attention"))
         runBlocking {
             val record = requireNotNull(app.repository.interviewRecord(id))
             assertEquals(partialVisit, ph.tala.registry.domain.form.InterviewRules.answers(record,
@@ -95,7 +95,7 @@ class WorkspaceSemanticsDeviceTest {
         awaitSelected("demographics")
         compose.onNodeWithTag("section-position").assertTextEquals("Section 5 of 18")
         compose.onNodeWithTag("section-demographics").performScrollTo().assertIsSelected()
-        compose.onNodeWithText("Save & back").performClick()
+        compose.onNodeWithText("Save & Back").performClick()
         await("interview-screen")
         compose.onNodeWithTag("interview-screen").performScrollToNode(hasTestTag("tab-Sections"))
         compose.onNodeWithTag("tab-Sections").performScrollTo().performClick()

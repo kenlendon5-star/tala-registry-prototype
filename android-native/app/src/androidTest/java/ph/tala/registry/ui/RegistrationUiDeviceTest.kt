@@ -162,7 +162,7 @@ class RegistrationUiDeviceTest {
         await("interview-workspace")
         compose.onNodeWithTag("field-firstName").performScrollTo().performTextReplacement("Ana")
         compose.onNodeWithTag("field-lastName").performScrollTo().performTextReplacement("Reyes")
-        compose.onNodeWithText("Save draft").performClick(); saved()
+        compose.onNodeWithText("Save Draft").performClick(); saved()
         val household = runBlocking { app.repository.households.first().single { it.headName == "Ana Reyes" && it.address == address } }
         val (_, date) = pickerImage()
         chooseFixture("photo-choose", date)
@@ -189,14 +189,14 @@ class RegistrationUiDeviceTest {
         compose.waitUntil(15_000) { automation.rootInActiveWindow?.packageName?.toString() == "com.google.android.photopicker" }
         automation.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
         await("interview-workspace")
-        compose.onNodeWithText("Save & back").performClick()
+        compose.onNodeWithText("Save & Back").performClick()
         await("household-edit-screen")
         compose.onNodeWithTag("field-headName").assertTextContains("Ana Reyes")
         compose.onNodeWithTag("edit-name-details").performScrollTo().performClick()
         await("interview-workspace")
         compose.onNodeWithTag("field-lastName").performScrollTo().performTextReplacement("Cruz")
-        compose.onNodeWithText("Save draft").performClick(); saved()
-        compose.onNodeWithText("Save & back").performClick()
+        compose.onNodeWithText("Save Draft").performClick(); saved()
+        compose.onNodeWithText("Save & Back").performClick()
         compose.onNodeWithTag("field-headName").assertTextContains("Ana Cruz")
         runBlocking {
             val record = app.repository.interviewRecord(household.id)!!

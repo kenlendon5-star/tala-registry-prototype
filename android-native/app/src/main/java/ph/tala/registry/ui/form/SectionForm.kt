@@ -66,7 +66,7 @@ fun SectionForm(
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
-                Button(onClick = onCheck, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("check-answers")) { Text("Check answers") }
+                Button(onClick = onCheck, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("check-answers")) { Text("Check Answers") }
             }
         }
     }

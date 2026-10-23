@@ -116,15 +116,15 @@ class FullCoverageDeviceTest {
         option(key, text)
     }
     private fun save() {
-        compose.onNodeWithText("Save draft").performClick()
+        compose.onNodeWithText("Save Draft").performClick()
         compose.waitUntil(30_000) { compose.onAllNodesWithText("Saved on this device.").fetchSemanticsNodes().isNotEmpty() }
     }
     private fun recordVisit() {
-        compose.onNodeWithText("Record visit result").performScrollTo().performClick()
+        compose.onNodeWithText("Record Visit Result").performScrollTo().performClick()
         compose.waitUntil(30_000) { compose.onAllNodesWithText("Visit result recorded on this device.").fetchSemanticsNodes().isNotEmpty() }
     }
     private fun review() {
-        compose.onNodeWithText("Review interview").performClick()
+        compose.onNodeWithText("Review Interview").performClick()
         await("review-progress")
     }
     private fun open() {
@@ -199,7 +199,7 @@ class FullCoverageDeviceTest {
         assertTrue(InterviewRules.issues(record(hh)).isEmpty())
         assertTrue(InterviewRules.progress(record(hh)).allReady)
         capture("review-18-of-18")
-        compose.onNodeWithText("Mark interview reviewed").performScrollTo().performClick()
+        compose.onNodeWithText("Mark Interview Reviewed").performScrollTo().performClick()
         compose.waitUntil(30_000) { record(hh).household.status == "Reviewed" }
         compose.onNodeWithText("Interview reviewed on this device.").assertExists()
         capture("interview-reviewed")

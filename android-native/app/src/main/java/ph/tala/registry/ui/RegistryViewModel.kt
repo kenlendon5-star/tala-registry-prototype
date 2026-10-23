@@ -12,7 +12,7 @@ import ph.tala.registry.domain.model.Household
 import ph.tala.registry.domain.model.HouseholdStatus
 
 enum class HouseholdFilter(val label: String, val status: HouseholdStatus? = null) {
-    All("All"), InProgress("In progress", HouseholdStatus.InProgress),
+    All("All"), InProgress("In Progress", HouseholdStatus.InProgress),
     Callback("Callback", HouseholdStatus.Callback), Reviewed("Reviewed", HouseholdStatus.Reviewed),
     Archived("Archived"),
 }

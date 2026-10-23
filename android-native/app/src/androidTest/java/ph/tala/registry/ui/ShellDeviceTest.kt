@@ -86,12 +86,12 @@ class ShellDeviceTest {
         awaitSeededFixtures()
         compose.onNodeWithTag("nav-Households").performClick()
         compose.onNodeWithTag("household-search").performTextReplacement("No Such Fictional Household D13")
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("No matching households").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("No Matching Households").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Reviewed", useUnmergedTree = true).performClick()
-        compose.onNodeWithText("No matching households").assertIsDisplayed()
+        compose.onNodeWithText("No Matching Households").assertIsDisplayed()
         compose.activityRule.scenario.recreate()
-        compose.onNodeWithText("No matching households").assertIsDisplayed()
-        compose.onNodeWithText("Clear search and filters").performClick()
+        compose.onNodeWithText("No Matching Households").assertIsDisplayed()
+        compose.onNodeWithText("Clear Search and Filters").performClick()
         compose.onNodeWithTag("household-HH-00452").assertExists()
     }
 

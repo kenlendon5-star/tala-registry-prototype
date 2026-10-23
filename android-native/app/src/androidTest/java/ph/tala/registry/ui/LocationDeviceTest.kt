@@ -98,7 +98,7 @@ class LocationDeviceTest {
         await("section-setup")
         compose.onNodeWithTag("field-enumerator").performScrollTo().performTextReplacement("Location Permission Sample")
         androidx.test.espresso.Espresso.closeSoftKeyboard()
-        compose.onNodeWithText("Save draft").performClick()
+        compose.onNodeWithText("Save Draft").performClick()
         compose.waitUntil(15_000) { InterviewRules.answers(record(id),QuestionnaireSections.setup).scalar("enumerator")=="Location Permission Sample" }
     }
     @Test fun deniedThenPermanentDenialDoesNotBlockInterview() {
