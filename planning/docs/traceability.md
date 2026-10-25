@@ -39,6 +39,6 @@ Current native mapping (18 October 2026): use the [complete native acceptance ma
 | AUD-05 | Browser validation gaps | Open; native rule parity documented |
 | AUD-06 | Invalid planning progress JSON | Repaired in this organization task; generator verified |
 | AUD-07 | Outdated entry-point paths/links | Updated in this organization task; local Markdown links checked |
-| AUD-08 | Malformed URL crashes local preview handler | Open |
+| AUD-08 | Malformed URL crashes local preview handler | Fixed 24 October 2026; malformed encoding returns HTTP 400 and the handler/MIME regression test runs in the prototype check |
 
 The [system analysis](reviews/SYSTEM-ANALYSIS.md) is a dated snapshot. The table above records follow-up status without rewriting its historical findings. The [planning evidence](../03-evidence/) describes completed work packages; release requirements must also pass their stated end-to-end acceptance.

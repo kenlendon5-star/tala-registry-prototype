@@ -83,7 +83,7 @@
         },
         {
           "key": "visitNotes",
-          "label": "Visit notes",
+          "label": "Visit notes (Optional)",
           "type": "textarea",
           "options": [],
           "optional": true,
@@ -590,7 +590,7 @@
         },
         {
           "key": "track",
-          "label": "Program / track (Optional)",
+          "label": "Program / track (optional)",
           "type": "text",
           "options": [],
           "optional": true,

@@ -134,7 +134,7 @@ fun HouseholdEditScreen(
         text = {
             Text(
                 if (state.archived) "The record returns to the active household list with its members and answers."
-                else "Members, answers and pictures stay available. The record leaves the active household and member counts.",
+                else "Members, answers and pictures stay available. The record leaves the active household and member counts. Permanent deletion is not available in this release.",
             )
         },
         confirmButton = {

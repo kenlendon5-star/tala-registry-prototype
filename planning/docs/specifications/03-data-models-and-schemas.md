@@ -1,14 +1,14 @@
 # Data Models & Schemas — Tala
 
-Updated 19 October 2026. **Current** means checked-in Room version 3. **Target** means a design proposal requiring implementation/migration. No database is modified by this specification.
+Updated 24 October 2026. **Current** means checked-in Room version 5. **Target** means a design proposal requiring implementation/migration. No database is modified by this specification.
 
 ## 1. Sources of truth
 
 - Current entities: [Entities.kt](../../../android-native/app/src/main/java/ph/tala/registry/data/local/Entities.kt).
-- Authoritative exported Room schema: [version 3 JSON](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/3.json); [version 1](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/1.json) and [version 2](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/2.json) remain migration fixtures.
+- Authoritative exported Room schema: [version 5 JSON](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/5.json); [versions 1–4](../../../android-native/app/schemas/ph.tala.registry.data.local.RegistryDatabase/4.json) remain migration fixtures.
 - Readable generated historical DDL snapshot: [room-v1.sql](../schemas/room-v1.sql). Documentation only; do not apply as a Supabase migration or treat it as the latest Room schema.
 - Current questionnaire: [field dictionary](../schemas/questionnaire-field-dictionary.md), [machine-readable inventory](../schemas/questionnaire-current.json), generated from browser/forms.js.
-- Target portable format: [backup-v1.schema.json](../schemas/backup-v1.schema.json), [fictional example](../schemas/backup-v1.example.json). No current restore implementation consumes this format.
+- Current portable format: [backup-v1.schema.json](../schemas/backup-v1.schema.json), [fictional example](../schemas/backup-v1.example.json). Reports exports and restores this format.
 
 ## 2. Current entity relationships
 
@@ -27,14 +27,14 @@ erDiagram
 
 One interview per household is enforced by a unique householdId index. The store expects an interview when loading a complete snapshot, although the household row can exist independently at the SQL level. Multiple visits belong to that interview. A future repeated census cycle needs a deliberate change to interview uniqueness; it is not supported by silently adding another interview now.
 
-## 3. Current Room version-3 dictionary
+## 3. Current Room version-4 dictionary
 
 All String columns use SQLite TEXT; Double uses REAL; Long uses INTEGER. Fields are non-null unless suffixed `?` below. UUID validation is performed by RoomRecordStore, not a SQL UUID column type.
 
 | Table | Fields | Keys / relationships |
 |---|---|---|
 | households | id:String; displayCode:String; headName:String; address:String; status:String; archivedAt:Long? | PK id; unique displayCode. Store permits NotStarted, InProgress, Callback, Reviewed; archivedAt is null on active records and set when a record is archived. Migration 1 → 2 adds this column with `ALTER TABLE households ADD COLUMN archivedAt INTEGER` and keeps every existing row active |
-| members | id:String; householdId:String; displayName:String | PK id; FK householdId→households.id CASCADE; household index; unique (id,householdId) |
+| members | id:String; householdId:String; displayName:String; sortOrder:Int | PK id; FK householdId→households.id CASCADE; household index; unique (id,householdId). Migration 3→4 assigns existing members a deterministic order and new snapshot saves persist the visible roster order |
 | interviews | id:String; householdId:String; questionnaireVersion:String | PK id; unique householdId; FK→households CASCADE; unique (id,householdId). Kotlin default practice-v1 |
 | visits | id:String; interviewId:String; outcome:String; callbackAt:String?; visitedOn:String; notes:String; recordedAt:Long | PK id; FK→interviews CASCADE; interview index. Migration 2→3 preserves existing rows and adds blank date/notes and zero recordedAt defaults. Explicit visit actions append entries ordered by recordedAt then id; callback appointment is local date/time with no explicit zone column |
 | household_answers | interviewId:String; section:String; field:String; kind:String; value:String | PK (interviewId,section,field); FK→interviews CASCADE |
@@ -70,7 +70,7 @@ Current native demo identifiers such as HH-00452 are readable placeholders. Targ
 | Entity | Proposed fields / change | Purpose |
 |---|---|---|
 | Household | revision:Long; createdAt/updatedAt:UTC timestamp | Optimistic concurrency and history boundary; archivedAt is already implemented |
-| Member | firstName/middleName/lastName/extension/alias; sortOrder:Int | One authoritative name and stable user-visible roster order; displayName derived |
+| Member | firstName/middleName/lastName/extension/alias | One authoritative name; `sortOrder` and stable user-visible roster order are already implemented, while displayName remains stored rather than derived |
 | Household head | headMemberId:nullable member FK in same household, plus provisional head name before roster | Avoid two independent identities; confirm respondent versus head semantics |
 | Interview | consent:Unanswered/Yes/No; signedName?; signatureAttachmentId?; reviewedAt?; reviewedRevision? | Review tied to acknowledged record content; no duplicate signature source |
 | Visit | visitedAt:timestamp; callbackTimeZone?; enumerator attribution | Extend current dated history/local appointments with time-zone and attribution metadata; notes and recording order are already implemented |
@@ -83,25 +83,27 @@ Remaining extensions require a later Room migration and preservation tests. DEC-
 
 ## 6. Portable backup contract
 
-The proposed offline format uses UTF-8 JSON, format=`tala-backup`, formatVersion=`1`, exportedAt UTC, prototype=true, and a records array. Each household is a full graph with members, interview, visits, scoped answers, optional location and embedded attachments. IDs remain UUIDs and pictures/signatures travel with the record as base64 content plus MIME type, byte size and SHA-256. The portable answer objects carry scalar/multi values directly, not the database's doubly encoded JSON strings.
+The implemented offline format uses UTF-8 JSON, format=`tala-backup`, formatVersion=`1`, exportedAt UTC, prototype=true, and a records array. Each household is a full graph with members, interview, visits, scoped answers, optional location and embedded attachments. IDs remain UUIDs and pictures/signatures travel with the record as base64 content plus MIME type, byte size and SHA-256. The portable answer objects carry scalar/multi values directly, not the database's doubly encoded JSON strings.
 
-Required restore sequence:
+D17 amendment: the contract contains only what the native record store persists. Record `revision`/`createdAt`/`updatedAt`, member name parts, interview `reviewedAt`/`reviewedRevision`, and location `confirmedAt`/`addressAtCapture`/`notes` were removed rather than synthesized; visits carry `visitedOn` (form-entered date) plus `recordedAt` (append order) instead of one timestamp, and member `sortOrder` comes from the persisted roster order. Export-side limits: an attachment whose file is missing, empty, or over 5 MiB is skipped and counted in the saved summary. The JSON is encoded to a size-limited staging file, then copied to the selected destination only after the complete document is valid and at most 50 MiB; attachment bytes and the final JSON are not retained together in memory. The review timestamp is not tracked natively; a reviewed household exports status `Reviewed` with no fabricated date.
+
+Implemented restore sequence:
 
 1. Enforce 50 MiB file cap before parsing; reject unsupported format/version and wrong primitive types.
-2. Validate JSON Schema and semantic invariants below. Decode bounded attachments to a staging directory and verify size/hash and format.
-3. Show counts, duplicate IDs, conflicts and the source export time. Default to importing new records only; existing IDs require a visible keep/replace decision. Do not invent new IDs for the same record silently.
-4. Stage changes; transactionally write the complete chosen graphs with appropriate revision checks; finalize media safely. If a write or file operation fails, restore the prior state and retain a recoverable error.
-5. Recompute completeness/counts and verify references. A schema-valid file can still contain invalid questionnaire answers; preserve incomplete drafts but do not label them Reviewed.
+2. Stream the bounded file into the strict versioned decoder and validate semantic invariants, including globally unique per-table identities and consistency of derived consent/signature summaries. Decode bounded attachments to app-private staging and verify size, SHA-256, MIME type and actual image format.
+3. Show household, attachment and matching-ID replacement counts. Refuse display-code collisions owned by another UUID; matching UUIDs are visibly replaced after confirmation.
+4. Stage media, transactionally replace all complete selected graphs, then best-effort delete superseded files. Database failure removes newly staged files and preserves prior records.
+5. Restrict answers to the current questionnaire and correct scope, clear hidden dependents to a fixed point, and downgrade an incomplete imported Reviewed record to InProgress.
 
-Semantic invariants that JSON Schema alone cannot establish: unique IDs across records; unique displayCode; unique section/field/member answer key; member ownership; attachment reference existence; head/signature/profile reference scope; field membership in questionnaire version; hidden-answer cleanup; strict calendar dates; actual base64 decode size; content hash; reviewedRevision matching content revision. The example uses an incomplete draft intentionally.
+Semantic invariants that JSON Schema alone cannot establish: unique IDs across records; unique displayCode; unique section/field/member answer key; member ownership; attachment reference existence; head/signature/profile reference scope; field membership in questionnaire version; hidden-answer cleanup; strict calendar dates; actual base64 decode size; content hash. The example uses an incomplete draft intentionally.
 
 Browser `exportData` currently emits `{exportedAt, prototype, households}` without this versioned format and without stable member IDs. Treat it as a separate legacy import source requiring a converter, never as backup-v1 automatically.
 
-## 7. Future cloud model — design boundary only
+## 7. Current cloud boundary
 
-If synchronization is approved, mirror persistent UUID relationships in PostgreSQL and add barangay/workspace ownership, enumerator assignments, server revisions, change cursors/tombstones and an audit-event model. Keep database privileges and RLS policies in versioned migrations. Index foreign keys and ownership/filter columns used by real queries; assess plans before adding speculative indexes. Use private object storage with household-scoped authorization for media.
+The optional Supabase integration stores owner-scoped full snapshots plus private attachment objects. Room remains the source of truth. A durable Room outbox retries selected uploads, and acknowledged per-owner revisions prevent ordinary retries from overwriting a newer cloud snapshot. Deliberate local-wins replacement requires separate user confirmation. Keep database privileges and RLS policies in versioned migrations.
 
-No cloud DDL is prescribed as ready to apply: assignment authority, role matrix, retention and conflict rules need confirmation first. The existing Supabase migration is a placeholder. Exposed relations require both grants and row-level policies. [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [PostgreSQL constraints](https://www.postgresql.org/docs/current/ddl-constraints.html).
+Cloud download/merge, assignment authority, multi-role administration, retention, tombstones and audit history remain outside the current implementation. Exposed relations require both grants and row-level policies. [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [PostgreSQL constraints](https://www.postgresql.org/docs/current/ddl-constraints.html).
 
 ## 8. Migration acceptance
 

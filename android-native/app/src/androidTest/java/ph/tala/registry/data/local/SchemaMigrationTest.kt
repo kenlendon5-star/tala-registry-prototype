@@ -94,6 +94,46 @@ class SchemaMigrationTest {
         } finally { database.close(); holder.deleteDatabase(TEST_DB) }
     }
 
+    @Test fun versionThreeMembersReceiveStableRosterOrder() {
+        val created = helper.createDatabase(TEST_DB, 3)
+        created.execSQL("INSERT INTO households (id, displayCode, headName, address, status, archivedAt) VALUES (?, 'HH-00777', 'Luna Reyes', 'Sample Street', 'InProgress', NULL)", arrayOf(SampleRecords.HOUSEHOLD))
+        val first = "10000000-0000-4000-8000-000000000001"
+        val second = "20000000-0000-4000-8000-000000000002"
+        created.execSQL("INSERT INTO members (id, householdId, displayName) VALUES (?, ?, 'First Member')", arrayOf(first, SampleRecords.HOUSEHOLD))
+        created.execSQL("INSERT INTO members (id, householdId, displayName) VALUES (?, ?, 'Second Member')", arrayOf(second, SampleRecords.HOUSEHOLD))
+        created.close()
+
+        helper.runMigrationsAndValidate(TEST_DB, 4, true, RegistryDatabase.MIGRATION_3_4).close()
+        val holder = holderFor()
+        val database = RegistryDatabase.open(holder, TEST_DB)
+        try {
+            runBlocking {
+                val members = database.records().members(SampleRecords.HOUSEHOLD)
+                assertEquals(listOf(first, second), members.map { it.id })
+                assertEquals(listOf(0, 1), members.map { it.sortOrder })
+            }
+        } finally { database.close(); holder.deleteDatabase(TEST_DB) }
+    }
+
+    @Test fun versionFourAddsDurableSyncOutboxWithoutChangingHouseholds() {
+        val created = helper.createDatabase(TEST_DB, 4)
+        created.execSQL("INSERT INTO households (id, displayCode, headName, address, status, archivedAt) VALUES (?, 'HH-00777', 'Luna Reyes', 'Sample Street', 'InProgress', NULL)", arrayOf(SampleRecords.HOUSEHOLD))
+        created.close()
+
+        helper.runMigrationsAndValidate(TEST_DB, 5, true, RegistryDatabase.MIGRATION_4_5).close()
+        val holder = holderFor()
+        val database = RegistryDatabase.open(holder, TEST_DB)
+        try {
+            runBlocking {
+                database.records().putSyncOutbox(listOf(SyncOutboxRow(SampleRecords.HOUSEHOLD, 123L)))
+                database.records().putSyncRevision(SyncRevisionRow("91000000-0000-4000-8000-000000000001", SampleRecords.HOUSEHOLD, 2L))
+                assertEquals(SampleRecords.HOUSEHOLD, database.records().pendingSyncs().single().householdId)
+                assertEquals(2L, database.records().syncRevision("91000000-0000-4000-8000-000000000001", SampleRecords.HOUSEHOLD))
+                assertEquals("Luna Reyes", database.records().household(SampleRecords.HOUSEHOLD)?.headName)
+            }
+        } finally { database.close(); holder.deleteDatabase(TEST_DB) }
+    }
+
     private fun holderFor() = if (appContext.getDatabasePath(TEST_DB).exists()) appContext else instrumentation.context
 
     private companion object {

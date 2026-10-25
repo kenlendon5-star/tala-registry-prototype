@@ -2,7 +2,10 @@ const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 const path=require('node:path');
 const baseline=require('./implementation-progress.json');
-const nextCard=Object.keys(baseline).find(id=>['Ready','Backlog'].includes(baseline[id].status));
+const trackedIds=Object.keys(baseline);
+const nextCard=trackedIds.find(id=>['Ready','Backlog'].includes(baseline[id].status))
+ || `D${String(Math.max(...trackedIds.map(id=>Number(id.slice(1))))+1).padStart(2,'0')}`;
+const nextCardStatus=baseline[nextCard]?.status||'Backlog';
 const {pathToFileURL}=require('node:url');
 (async()=>{
  const browser=await chromium.launch({headless:true,channel:'msedge'});
@@ -37,9 +40,9 @@ const {pathToFileURL}=require('node:url');
   assert.equal(await page.getByLabel('Status for D22').inputValue(),'Backlog');
   // The refusal reason is shown on the card, not only in the notice bar at the top.
   assert.match(await page.locator('[data-id="D22"] .gate').textContent(),/waiting for D21/);
-  // Done gate: every checklist item and evidence note are required first; D08 still has unchecked tasks.
+  // Done gate: every checklist item and evidence note are required first.
   await page.getByLabel(`Status for ${nextCard}`).selectOption('Done');
-  assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),baseline[nextCard].status);
+  assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),nextCardStatus);
   assert.match(await page.locator(`[data-id="${nextCard}"] .gate`).textContent(),/(?:Check|Tick) every task/);
   // WIP gate: one card building at a time. D03's dependency (D02) stays Done while D01 builds.
   await page.getByLabel('Status for D01').selectOption('In progress');
@@ -50,7 +53,7 @@ const {pathToFileURL}=require('node:url');
   // Return D01 to Done (its checklist and evidence are already recorded) to free the slot.
   await page.getByLabel('Status for D01').selectOption('Done');
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
-  // Completing D08's checklist and evidence lets it reach Done (its dependency D07 is Done) and clears the refusal reason.
+  // Completing the next card's checklist and evidence lets it reach Done and clears the refusal reason.
   const nextDetails=page.locator(`[data-id="${nextCard}"] details`);
   // A refused Done transition can already expand the checklist for the user.
   if(!await nextDetails.evaluate(el=>el.open))await page.locator(`[data-id="${nextCard}"] summary`).click();

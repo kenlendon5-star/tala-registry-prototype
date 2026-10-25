@@ -15,7 +15,7 @@ object QuestionnaireSections {
         FieldSpec("visitDate", "Visit date", FieldType.Date),
         FieldSpec("visitResult", "Visit result", FieldType.Select, options = listOf("Interview started", "Completed visit", "Callback", "No respondent", "Refused")),
         FieldSpec("callbackDate", "Callback appointment", FieldType.DateTime, visibleWhen = Condition.Equals("visitResult", "Callback")),
-        FieldSpec("visitNotes", "Visit notes", FieldType.TextArea, optional = true),
+        FieldSpec("visitNotes", "Visit notes (Optional)", FieldType.TextArea, optional = true),
     ), scopedToMember = false)
     val household = SectionSpec("household", "Household profile", listOf(
         FieldSpec("firstName", "First Name", FieldType.Text, maxLength = RecordTextLimits.NAME),
@@ -71,7 +71,7 @@ object QuestionnaireSections {
         FieldSpec("reason", "Reason for not attending", FieldType.Select, options = listOf("Not yet school age", "Completed schooling", "Financial concerns", "Working", "Other", "Prefer not to answer"), visibleWhen = Condition.Equals("attending", "No")),
         FieldSpec("grade", "Highest grade / year completed", FieldType.Select, options = listOf("No grade completed", "Kindergarten", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12", "College level", "College graduate")),
         FieldSpec("educationAssistance", "Did You Receive Educational Assistance?", FieldType.Choice, options = listOf("Yes", "No")),
-        FieldSpec("track", "Program / track (Optional)", FieldType.Text, optional = true, visibleWhen = Condition.Equals("attending", "Yes")),
+        FieldSpec("track", "Program / track (optional)", FieldType.Text, optional = true, visibleWhen = Condition.Equals("attending", "Yes")),
     ), scopedToMember = true)
     val employment = SectionSpec("employment", "Employment", listOf(
         FieldSpec("worked", "Did This Member Earn for Pay or Profit in the Past 7 Days?", FieldType.Choice, options = listOf("Yes", "No")),

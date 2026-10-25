@@ -206,7 +206,7 @@ class RegistrationUiDeviceTest {
         }
         compose.onNodeWithContentDescription("Back", useUnmergedTree = true).performClick()
         compose.onNodeWithTag("nav-Home").performClick()
-        compose.onNodeWithTag("open-profile").performScrollTo().performClick()
+        compose.onNodeWithTag("nav-Profile").performClick()
         await("profile-screen")
         compose.onNodeWithTag("field-profileName").performTextReplacement("UI Enumerator")
         compose.onNodeWithTag("save-profile").performScrollTo().performClick(); saved()

@@ -22,7 +22,7 @@ Route: `visit`
 | visitDate | Visit date | date | Yes | — | Always |
 | visitResult | Visit result | select | Yes | Interview started; Completed visit; Callback; No respondent; Refused | Always |
 | callbackDate | Callback appointment | datetime-local | Yes | — | a=>a.visitResult==='Callback' |
-| visitNotes | Visit notes | textarea | No | — | Always |
+| visitNotes | Visit notes (Optional) | textarea | No | — | Always |
 
 ## 3. Household profile — household
 

@@ -80,9 +80,14 @@ class EditingPersistenceDeviceTest {
 
     @Test fun archivingKeepsTheRecordStoredAndRestoresTheSameIdentity() = runBlocking {
         assertEquals(WriteResult.Saved, repository.createHousehold(one, HouseholdDraft("Luna Reyes", "5 Sampaguita Street", HouseholdStatus.InProgress)))
+        assertEquals(WriteResult.Saved, repository.saveMember(one, member, MemberDraft("Luna Reyes Jr")))
+        assertEquals(WriteResult.Saved, repository.saveHouseholdPhotoAttachment(one, "attachments/archive-proof.jpg", "image/jpeg"))
         assertEquals(WriteResult.Saved, repository.setArchived(one, true))
         reopen()
         assertTrue(repository.households.first().single().archived)
+        val archivedRecord = repository.interviewRecord(one)!!
+        assertEquals(listOf(member.value), archivedRecord.members.map { it.id })
+        assertEquals(listOf("attachments/archive-proof.jpg"), archivedRecord.attachments.map { it.relativePath })
 
         assertEquals(WriteResult.Saved, repository.setArchived(one, false))
         reopen()
@@ -90,6 +95,8 @@ class EditingPersistenceDeviceTest {
         assertFalse(restored.archived)
         assertEquals(one, restored.id)
         assertEquals("Luna Reyes", restored.headName)
+        assertEquals(listOf(member), restored.members.map { it.id })
+        assertEquals(listOf("attachments/archive-proof.jpg"), repository.interviewRecord(one)!!.attachments.map { it.relativePath })
     }
 
     private companion object {

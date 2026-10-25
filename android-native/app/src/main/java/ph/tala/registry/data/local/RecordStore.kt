@@ -3,6 +3,7 @@ package ph.tala.registry.data.local
 import androidx.room.withTransaction
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -29,14 +30,20 @@ interface RecordStore {
     /** Every stored coordinate; the map joins it with the active household list. */
     val allCoordinates: Flow<List<CoordinateRow>>
     suspend fun load(id: String): StoredRecord?
+    /** Every stored snapshot in one read; the export joins full graphs by display code. */
+    suspend fun loadAll(): List<StoredRecord> = emptyList()
     suspend fun save(record: StoredRecord): WriteResult
+    suspend fun restore(records: List<StoredRecord>): WriteResult = WriteResult.Failed("Backup restore is unavailable.")
 }
 
 /** Full-snapshot replacement is atomic, including deletions of hidden/cleared answers. */
 class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
     private val dao = database.records()
     override val households = dao.observeHouseholds()
-    override val records = dao.observeRecords()
+    override val records = combine(dao.observeHouseholds(), dao.observeMembers()) { households, members ->
+        val byHousehold = members.groupBy { it.householdId }
+        households.map { HouseholdWithMembers(it, byHousehold[it.id].orEmpty()) }
+    }
     override val householdPuroks = dao.observePurokAnswers().map { rows ->
         rows.associate { it.householdId to ((AnswerCodec.decode(it.kind, it.value) as? AnswerValue.Scalar)?.text.orEmpty()) }
     }
@@ -52,22 +59,18 @@ class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
         StoredRecord(household, dao.members(id), interview, dao.visits(interview.id), dao.householdAnswers(interview.id), dao.memberAnswers(interview.id), dao.coordinates(id), dao.attachments(id))
     }
 
+    override suspend fun loadAll(): List<StoredRecord> = database.withTransaction {
+        dao.allHouseholds().mapNotNull { household ->
+            val interview = dao.interview(household.id) ?: return@mapNotNull null
+            StoredRecord(household, dao.members(household.id), interview, dao.visits(interview.id), dao.householdAnswers(interview.id), dao.memberAnswers(interview.id), dao.coordinates(household.id), dao.attachments(household.id))
+        }
+    }
+
     override suspend fun save(record: StoredRecord): WriteResult = try {
-        validate(record)
+        val normalized = record.copy(members = record.members.mapIndexed { index, member -> member.copy(sortOrder = index) })
+        validate(normalized)
         database.withTransaction {
-            val id = record.household.id
-            dao.putHousehold(record.household)
-            dao.clearAttachments(id)
-            dao.clearInterviews(id) // Cascades visits and both scoped answer tables.
-            dao.clearMembers(id)
-            dao.clearCoordinates(id)
-            dao.putMembers(record.members)
-            dao.putInterview(record.interview)
-            dao.putVisits(record.visits)
-            dao.putHouseholdAnswers(record.householdAnswers)
-            dao.putMemberAnswers(record.memberAnswers)
-            record.coordinates?.let { dao.putCoordinate(it) }
-            dao.putAttachments(record.attachments)
+            replace(normalized)
         }
         WriteResult.Saved
     } catch (cancelled: CancellationException) {
@@ -75,6 +78,38 @@ class RoomRecordStore(private val database: RegistryDatabase) : RecordStore {
     } catch (_: Exception) {
         // Do not expose answers, paths or database diagnostics in UI/logs.
         WriteResult.Failed("Could not save on this device. The previous saved record is unchanged. Retry after checking available storage.")
+    }
+
+    override suspend fun restore(records: List<StoredRecord>): WriteResult = try {
+        require(records.isNotEmpty())
+        val normalized = records.map { record ->
+            record.copy(members = record.members.sortedBy { it.sortOrder }.mapIndexed { index, member -> member.copy(sortOrder = index) })
+                .also(::validate)
+        }
+        require(normalized.map { it.household.id }.distinct().size == normalized.size)
+        require(normalized.map { it.household.displayCode }.distinct().size == normalized.size)
+        database.withTransaction { normalized.forEach { replace(it) } }
+        WriteResult.Saved
+    } catch (cancelled: CancellationException) {
+        throw cancelled
+    } catch (_: Exception) {
+        WriteResult.Failed("Could not restore the backup. Existing records are unchanged.")
+    }
+
+    private suspend fun replace(record: StoredRecord) {
+        val id = record.household.id
+        dao.putHousehold(record.household)
+        dao.clearAttachments(id)
+        dao.clearInterviews(id)
+        dao.clearMembers(id)
+        dao.clearCoordinates(id)
+        dao.putMembers(record.members)
+        dao.putInterview(record.interview)
+        dao.putVisits(record.visits)
+        dao.putHouseholdAnswers(record.householdAnswers)
+        dao.putMemberAnswers(record.memberAnswers)
+        record.coordinates?.let { dao.putCoordinate(it) }
+        dao.putAttachments(record.attachments)
     }
 
     private fun validate(r: StoredRecord) {

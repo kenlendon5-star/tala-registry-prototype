@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
@@ -5,7 +7,17 @@ plugins {
     // registers a second 'kotlin' extension and fails configuration.
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // Same KGP compiler-plugin kind as compose above; generates @Serializable serializers
+    // for the D17 backup DTOs under AGP 9 built-in Kotlin.
+    alias(libs.plugins.kotlin.serialization)
 }
+
+val supabaseProperties = Properties().apply {
+    val configFile = rootProject.file("supabase.properties")
+    if (configFile.isFile) configFile.inputStream().use { load(it) }
+}
+
+fun buildConfigString(value: String): String = "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
 
 android {
     namespace = "ph.tala.registry"
@@ -18,6 +30,8 @@ android {
         versionCode = 6
         versionName = "0.6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "SUPABASE_URL", buildConfigString(supabaseProperties.getProperty("SUPABASE_URL", "")))
+        buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", buildConfigString(supabaseProperties.getProperty("SUPABASE_PUBLISHABLE_KEY", "")))
     }
 
     buildTypes {
@@ -40,6 +54,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -68,6 +83,11 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.auth)
+    implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.storage)
+    implementation(libs.ktor.client.android)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)

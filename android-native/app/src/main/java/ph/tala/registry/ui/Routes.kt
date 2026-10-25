@@ -12,6 +12,7 @@ sealed interface Destination {
     data object Home : Destination { override val route = "home" }
     data object Households : Destination { override val route = "households" }
     data object Profile : Destination { override val route = "profile" }
+    data object Account : Destination { override val route = "account" }
     data object Map : Destination { override val route = "map" }
     data object Reports : Destination { override val route = "reports" }
     data object HouseholdAdd : Destination { override val route = "household/add" }

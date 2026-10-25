@@ -21,8 +21,8 @@ object SampleRecords {
     fun record(): StoredRecord = StoredRecord(
         household = HouseholdRow(HOUSEHOLD, "HH-00901", "Maria Santos", "24 Mabini Street · Purok 2", "InProgress"),
         members = listOf(
-            MemberRow(MEMBER_ONE, HOUSEHOLD, "Maria Santos"),
-            MemberRow(MEMBER_TWO, HOUSEHOLD, "Juan Santos"),
+            MemberRow(MEMBER_ONE, HOUSEHOLD, "Maria Santos", sortOrder = 0),
+            MemberRow(MEMBER_TWO, HOUSEHOLD, "Juan Santos", sortOrder = 1),
         ),
         interview = InterviewRow(INTERVIEW, HOUSEHOLD),
         visits = listOf(VisitRow(VISIT, INTERVIEW, "Callback requested", "2026-10-20T09:30")),

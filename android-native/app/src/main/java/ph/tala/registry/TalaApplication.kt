@@ -9,6 +9,9 @@ import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import ph.tala.registry.data.*
 import ph.tala.registry.data.local.*
+import ph.tala.registry.data.cloud.SupabaseAccountRepository
+import ph.tala.registry.data.cloud.SupabaseHouseholdCloudSyncRepository
+import ph.tala.registry.data.backup.BackupImporter
 import java.io.File
 
 /** Application-owned dependencies survive Activity recreation without holding an Activity. */
@@ -16,7 +19,13 @@ class TalaApplication : Application() {
     val profiles by lazy { DataStoreEnumeratorProfileStore(this) }
     val resumes by lazy { DataStoreInterviewResumeStore(this) }
     val photos by lazy { PhotoStore(this) }
-    val repository by lazy { RoomHouseholdRepository(RoomRecordStore(RegistryDatabase.open(this)), profiles = profiles) }
+    val database by lazy { RegistryDatabase.open(this) }
+    val recordStore by lazy { RoomRecordStore(database) }
+    val syncOutbox by lazy { RoomSyncOutboxStore(database) }
+    val repository by lazy { RoomHouseholdRepository(recordStore, profiles = profiles) }
+    val accounts by lazy { SupabaseAccountRepository(BuildConfig.SUPABASE_URL, BuildConfig.SUPABASE_PUBLISHABLE_KEY) }
+    val cloudSync by lazy { SupabaseHouseholdCloudSyncRepository(accounts, recordStore, syncOutbox, photos) }
+    val backupImporter by lazy { BackupImporter(recordStore, photos, File(cacheDir, "backup-imports")) }
     override fun onCreate() {
         super.onCreate()
         // D16 map: the tile provider must see an identifying User-Agent (OpenStreetMap
@@ -33,5 +42,6 @@ class TalaApplication : Application() {
                     .toSet() + listOfNotNull(profiles.profile.first().photoRelativePath)
             }
         }
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch { cloudSync.retryPending() }
     }
 }

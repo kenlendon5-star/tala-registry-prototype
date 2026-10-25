@@ -64,6 +64,9 @@ interface HouseholdRepository {
     suspend fun setArchived(id: HouseholdId, archived: Boolean): WriteResult
 
     suspend fun interviewRecord(id: HouseholdId): StoredRecord? = null
+
+    /** Full snapshots for the selected households in one locked read; the export uses this. */
+    suspend fun interviewRecords(ids: List<HouseholdId>): List<StoredRecord> = emptyList()
     suspend fun saveDraftSection(id: HouseholdId, route: String, memberId: MemberId?, answers: AnswerState, expected: AnswerState): WriteResult =
         WriteResult.Failed("Interview editing is unavailable.")
     suspend fun reviewInterview(id: HouseholdId): WriteResult = WriteResult.Failed("Interview review is unavailable.")
@@ -138,6 +141,11 @@ class RoomHouseholdRepository(
     private val writes = Mutex()
 
     override suspend fun interviewRecord(id: HouseholdId): StoredRecord? = writes.withLock { store.load(id.value) }
+
+    override suspend fun interviewRecords(ids: List<HouseholdId>): List<StoredRecord> = writes.withLock {
+        val wanted = ids.map { it.value }.toSet()
+        store.loadAll().filter { it.household.id in wanted }
+    }
 
     override suspend fun saveDraftSection(id: HouseholdId, route: String, memberId: MemberId?, answers: AnswerState, expected: AnswerState): WriteResult = writes.withLock {
         val record = store.load(id.value) ?: return@withLock WriteResult.Failed(MISSING)

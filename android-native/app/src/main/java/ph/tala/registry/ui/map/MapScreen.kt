@@ -115,21 +115,39 @@ fun MapScreen(
 private fun OsmTileMap(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPlacePin: (Double, Double) -> Unit) {
     val context = LocalContext.current
     val dragging = remember { mutableStateOf(false) }
+    val map = remember(context) {
+        MapView(context).apply {
+            setTileSource(TileSourceFactory.MAPNIK)
+            setMultiTouchControls(true)
+            isTilesScaledToDpi = true
+            zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
+            setMinZoomLevel(MapRules.MIN_ZOOM)
+            setMaxZoomLevel(MapRules.MAX_ZOOM)
+            controller.setZoom(MapRules.DEFAULT_ZOOM)
+            controller.setCenter(GeoPoint(MapRules.CENTER_LATITUDE, MapRules.CENTER_LONGITUDE))
+            overlays.add(extentPolygon())
+        }
+    }
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(map, lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            when (event) {
+                androidx.lifecycle.Lifecycle.Event.ON_RESUME -> map.onResume()
+                androidx.lifecycle.Lifecycle.Event.ON_PAUSE -> map.onPause()
+                else -> Unit
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        if (lifecycleOwner.lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) map.onResume()
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            map.onPause()
+            map.onDetach()
+        }
+    }
     AndroidView(
         modifier = Modifier.fillMaxSize().testTag("osm-map").semantics { contentDescription = "Household map with saved pins" },
-        factory = { mapContext ->
-            MapView(mapContext).apply {
-                setTileSource(TileSourceFactory.MAPNIK)
-                setMultiTouchControls(true)
-                isTilesScaledToDpi = true
-                zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
-                setMinZoomLevel(MapRules.MIN_ZOOM)
-                setMaxZoomLevel(MapRules.MAX_ZOOM)
-                controller.setZoom(MapRules.DEFAULT_ZOOM)
-                controller.setCenter(GeoPoint(MapRules.CENTER_LATITUDE, MapRules.CENTER_LONGITUDE))
-                overlays.add(extentPolygon())
-            }
-        },
+        factory = { map },
         update = { map ->
             if (dragging.value) return@AndroidView
             syncOverlays(map, state, context, onSelect, onPlacePin, dragging)

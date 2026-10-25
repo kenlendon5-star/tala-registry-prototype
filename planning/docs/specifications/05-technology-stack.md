@@ -60,8 +60,8 @@ Supabase config declares PostgreSQL major 17, local API 54321, database 54322, S
 From repository root:
 
 ```powershell
-rtk npm --prefix browser start
-rtk npm --prefix browser run check
+rtk npm start
+rtk npm --prefix "planning/prototype as web app" run check
 rtk proxy node browser/tests/verify.cjs
 rtk proxy node browser/tests/verify-map.cjs
 rtk proxy node browser/tests/verify-revisions.cjs

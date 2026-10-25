@@ -1,0 +1,6 @@
+# Copy to android-native/supabase.properties. This file is ignored by Git.
+# Use the publishable key from Supabase Dashboard > Project Settings > API.
+# Never put a service_role or secret key in this mobile app.
+# Only HTTPS endpoints are accepted; Android cleartext traffic is disabled.
+SUPABASE_URL=https://lylsjfmxhrynwgpdttim.supabase.co
+SUPABASE_PUBLISHABLE_KEY=replace-with-project-publishable-key

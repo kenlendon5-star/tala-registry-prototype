@@ -4,9 +4,14 @@ import android.net.Uri
 import ph.tala.registry.data.local.WriteResult
 import ph.tala.registry.domain.model.*
 
-class InMemoryPhotoStore : PhotoRepository {
+class InMemoryPhotoStore : PhotoRepository, ph.tala.registry.data.backup.AttachmentSource {
     /** Records signature calls so tests can assert the cleanup ran exactly once. */
     val signatureEvents = mutableListOf<String>()
+
+    /** Test-attached bytes by relative path; paths absent here read as missing files. */
+    val files = mutableMapOf<String, ByteArray>()
+
+    override suspend fun read(relativePath: String): ByteArray? = files[relativePath]
 
     override suspend fun saveHouseholdPhoto(source: Uri, householdId: HouseholdId, repository: HouseholdRepository) = WriteResult.Failed("No image decoder in JVM tests.")
     override suspend fun removeHouseholdPhoto(householdId: HouseholdId, repository: HouseholdRepository) = repository.removeHouseholdPhotoAttachment(householdId)

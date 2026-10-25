@@ -22,7 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
@@ -78,10 +80,24 @@ import ph.tala.registry.data.InterviewResume
 import ph.tala.registry.data.InterviewResumeStore
 import ph.tala.registry.ui.home.HomeInsightsViewModel
 import ph.tala.registry.ui.home.HomeScreen
+import ph.tala.registry.ui.account.AccountScreen
+import ph.tala.registry.ui.account.AccountUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: EnumeratorProfileStore, resumes: InterviewResumeStore) {
+fun TalaApp(
+    repository: HouseholdRepository,
+    photos: PhotoStore,
+    profiles: EnumeratorProfileStore,
+    resumes: InterviewResumeStore,
+    cloudSync: ph.tala.registry.data.cloud.HouseholdCloudSyncRepository,
+    backupImporter: ph.tala.registry.data.backup.BackupImporter,
+    accountState: AccountUiState,
+    onSignIn: (String, String) -> Unit,
+    onSignUp: (String, String, String, String, String) -> Unit,
+    onResendConfirmation: (String) -> Unit,
+    onSignOut: () -> Unit,
+) {
     val homeInsights: HomeInsightsViewModel = viewModel(factory = viewModelFactory {
         initializer { HomeInsightsViewModel(repository, resumes) }
     })
@@ -104,7 +120,8 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
     // mis-tap cannot abandon an unfinished edit.
     val isFullScreen = route == Destination.Questionnaire.PATTERN || route == Destination.Interview.PATTERN || route == Destination.Practice.PATTERN ||
         route == Destination.HouseholdAdd.route || route == Destination.HouseholdEdit.PATTERN ||
-        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN || route == Destination.Profile.route
+        route == Destination.MemberAdd.PATTERN || route == Destination.MemberEdit.PATTERN || route == Destination.Profile.route ||
+        route == Destination.Account.route
     val openHousehold: (HouseholdId) -> Unit = {
         homeInsights.opened(it)
         nav.navigate(Destination.Interview(it).route) { launchSingleTop = true }
@@ -123,6 +140,7 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
         route == Destination.Questionnaire.PATTERN -> "Questionnaire"
         route == Destination.Practice.PATTERN -> "Practice Interview"
         route == Destination.Profile.route -> "Enumerator Profile"
+        route == Destination.Account.route -> "Cloud Account"
         route == Destination.Map.route -> "Map"
         route == Destination.Reports.route -> "Reports"
         else -> null
@@ -242,16 +260,39 @@ fun TalaApp(repository: HouseholdRepository, photos: PhotoStore, profiles: Enume
                     )
                 }
                 composable(Destination.Reports.route) {
-                    ReportsScreen()
+                    val reports: ph.tala.registry.ui.reports.ReportsViewModel = viewModel(factory = viewModelFactory {
+                        initializer { ph.tala.registry.ui.reports.ReportsViewModel(repository, ph.tala.registry.data.backup.BackupExporter(), photos, cloudSync, importer = backupImporter) }
+                    })
+                    val reportsState by reports.state().collectAsStateWithLifecycle()
+                    ReportsScreen(
+                        state = reportsState,
+                        onToggle = reports::toggle,
+                        onSelectAll = reports::selectAll,
+                        onClear = reports::clearSelection,
+                        onExport = reports::exportTo,
+                        onImport = reports::previewImport,
+                        onConfirmImport = reports::confirmImport,
+                        onCancelImport = reports::cancelImport,
+                        onSync = reports::syncSelected,
+                        onReplaceCloud = reports::replaceCloudWithSelected,
+                        signedIn = accountState.signedInEmail != null,
+                        onAccount = { nav.navigate(Destination.Account.route) { launchSingleTop = true } },
+                        onCanceled = reports::reportCanceled,
+                    )
+                }
+                composable(Destination.Account.route) {
+                    AccountScreen(accountState, onSignIn, onSignUp, onResendConfirmation, onSignOut)
                 }
                 composable(Destination.Profile.route) {
                     ProfileScreen(
                         profileState,
+                        accountEmail = accountState.signedInEmail.orEmpty(),
                         onName = profile::setName,
                         onBarangay = profile::setBarangay,
                         onSave = profile::save,
                         onPickPhoto = profile::savePhoto,
                         onRemovePhoto = profile::removePhoto,
+                        onManageAccount = { nav.navigate(Destination.Account.route) { launchSingleTop = true } },
                     )
                 }
                 composable(Destination.Households.route) {
@@ -617,26 +658,176 @@ private fun StatusBadge(label: String, archived: Boolean) {
 
 @Composable
 private fun DemoNotice() {
-    Text("Fictional sample records · Saves stay on this device.\nQuestionnaire answers, pictures, signatures and the enumerator profile save here.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text("Fictional sample records · Saves stay on this device by default.\nSelected household records sync only when an enumerator signs in and chooses Sync.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
-/** Reports screen: placeholder for export/restore (future build). */
+/** Reports screen: SAF create-document export of the selected households (restore is D18). */
 @Composable
-private fun ReportsScreen() {
+private fun ReportsScreen(
+    state: ph.tala.registry.ui.reports.ReportsUiState,
+    onToggle: (String) -> Unit,
+    onSelectAll: () -> Unit,
+    onClear: () -> Unit,
+    onExport: (() -> java.io.OutputStream) -> Unit,
+    onImport: (() -> java.io.InputStream) -> Unit,
+    onConfirmImport: () -> Unit,
+    onCancelImport: () -> Unit,
+    onSync: () -> Unit,
+    onReplaceCloud: () -> Unit,
+    signedIn: Boolean,
+    onAccount: () -> Unit,
+    onCanceled: () -> Unit,
+) {
+    val context = LocalContext.current
+    var confirmCloudReplace by remember { mutableStateOf(false) }
+    // One-shot write grant: the document is opened, written and closed per export —
+    // no persistable permission is ever taken.
+    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        if (uri == null) onCanceled()
+        else onExport {
+            context.contentResolver.openOutputStream(uri)
+                ?: throw java.io.IOException("The chosen destination could not be opened.")
+        }
+    }
+    val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri == null) onCanceled()
+        else onImport {
+            context.contentResolver.openInputStream(uri)
+                ?: throw java.io.IOException("The selected backup could not be opened.")
+        }
+    }
+    val busy = state.phase == ph.tala.registry.ui.reports.ReportsUiState.Phase.Exporting ||
+        state.phase == ph.tala.registry.ui.reports.ReportsUiState.Phase.ReadingBackup ||
+        state.phase == ph.tala.registry.ui.reports.ReportsUiState.Phase.Restoring ||
+        state.phase == ph.tala.registry.ui.reports.ReportsUiState.Phase.Syncing
+    state.importPreview?.let { preview ->
+        AlertDialog(
+            onDismissRequest = onCancelImport,
+            title = { Text("Restore backup?") },
+            text = {
+                Text(
+                    "This backup contains ${preview.recordCount} ${if (preview.recordCount == 1) "household" else "households"} and ${preview.attachmentCount} ${if (preview.attachmentCount == 1) "attachment" else "attachments"}. " +
+                        if (preview.replacedCount > 0) "${preview.replacedCount} existing ${if (preview.replacedCount == 1) "record has" else "records have"} the same identity and will be replaced atomically." else "No existing records will be replaced.",
+                )
+            },
+            confirmButton = { Button(onClick = onConfirmImport, modifier = Modifier.testTag("reports-restore-confirm")) { Text("Restore") } },
+            dismissButton = { TextButton(onClick = onCancelImport) { Text("Cancel") } },
+        )
+    }
+    if (confirmCloudReplace) {
+        AlertDialog(
+            onDismissRequest = { confirmCloudReplace = false },
+            title = { Text("Replace the newer cloud copy?") },
+            text = { Text("This deliberately replaces the selected households' newer cloud snapshots and attachments with the current local copies. Local records are unchanged.") },
+            confirmButton = {
+                Button(
+                    onClick = { confirmCloudReplace = false; onReplaceCloud() },
+                    modifier = Modifier.testTag("reports-cloud-replace-confirm"),
+                ) { Text("Replace Cloud Copy") }
+            },
+            dismissButton = { TextButton(onClick = { confirmCloudReplace = false }) { Text("Keep Cloud Copy") } },
+        )
+    }
     Column(
-        Modifier.fillMaxSize().padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        Modifier.fillMaxSize().testTag("reports-screen").padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Reports", style = MaterialTheme.typography.titleLarge)
-        Text("Export household records to a file on this device.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            "Choose households to export as a versioned JSON backup. Archived households remain selectable so recovery records can be backed up.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+        if (state.message.isNotEmpty()) {
+            Text(
+                state.message,
+                Modifier.fillMaxWidth().testTag("reports-status"),
+                style = MaterialTheme.typography.bodySmall,
+                color = when (state.phase) {
+                    ph.tala.registry.ui.reports.ReportsUiState.Phase.Saved, ph.tala.registry.ui.reports.ReportsUiState.Phase.Restored, ph.tala.registry.ui.reports.ReportsUiState.Phase.Synced -> MaterialTheme.colorScheme.primary
+                    ph.tala.registry.ui.reports.ReportsUiState.Phase.Conflict, ph.tala.registry.ui.reports.ReportsUiState.Phase.Failed -> MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                },
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = onSelectAll,
+                enabled = state.households.isNotEmpty() && !busy,
+                modifier = Modifier.testTag("reports-select-all"),
+            ) { Text("Select All") }
+            OutlinedButton(
+                onClick = onClear,
+                enabled = state.selectedCodes.isNotEmpty() && !busy,
+                modifier = Modifier.testTag("reports-clear"),
+            ) { Text("Clear Selection") }
+        }
+        if (state.households.isEmpty()) {
+            Text(
+                "No households registered yet.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            LazyColumn(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                items(state.households, key = { it.id }) { household ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(
+                            checked = household.displayCode in state.selectedCodes,
+                            onCheckedChange = { if (!busy) onToggle(household.displayCode) },
+                            enabled = !busy,
+                            modifier = Modifier.testTag("reports-checkbox-${household.displayCode}"),
+                        )
+                        Column(Modifier.padding(start = 4.dp)) {
+                            Text(household.displayCode, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                listOfNotNull(household.headName.ifBlank { null }, household.status).joinToString(" · "),
+                                modifier = Modifier.testTag("reports-row-status-${household.displayCode}"),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )}
+                    }
+                }
+            }
+        }
         Button(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-        ) { Text("Choose Export Destination") }
-        Button(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-        ) { Text("Restore From Backup") }
+            onClick = {
+                val stamp = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmm").format(java.time.LocalDateTime.now())
+                exportLauncher.launch("tala-backup-$stamp.json")
+            },
+            enabled = state.canExport,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("reports-export"),
+        ) { Text("Export Selected") }
+        OutlinedButton(
+            onClick = { importLauncher.launch(arrayOf("application/json", "text/json", "text/plain")) },
+            enabled = !busy,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("reports-restore"),
+        ) { Text("Restore Backup") }
+        OutlinedButton(
+            onClick = if (signedIn) onSync else onAccount,
+            enabled = if (signedIn) state.canSync else !busy,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("reports-sync"),
+        ) { Text(if (signedIn) "Sync Selected to Supabase" else "Sign In for Cloud Sync") }
+        if (signedIn && state.phase == ph.tala.registry.ui.reports.ReportsUiState.Phase.Conflict) {
+            Button(
+                onClick = { confirmCloudReplace = true },
+                enabled = state.selectedCodes.isNotEmpty() && !busy,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("reports-cloud-replace"),
+            ) { Text("Resolve: Replace Cloud with Local") }
+        }
+        Text(
+            if (signedIn) "Cloud sync includes private pictures and signatures. Failed uploads stay queued for retry."
+            else "Cloud sync is optional. Sign in only when you intend to upload selected household records.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
@@ -695,11 +886,13 @@ private fun ProfileIcon(modifier: Modifier = Modifier) {
 @Composable
 private fun ProfileScreen(
     state: EnumeratorProfileUiState,
+    accountEmail: String,
     onName: (String) -> Unit,
     onBarangay: (String) -> Unit,
     onSave: () -> Unit,
     onPickPhoto: (Uri) -> Unit,
     onRemovePhoto: () -> Unit,
+    onManageAccount: () -> Unit,
 ) {
     if (state.loading) { LinearProgressIndicator(Modifier.fillMaxWidth()); return }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> uri?.let(onPickPhoto) }
@@ -708,6 +901,7 @@ private fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text("Enumerator Profile", style = MaterialTheme.typography.titleLarge)
+        if (accountEmail.isNotBlank()) Text("Signed in as $accountEmail", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text("Changes stamp new interviews; saved records keep their own attribution.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         OutlinedTextField(
             value = state.name, onValueChange = onName, enabled = !state.saving,
@@ -747,6 +941,11 @@ private fun ProfileScreen(
             onClick = onSave, enabled = !state.saving,
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("save-profile"),
         ) { Text(if (state.saving) "Saving…" else "Save Profile") }
+        OutlinedButton(
+            onClick = onManageAccount,
+            enabled = !state.saving,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("manage-cloud-account"),
+        ) { Text(if (accountEmail.isBlank()) "Sign In for Cloud Sync" else "Manage Cloud Account") }
     }
 }
 

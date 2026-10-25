@@ -77,6 +77,17 @@ class RecordStoreDeviceTest {
         }
     }
 
+    @Test fun memberRosterOrderSurvivesSaveAndReopen() {
+        val record = SampleRecords.record()
+        val reordered = record.copy(members = record.members.reversed())
+        assertEquals(WriteResult.Saved, runBlocking { store.save(reordered) })
+        reopen()
+        assertEquals(
+            listOf(SampleRecords.MEMBER_TWO, SampleRecords.MEMBER_ONE),
+            requireNotNull(load()).members.map { it.id },
+        )
+    }
+
     @Test fun snapshotReplacementClearsRemovedAnswersMembersAndCoordinates() {
         val first = SampleRecords.record()
         runBlocking { store.save(first) }
@@ -128,6 +139,28 @@ class RecordStoreDeviceTest {
         assertTrue("Expected a failed write, got $result", result is WriteResult.Failed)
         reopen()
         assertEquals("The transaction must roll back to the last saved snapshot.", record, load())
+    }
+
+    @Test fun simulatedDiskFullFailureKeepsTheLastConfirmedSnapshot() {
+        val record = SampleRecords.record()
+        assertEquals(WriteResult.Saved, runBlocking { store.save(record) })
+        database.openHelper.writableDatabase.execSQL(
+            "CREATE TRIGGER simulate_disk_full BEFORE UPDATE ON households " +
+                "BEGIN SELECT RAISE(ABORT, 'database or disk is full'); END",
+        )
+
+        val attempted = record.copy(
+            household = record.household.copy(
+                headName = "Unsaved Disk Full Edit",
+                address = "Fictional low-storage edit",
+            ),
+        )
+        val result = runBlocking { store.save(attempted) }
+        assertTrue("Expected storage exhaustion to fail, got $result", result is WriteResult.Failed)
+        assertTrue((result as WriteResult.Failed).message.contains("available storage"))
+
+        reopen()
+        assertEquals(record, load())
     }
 
     @Test fun answerCodecRoundTripsQuotesNewlinesAndUnicode() {

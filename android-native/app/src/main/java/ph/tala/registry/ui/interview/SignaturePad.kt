@@ -64,7 +64,7 @@ fun SignaturePad(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             OutlinedButton(
                 onClick = { expanded = !expanded },
-                modifier = Modifier.heightIn(min = 40.dp).testTag("signature-expand"),
+                modifier = Modifier.heightIn(min = 48.dp).testTag("signature-expand"),
             ) { Text(if (expanded) "Shrink canvas" else "Expand canvas") }
         }
         Canvas(

@@ -99,6 +99,8 @@ Sources: [root README](../../../README.md), [planning README](../../README.md), 
 
 ### 8. Low: malformed URLs can terminate the local preview server
 
+> **24 October 2026 follow-up:** Fixed. The handler now catches malformed percent encoding and returns HTTP 400, blocks traversal with `path.relative`, sends explicit MIME types plus `nosniff`, and is covered by `tests/server.test.cjs` through the prototype `check` script.
+
 The request handler calls `decodeURIComponent` without exception handling. Invoking it with `/%` throws an uncaught `URIError`. This was reproduced with the handler in an isolated VM, without crashing the running preview. The server binds to localhost, which limits exposure, but one malformed request can still disrupt a demonstration.
 
 Fix direction: reject malformed requests with HTTP 400. The server also serves most non-JS/CSS/HTML assets as `text/plain`; use explicit MIME types if this server is retained beyond a simple preview.

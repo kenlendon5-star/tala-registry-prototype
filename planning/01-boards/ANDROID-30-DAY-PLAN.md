@@ -55,10 +55,10 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D14: Done. [Implementation evidence](../03-evidence/D14.md).
 - D15: Done. [Implementation evidence](../03-evidence/D15.md).
 - D16: Done. [Implementation evidence](../03-evidence/D16.md).
-- D17: Backlog. [Implementation evidence](../03-evidence/D17.md).
-- D18: Backlog. [Implementation evidence](../03-evidence/D18.md).
-- D19: Backlog. [Implementation evidence](../03-evidence/D19.md).
-- D20: Backlog. [Implementation evidence](../03-evidence/D20.md).
+- D17: Done. [Implementation evidence](../03-evidence/D17.md).
+- D18: Done. [Implementation evidence](../03-evidence/D18.md).
+- D19: Done. [Implementation evidence](../03-evidence/D19.md).
+- D20: Verify. [Implementation evidence](../03-evidence/D20.md).
 
 Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
@@ -356,65 +356,65 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Produce a usable, deliberate record export.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D14
 
-- [ ] Implement Android Storage Access Framework create-document export and optional Sharesheet sharing for selected records, including URI permission handling.
-- [ ] Use Kotlin serialization for a versioned JSON backup format containing IDs, answers, coordinates and recoverable photos/signatures; set documented size limits.
-- [ ] Test user cancellation, large attachments and write errors; confirm the exported payload contains only selected records.
+- [x] Implement Android Storage Access Framework create-document export and optional Sharesheet sharing for selected records, including URI permission handling.
+- [x] Use Kotlin serialization for a versioned JSON backup format containing IDs, answers, coordinates and recoverable photos/signatures; set documented size limits.
+- [x] Test user cancellation, large attachments and write errors; confirm the exported payload contains only selected records.
 
 **Done when:** A phone export opens correctly on another machine, is versioned and includes all data needed for a round-trip restore.
 
 **Evidence/deliverable:** Sample fictional export + export tests
 
-**Implementation evidence:** 2026-10-12 audit: no export code exists; kotlinx-serialization is present for the Room answer codec, and docs/schemas/backup-v1.schema.json is a documentation contract not consumed by the app. Card reset to Backlog.
+**Implementation evidence:** 2026-10-23: D17 export acceptance passed on the Android 17/API 37 emulator using isolated ph.tala.registry.d08test (0.6.0/6). SAF create-document selection UI, versioned Kotlin-serialization JSON, selected-record filtering, IDs/answers/visits/coordinates/attachments, attachment skip/count safeguards (5 MiB each) and the 50 MiB total cap are implemented. Verification: 14 focused JVM backup tests; 2 real Room/app-private-file export tests (independent JSON parse, byte-for-byte attachment base64 round trip, orphan skip/count); 3 Reports selection UI tests; regenerated schema and docs checks pass. Restore/preview remains D18. Evidence: planning/03-evidence/D17.md.
 
 ### D18 · 2026-10-16 · Restore and migrate safely
 
 **Goal:** Prove records can survive backup restoration and app updates.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D06, D17
 
-- [ ] Validate JSON format, size and schema version before import; reject malformed or unsupported data without modifying the database.
+- [x] Validate JSON format, size and schema version before import; reject malformed or unsupported data without modifying the database.
 - [x] Implement explicit import preview and duplicate-ID handling with transactional rollback; document browser-to-app transfer as an explicit operation.
-- [ ] Test export → clean app → restore, and an app upgrade with a schema migration; compare record/attachment counts and representative values.
+- [x] Test export → clean app → restore, and an app upgrade with a schema migration; compare record/attachment counts and representative values.
 
 **Done when:** Round-trip backup and upgrade retain complete records; failed imports leave existing data intact.
 
 **Evidence/deliverable:** Restore comparison + migration evidence
 
-**Implementation evidence:** 2026-10-12 audit: the migration groundwork exists and passes - RegistryDatabase.MIGRATION_1_2 (adding households.archivedAt) shipped with the Day 6 commit and SchemaMigrationTest ran the real 1-to-2 migration on the OPPO device during this audit. The card stays Backlog because D17 is not Done and the restore side (JSON import validation, preview and rollback) has no code.
+**Implementation evidence:** 2026-10-24: D18 restore and migration acceptance passed on the Android 17/API 37 emulator using isolated ph.tala.registry.d08test. Reports now previews and confirms versioned backup restore; import validates size/version/identity/questionnaire/reference/date and attachment image/hash invariants, stages media, atomically replaces complete Room graphs, rolls back failed writes, clears hidden dependents and prevents invalid Reviewed status. Medium-priority hardening added streamed decoding, cross-household identity/summary checks, centralized account validation, HTTPS-only cloud configuration and retry-safe stale-object cleanup. Device evidence covers a clean-database export/restore with PNG bytes, Room 4-to-5 migration preserving the household while adding sync outbox/revisions, account/manifest checks, and 4 Reports UI checks. Full gate: 231 JVM tests, lint with no errors, debug APK, and docs checks passed. Evidence: planning/03-evidence/D18.md and planning/docs/reviews/MEDIUM-PRIORITY-FIXES-2026-10-24.md.
 
 ### D19 · 2026-10-17 · Add reversible household removal
 
 **Goal:** Make record maintenance predictable.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D16, D18
 
 - [x] Replace immediate permanent household removal with confirmed archive and a restore path for the demo.
 - [x] Verify archived records leave active counts/maps while their members and attachments remain recoverable.
-- [ ] Test archive, undo/restore, search/filter behavior and export selection after restart; specify any permanent-delete policy as future work.
+- [x] Test archive, undo/restore, search/filter behavior and export selection after restart; specify any permanent-delete policy as future work.
 
 **Done when:** Archiving the wrong household can be reversed; active totals and maps stay consistent after every transition.
 
 **Evidence/deliverable:** Archive/restore test evidence
 
-**Implementation evidence:** 2026-10-12 audit: confirmed archive/restore works on device (EditingPersistenceDeviceTest), and this audit's fixes added archived exclusion from active counts plus an Archived recovery filter (SprintAcceptanceRegressionTest). The card stays Backlog because D16 and D18 are not Done; export-selection interaction and restart checks remain.
+**Implementation evidence:** 2026-10-25: D19 reversible removal acceptance passed on the Android 17/API 37 emulator. Archive/restore survives a Room close/reopen with the same identity, member and attachment reference; active totals, purok summaries and maps exclude archived records; Archived search remains available; and Reports visibly labels and selects an archived household for export after Activity recreation. Permanent deletion is explicitly unavailable in this release and remains future policy work. Focused device suites passed 7 tests; the full gate passed 231 JVM tests, lint with 0 errors, and debug APK assembly. Evidence: planning/03-evidence/D19.md.
 
 ### D20 · 2026-10-18 · Harden lifecycle and accessibility
 
 **Goal:** Remove failures caused by everyday phone use.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Backlog
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Verify
 
 **Depends on:** D19
 
-- [ ] Test background/resume, rotation, external-app return, low storage and process death during editing; protect the last confirmed save.
+- [x] Test background/resume, rotation, external-app return, low storage and process death during editing; protect the last confirmed save.
 - [ ] Check TalkBack labels, focus order, text scaling, contrast and approximately 48dp interactive touch targets.
 - [ ] Generate a fictional performance dataset, provisionally 200 households/1,000 members; record startup/list/map timings on the target phone and fix blockers.
 
@@ -422,7 +422,7 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Evidence/deliverable:** Lifecycle/accessibility/performance report
 
-**Implementation evidence:** 2026-10-12 audit: the core hardening pre-dates this card (SavedStateHandle drafts, live regions and insets from D03-D06; key-guard flags added during this audit), and a Saved label now clears when its draft changes. The card was reset for its unmet tasks: explicit low-storage/rotation passes and the fictional 200-household performance dataset.
+**Implementation evidence:** 2026-10-25: automated D20 work is ready for physical verification. Background/resume, recreation, Bundle/Parcel process restoration, real Photo Picker return, and a deterministic simulated disk-full rollback pass. Critical controls have TalkBack names and >=48dp bounds at 100% and 200% font scale; two 40dp controls were raised to 48dp. A fictional 200-household/1,000-member API 37 emulator benchmark measured 65ms startup-data, 55ms list, 12ms search p95 and 46ms map state. Full gate: 231 JVM tests, lint 0 errors, debug APK. Still required before Done: spoken TalkBack/contrast review and cold-start/dataset timing on OPPO CPH2529. Evidence: planning/03-evidence/D20.md.
 
 ### D21 · 2026-10-19 · Review feature completeness
 

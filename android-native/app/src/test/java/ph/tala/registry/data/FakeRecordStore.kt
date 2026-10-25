@@ -55,6 +55,8 @@ class FakeRecordStore(seed: List<StoredRecord> = emptyList()) : RecordStore {
 
     override suspend fun load(id: String): StoredRecord? = state.value[id]
 
+    override suspend fun loadAll(): List<StoredRecord> = state.value.values.toList()
+
     override suspend fun save(record: StoredRecord): WriteResult {
         failWith?.let { return WriteResult.Failed(it) }
         val others = state.value.filterKeys { it != record.household.id }.values
@@ -66,6 +68,21 @@ class FakeRecordStore(seed: List<StoredRecord> = emptyList()) : RecordStore {
             return WriteResult.Failed("An answer still references a removed member.")
         }
         state.value = state.value + (record.household.id to record)
+        return WriteResult.Saved
+    }
+
+    override suspend fun restore(records: List<StoredRecord>): WriteResult {
+        failWith?.let { return WriteResult.Failed(it) }
+        if (records.isEmpty() || records.map { it.household.id }.distinct().size != records.size ||
+            records.map { it.household.displayCode }.distinct().size != records.size) {
+            return WriteResult.Failed("Could not restore the backup. Existing records are unchanged.")
+        }
+        val incomingIds = records.map { it.household.id }.toSet()
+        val untouched = state.value.filterKeys { it !in incomingIds }
+        if (records.any { incoming -> untouched.values.any { it.household.displayCode == incoming.household.displayCode } }) {
+            return WriteResult.Failed("Could not restore the backup. Existing records are unchanged.")
+        }
+        state.value = untouched + records.associateBy { it.household.id }
         return WriteResult.Saved
     }
 }

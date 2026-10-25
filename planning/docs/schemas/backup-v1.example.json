@@ -10,30 +10,20 @@
       "headName": "Alex Reyes",
       "address": "Fictional Demo Street",
       "status": "InProgress",
-      "revision": 1,
-      "createdAt": "2026-10-11T08:00:00Z",
-      "updatedAt": "2026-10-11T08:30:00Z",
       "archivedAt": null,
       "members": [
         {
           "id": "22222222-2222-4222-8222-222222222222",
-          "firstName": "Alex",
-          "middleName": "",
-          "lastName": "Reyes",
-          "extension": "",
-          "alias": "",
           "displayName": "Alex Reyes",
           "sortOrder": 0
         }
       ],
       "interview": {
         "id": "33333333-3333-4333-8333-333333333333",
-        "questionnaireVersion": "tala-demo-target-v1",
+        "questionnaireVersion": "tala-demo-v1",
         "consent": "Unanswered",
         "signedName": null,
         "signatureAttachmentId": null,
-        "reviewedAt": null,
-        "reviewedRevision": null,
         "answers": [
           {
             "section": "demographics",

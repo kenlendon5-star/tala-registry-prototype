@@ -69,13 +69,36 @@ after startup. Local endpoints use API port `54321`, database port `54322`, and
 Studio port `54323`. Local containers are separate from the hosted project.
 Stop them when finished using `rtk proxy supabase stop` (local data is preserved).
 
-## Next application work
+## Android account setup
 
-This setup provides development tooling; it does not connect the Android app's
-repository layer to Supabase. Day 5 schema, RLS, authentication, and client
-integration are tracked in [the Day 5 analysis](D05-SUPABASE-ANALYSIS.md).
-Create versioned schema changes with `rtk proxy supabase migration new <name>`
-and review them before applying them to the hosted database.
+The app's optional cloud account flow is implemented with `supabase-kt`. Before
+running an Android build, copy the ignored template and add the project's
+**publishable** key (never a secret or service-role key):
+
+```powershell
+Copy-Item android-native/supabase.properties.example android-native/supabase.properties
+```
+
+Set `SUPABASE_PUBLISHABLE_KEY` in the copied file from **Supabase Dashboard >
+Project Settings > API**. The build embeds this publishable client identifier;
+it is safe only because all database and Storage access is enforced by RLS.
+
+Hosted Auth keeps email confirmation enabled and allow-lists
+`tala://auth-callback`, which is also declared by the Android activity. Configure
+custom SMTP before testing signup with arbitrary enumerator addresses; the built-in
+Supabase sender is rate-limited and is not a production mail service.
+
+## Android integration
+
+The hosted project has the tracked migrations applied: authenticated enumerator
+profiles, revision-guarded owner-scoped household snapshots, attachment metadata,
+and a private attachment bucket. Android queues selected households in Room before
+network I/O, uploads referenced attachments, retries pending work, and requires an
+explicit confirmation before replacing a newer cloud revision. See
+[the cloud-sync guide](../planning/docs/supabase-cloud-sync.md) before changing
+the schema or client contract. Create versioned schema changes with
+`rtk proxy supabase migration new <name>` and review them before applying them
+to the hosted database.
 
 References: [CLI getting started](https://supabase.com/docs/guides/local-development/cli/getting-started),
 [CLI releases](https://github.com/supabase/cli/releases/tag/v2.120.0).

@@ -17,7 +17,7 @@ data class HouseholdRow(
 )
 
 @Entity(tableName = "members", foreignKeys = [ForeignKey(entity = HouseholdRow::class, parentColumns = ["id"], childColumns = ["householdId"], onDelete = ForeignKey.CASCADE)], indices = [Index("householdId"), Index(value = ["id", "householdId"], unique = true)])
-data class MemberRow(@PrimaryKey val id: String, val householdId: String, val displayName: String)
+data class MemberRow(@PrimaryKey val id: String, val householdId: String, val displayName: String, val sortOrder: Int = 0)
 
 @Entity(tableName = "interviews", foreignKeys = [ForeignKey(entity = HouseholdRow::class, parentColumns = ["id"], childColumns = ["householdId"], onDelete = ForeignKey.CASCADE)], indices = [Index(value = ["householdId"], unique = true), Index(value = ["id", "householdId"], unique = true)])
 data class InterviewRow(@PrimaryKey val id: String, val householdId: String, val questionnaireVersion: String = "practice-v1")
@@ -47,6 +47,30 @@ data class CoordinateRow(@PrimaryKey val householdId: String, val latitude: Doub
     ForeignKey(entity = MemberRow::class, parentColumns = ["id", "householdId"], childColumns = ["memberId", "householdId"], onDelete = ForeignKey.CASCADE),
 ], indices = [Index("householdId"), Index(value = ["memberId", "householdId"])])
 data class AttachmentRow(@PrimaryKey val id: String, val householdId: String, val memberId: String?, val kind: String, val relativePath: String, val mimeType: String)
+
+@Entity(
+    tableName = "sync_outbox",
+    foreignKeys = [ForeignKey(entity = HouseholdRow::class, parentColumns = ["id"], childColumns = ["householdId"], onDelete = ForeignKey.CASCADE)],
+    indices = [Index("requestedAt")],
+)
+data class SyncOutboxRow(
+    @PrimaryKey val householdId: String,
+    val requestedAt: Long,
+    val attempts: Int = 0,
+    val lastError: String = "",
+)
+
+@Entity(
+    tableName = "sync_revisions",
+    primaryKeys = ["ownerId", "householdId"],
+    foreignKeys = [ForeignKey(entity = HouseholdRow::class, parentColumns = ["id"], childColumns = ["householdId"], onDelete = ForeignKey.CASCADE)],
+    indices = [Index("householdId")],
+)
+data class SyncRevisionRow(
+    val ownerId: String,
+    val householdId: String,
+    val revision: Long,
+)
 
 /** One complete household snapshot. A section replacement must include all remaining answers. */
 data class StoredRecord(

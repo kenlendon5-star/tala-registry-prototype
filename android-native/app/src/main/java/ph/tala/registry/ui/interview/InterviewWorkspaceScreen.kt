@@ -94,7 +94,7 @@ private fun SinglePaneWorkspace(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = { directoryOpen = true }, modifier = Modifier.size(40.dp).testTag("section-directory")) {
+            IconButton(onClick = { directoryOpen = true }, modifier = Modifier.size(48.dp).testTag("section-directory")) {
                 MenuGlyph(Modifier.semantics { contentDescription = "Open section directory" })
             }
             sections.forEach { section ->

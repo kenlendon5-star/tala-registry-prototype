@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Tala proposed offline backup v1",
-  "description": "Draft documentation contract. Not consumed by the current application. Semantic ownership, uniqueness, questionnaire validation and media checks are additional requirements.",
+  "title": "Tala offline backup v1",
+  "description": "Documentation contract for the native Android export (D17). Fields the record store does not persist are absent; semantic ownership, uniqueness, questionnaire validation and media checks are additional restore-side requirements.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -126,21 +126,6 @@
         "id": {
           "$ref": "#/definitions/uuid"
         },
-        "firstName": {
-          "type": "string"
-        },
-        "middleName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        },
-        "extension": {
-          "type": "string"
-        },
-        "alias": {
-          "type": "string"
-        },
         "displayName": {
           "type": "string"
         },
@@ -151,11 +136,6 @@
       },
       "required": [
         "id",
-        "firstName",
-        "middleName",
-        "lastName",
-        "extension",
-        "alias",
         "displayName",
         "sortOrder"
       ]
@@ -167,8 +147,8 @@
         "id": {
           "$ref": "#/definitions/uuid"
         },
-        "visitedAt": {
-          "$ref": "#/definitions/timestamp"
+        "visitedOn": {
+          "type": "string"
         },
         "outcome": {
           "enum": [
@@ -203,15 +183,26 @@
         },
         "notes": {
           "type": "string"
+        },
+        "recordedAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
         "id",
-        "visitedAt",
+        "visitedOn",
         "outcome",
         "callbackLocalDateTime",
         "callbackTimeZone",
-        "notes"
+        "notes",
+        "recordedAt"
       ]
     },
     "location": {
@@ -247,15 +238,6 @@
         },
         "capturedAt": {
           "$ref": "#/definitions/timestamp"
-        },
-        "confirmedAt": {
-          "$ref": "#/definitions/timestamp"
-        },
-        "addressAtCapture": {
-          "type": "string"
-        },
-        "notes": {
-          "type": "string"
         }
       },
       "required": [
@@ -263,10 +245,7 @@
         "longitude",
         "accuracyMetres",
         "source",
-        "capturedAt",
-        "confirmedAt",
-        "addressAtCapture",
-        "notes"
+        "capturedAt"
       ]
     },
     "attachment": {
@@ -364,27 +343,6 @@
             }
           ]
         },
-        "reviewedAt": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/timestamp"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "reviewedRevision": {
-          "anyOf": [
-            {
-              "type": "integer",
-              "minimum": 0
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
         "answers": {
           "type": "array",
           "items": {
@@ -399,8 +357,6 @@
         "consent",
         "signedName",
         "signatureAttachmentId",
-        "reviewedAt",
-        "reviewedRevision",
         "answers"
       ]
     },
@@ -428,16 +384,6 @@
             "Callback",
             "Reviewed"
           ]
-        },
-        "revision": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "createdAt": {
-          "$ref": "#/definitions/timestamp"
-        },
-        "updatedAt": {
-          "$ref": "#/definitions/timestamp"
         },
         "archivedAt": {
           "anyOf": [
@@ -490,9 +436,6 @@
         "headName",
         "address",
         "status",
-        "revision",
-        "createdAt",
-        "updatedAt",
         "archivedAt",
         "members",
         "interview",

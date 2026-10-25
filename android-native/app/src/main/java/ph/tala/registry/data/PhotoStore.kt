@@ -38,7 +38,7 @@ interface PhotoRepository {
  * removing the old file. Cancellation cannot split the reference/cleanup sequence. After a
  * process interruption, cleanupUnreferenced removes only our UUID-named, unreferenced copies.
  * Tests inject a private root; no test owns the application's whole media directory. */
-class PhotoStore(context: Context, private val root: File = context.filesDir) : PhotoRepository {
+class PhotoStore(context: Context, private val root: File = context.filesDir) : PhotoRepository, ph.tala.registry.data.backup.AttachmentSource, ph.tala.registry.data.backup.RestoredAttachmentStore {
     private val resolver = context.applicationContext.contentResolver
     private val writes = Mutex()
     val maxBytes = 5 * 1024 * 1024
@@ -135,6 +135,49 @@ class PhotoStore(context: Context, private val root: File = context.filesDir) : 
         val result = File(root, path).canonicalFile
         require(result.toPath().startsWith(root.canonicalFile.toPath()))
         return result
+    }
+
+    /** Export-side read behind the same traversal guard; null when the file is gone. */
+    override suspend fun read(relativePath: String): ByteArray? = withContext(Dispatchers.IO) {
+        try {
+            val file = resolve(relativePath)
+            if (file.isFile) file.readBytes() else null
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    override suspend fun stage(bytes: ByteArray, mimeType: String): String = withContext(Dispatchers.IO + NonCancellable) {
+        writes.withLock {
+            require(bytes.isNotEmpty() && bytes.size <= maxBytes)
+            require(mimeType in setOf("image/jpeg", "image/png", "image/webp"))
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+            require(bounds.outWidth > 0 && bounds.outHeight > 0 && bounds.outMimeType == mimeType)
+            val extension = when (mimeType) {
+                "image/jpeg" -> "jpg"
+                "image/png" -> "png"
+                else -> "webp"
+            }
+            val relative = "attachments/${UUID.randomUUID()}.$extension"
+            val target = resolve(relative)
+            target.parentFile?.mkdirs()
+            try {
+                target.outputStream().use { stream -> stream.write(bytes); stream.fd.sync() }
+            } catch (error: Exception) {
+                target.delete()
+                throw error
+            }
+            relative
+        }
+    }
+
+    override suspend fun discard(relativePaths: Collection<String>) = withContext(Dispatchers.IO + NonCancellable) {
+        writes.withLock {
+            relativePaths.distinct().forEach { path -> runCatching { resolve(path).delete() } }
+        }
     }
 
     /** References are read inside the same mutex as saves, never from a stale startup snapshot. */

@@ -37,6 +37,8 @@ class MapDeviceTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val app get() = context.applicationContext as TalaApplication
+    private var wifiWasEnabled: Boolean? = null
+    private var mobileDataWasEnabled: Boolean? = null
     private fun await(tag: String, timeout: Long = 15_000) =
         compose.waitUntil(timeout) { compose.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty() }
 
@@ -116,13 +118,29 @@ class MapDeviceTest {
      * `cmd connectivity` applies airplane mode through ConnectivityService (the
      * AIRPLANE_MODE broadcast is denied to the shell uid on API 33+). The service
      * confirmation is polled because a silently failed toggle strands the test
-     * online and reads as a mysterious offline-plot timeout.
+     * online and reads as a mysterious offline-plot timeout. Some OEMs preserve
+     * Wi-Fi in airplane mode, so the test disables residual radios and restores
+     * their prior state afterward.
      */
     private fun setAirplaneMode(enabled: Boolean) {
         val want = if (enabled) "enabled" else "disabled"
+        if (enabled) {
+            wifiWasEnabled = shell("cmd wifi status").contains("enabled", ignoreCase = true)
+            mobileDataWasEnabled = shell("settings get global mobile_data").trim() == "1"
+        }
+        shell("cmd connectivity airplane-mode ${if (enabled) "enable" else "disable"}")
+        if (enabled) {
+            shell("svc wifi disable")
+            shell("svc data disable")
+        } else {
+            if (wifiWasEnabled == true) shell("svc wifi enable")
+            if (mobileDataWasEnabled == true) shell("svc data enable")
+        }
         repeat(10) {
-            if (shell("cmd connectivity airplane-mode").trim() == want) return
-            shell("cmd connectivity airplane-mode ${if (enabled) "enable" else "disable"}")
+            if (shell("cmd connectivity airplane-mode").trim() == want) {
+                Thread.sleep(2_000)
+                return
+            }
             Thread.sleep(1_000)
         }
         check(shell("cmd connectivity airplane-mode").trim() == want) {

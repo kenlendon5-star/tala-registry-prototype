@@ -65,7 +65,7 @@ wording or failed behavior below. Sample locality/program choices remain demo va
 | Evacuation choices are hidden by the sample answer | Required correction | Low | Codex | Sample kept intact; inspection moved to separate record with evacuation-known Yes |
 | Earlier AI notes misstated date flags and structured roster names | Required correction | Low | Codex | Notes corrected against generated flags and RecordTextLimits.structuredName |
 | Board verifier assumed no Ready cards | Required correction | Low | Codex | Compared counts/transitions with baseline; verified 14 Done and D15 Ready with all gate assertions enabled |
-| Visit notes is optional without an Optional suffix | Nonblocking consistency polish | Low | Later polish | Behavior is correct; no change required for D14 |
+| Visit notes is optional without an Optional suffix | Nonblocking consistency polish | Low | Codex | Resolved 24 October 2026 at the browser questionnaire source; generated inventory and native definition now show `Visit notes (Optional)` |
 | Unique Head convention, approved sites/programs and official wording | Future scope / unresolved source decisions | Recorded | Owner | Demo labels and current behavior retained; no official questionnaire approval claimed |
 
 Reviewer comments / acceptance statement: I accept the D14 questionnaire label/flow gate within the documented fictional offline scope under the owner’s explicit AI peer appointment. Member/household scope, fixed-point clearing, exclusivity, validation, local review guard, callback/refusal/resume and signature reopening have supporting code review and passing phone evidence. Required review-document corrections are applied. Human usability, TalkBack/scaling and broader release acceptance remain later gates.
