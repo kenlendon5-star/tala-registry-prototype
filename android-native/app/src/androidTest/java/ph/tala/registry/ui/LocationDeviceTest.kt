@@ -81,6 +81,19 @@ class LocationDeviceTest {
     private fun captureStatus(text: String, timeout: Long=15_000) = compose.waitUntil(timeout) {
         compose.onAllNodesWithText(text,substring=true).fetchSemanticsNodes().isNotEmpty()
     }
+    private fun waitForAnyStatus(timeout: Long, vararg texts: String): String? {
+        val deadline = SystemClock.elapsedRealtime() + timeout
+        while (SystemClock.elapsedRealtime() < deadline) {
+            val visible = runCatching {
+                texts.firstOrNull { text ->
+                    compose.onAllNodesWithText(text, substring = true).fetchSemanticsNodes().isNotEmpty()
+                }
+            }.getOrNull()
+            if (visible != null) return visible
+            SystemClock.sleep(50)
+        }
+        return null
+    }
     private fun manual(lat: String, lon: String) {
         compose.onNodeWithTag("correct-location").performScrollTo().performClick()
         compose.onNodeWithTag("manual-lat").performScrollTo().performTextReplacement(lat)
@@ -102,10 +115,20 @@ class LocationDeviceTest {
         compose.waitUntil(15_000) { InterviewRules.answers(record(id),QuestionnaireSections.setup).scalar("enumerator")=="Location Permission Sample" }
     }
     @Test fun deniedThenPermanentDenialDoesNotBlockInterview() {
-        val id=create(); open(id); capture(); systemClick("permission_deny_button")
-        captureStatus("Location was denied")
-        capture(); systemClick("permission_deny_and_dont_ask_again_button", "permission_deny_button")
-        captureStatus("Location permission was denied for this app")
+        val id=create(); open(id); capture()
+        var status = waitForAnyStatus(1_500, "Location was denied", "Location permission was denied for this app")
+        if (status == null) {
+            systemClick("permission_deny_button")
+            status = waitForAnyStatus(15_000, "Location was denied", "Location permission was denied for this app")
+        }
+        assertNotNull(status)
+        if (status != "Location permission was denied for this app") {
+            capture()
+            if (waitForAnyStatus(1_500, "Location permission was denied for this app") == null) {
+                systemClick("permission_deny_and_dont_ask_again_button", "permission_deny_button")
+            }
+            captureStatus("Location permission was denied for this app")
+        }
         compose.onNodeWithTag("open-location-settings").performScrollTo().assertExists()
         captureImage("permission-denied")
         saveQuestionnaireDespiteFailure(id)

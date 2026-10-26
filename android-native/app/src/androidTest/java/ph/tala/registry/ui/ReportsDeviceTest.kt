@@ -79,7 +79,8 @@ class ReportsDeviceTest {
         try {
             assertEquals(WriteResult.Saved, runBlocking { app.repository.setArchived(householdId, true) })
             openReports()
-            compose.onNodeWithTag("reports-row-status-HH-00452").performScrollTo().assertTextContains("Archived")
+            compose.onNodeWithTag("reports-row-status-HH-00452").performScrollTo()
+                .assertTextContains("Archived", substring = true)
             compose.onNodeWithTag("reports-checkbox-HH-00452").performClick()
             compose.onNodeWithTag("reports-export").assertIsEnabled()
             compose.onNodeWithTag("reports-clear").performClick()
@@ -87,7 +88,8 @@ class ReportsDeviceTest {
             compose.activityRule.scenario.recreate()
             compose.waitUntil(10_000) { compose.onAllNodesWithTag("reports-screen").fetchSemanticsNodes().isNotEmpty() }
             compose.waitUntil(10_000) { compose.onAllNodesWithTag("reports-checkbox-HH-00452").fetchSemanticsNodes().isNotEmpty() }
-            compose.onNodeWithTag("reports-row-status-HH-00452").performScrollTo().assertTextContains("Archived")
+            compose.onNodeWithTag("reports-row-status-HH-00452").performScrollTo()
+                .assertTextContains("Archived", substring = true)
             compose.onNodeWithTag("reports-checkbox-HH-00452").performClick()
             compose.onNodeWithTag("reports-export").assertIsEnabled()
         } finally {

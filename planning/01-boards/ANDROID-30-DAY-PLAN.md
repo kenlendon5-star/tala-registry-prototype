@@ -58,7 +58,8 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D17: Done. [Implementation evidence](../03-evidence/D17.md).
 - D18: Done. [Implementation evidence](../03-evidence/D18.md).
 - D19: Done. [Implementation evidence](../03-evidence/D19.md).
-- D20: Verify. [Implementation evidence](../03-evidence/D20.md).
+- D20: Done. [Implementation evidence](../03-evidence/D20.md).
+- D21: Done. [Implementation evidence](../03-evidence/D21.md).
 
 Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
@@ -410,35 +411,37 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Remove failures caused by everyday phone use.
 
-**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Verify
+**Sprint:** 3 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D19
 
 - [x] Test background/resume, rotation, external-app return, low storage and process death during editing; protect the last confirmed save.
-- [ ] Check TalkBack labels, focus order, text scaling, contrast and approximately 48dp interactive touch targets.
-- [ ] Generate a fictional performance dataset, provisionally 200 households/1,000 members; record startup/list/map timings on the target phone and fix blockers.
+- [x] Check TalkBack labels, focus order, text scaling, contrast and approximately 48dp interactive touch targets.
+- [x] Generate a fictional performance dataset, provisionally 200 households/1,000 members; record startup/list/map timings on the target phone and fix blockers.
 
 **Done when:** No confirmed saved record is lost; all critical actions are usable with large text and TalkBack. Record measured performance against Day-one targets.
 
 **Evidence/deliverable:** Lifecycle/accessibility/performance report
 
-**Implementation evidence:** 2026-10-25: automated D20 work is ready for physical verification. Background/resume, recreation, Bundle/Parcel process restoration, real Photo Picker return, and a deterministic simulated disk-full rollback pass. Critical controls have TalkBack names and >=48dp bounds at 100% and 200% font scale; two 40dp controls were raised to 48dp. A fictional 200-household/1,000-member API 37 emulator benchmark measured 65ms startup-data, 55ms list, 12ms search p95 and 46ms map state. Full gate: 231 JVM tests, lint 0 errors, debug APK. Still required before Done: spoken TalkBack/contrast review and cold-start/dataset timing on OPPO CPH2529. Evidence: planning/03-evidence/D20.md.
+**Implementation evidence:** 2026-10-26: D20 accepted on OPPO CPH2529/API 35. AccessibilityDeviceTest passed 2/2 at 100% and 2/2 at 200%; the user confirmed spoken TalkBack output, focus behavior and visual contrast pass at 200%. The fictional 200-household/1,000-member dataset measured 85ms startup-data, 58ms list, 9ms search p95 and 62ms map state; 20 force-stopped launches measured 2,381ms p95 against the 3,000ms provisional target. Settings were restored. Evidence: planning/03-evidence/D20.md.
 
 ### D21 · 2026-10-19 · Review feature completeness
 
 **Goal:** Freeze the release candidate feature set.
 
-**Sprint:** 3 · **Budget:** 2 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 3 · **Budget:** 2 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D20
 
-- [ ] Demonstrate an offline interview, GPS denial/manual location, export/restore and archive/restore.
-- [ ] Review open issues and classify release blockers versus cosmetic changes; freeze features.
-- [ ] Confirm UAT participants and book the final demo; protect the remaining day for rest.
+- [x] Demonstrate an offline interview, GPS denial/manual location, export/restore and archive/restore.
+- [x] Review open issues and classify release blockers versus cosmetic changes; freeze features.
+- [x] Confirm UAT participants and book the final demo; protect the remaining day for rest.
 
 **Done when:** Week-three gate passes: the agreed offline feature set is complete and release blockers have owners and reproduction steps.
 
 **Evidence/deliverable:** Feature-freeze checklist
+
+**Implementation evidence:** 2026-10-26: feature scope is frozen and all four current-build demonstrations pass on OPPO CPH2529/API 35: complete two-member/18-section interview plus force-stop recovery, permission denial/manual coordinates, clean-database backup restore with attachment bytes, and archive/restore. Technical UAT passed 21 automated acceptance tests plus the owner-confirmed TalkBack/contrast check with no open application defects; one test-only reports matcher was corrected and passed focused plus 5/5 class retest. Final demonstration confirmed for 2026-10-30 at 1:00 PM, Barangay Cogon HQ, using the OPPO CPH2529, with the Barangay Secretary as reviewer; backup date is 2026-11-06. D21 is Done. Evidence: planning/03-evidence/D21.md and planning/03-evidence/UAT-2026-10-26.md.
 
 ### D22 · 2026-10-20 · Run full regression
 

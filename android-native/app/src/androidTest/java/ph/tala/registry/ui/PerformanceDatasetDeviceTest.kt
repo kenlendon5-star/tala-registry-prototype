@@ -30,10 +30,11 @@ import java.util.UUID
 /** D20 representative local-data timing harness. All generated identities and names are fictional. */
 class PerformanceDatasetDeviceTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private val databaseName = "d20-performance.db"
 
     @Test fun twoHundredHouseholdsAndOneThousandMembersMeetProvisionalTargets() {
         runBlocking {
+        val retainForColdLaunch = InstrumentationRegistry.getArguments().getString("retainDataset") == "true"
+        val databaseName = if (retainForColdLaunch) "tala-registry.db" else "d20-performance.db"
         context.deleteDatabase(databaseName)
         val records = dataset()
         assertEquals(200, records.size)
@@ -101,6 +102,7 @@ class PerformanceDatasetDeviceTest {
               "listStateMs": $listMs,
               "searchP95Ms": $searchP95,
               "mapStateMs": $mapMs,
+              "retainedForColdLaunch": $retainForColdLaunch,
               "targetsMs": { "startupData": 3000, "searchP95": 300, "mapState": 3000 }
             }
             """.trimIndent()
@@ -111,7 +113,7 @@ class PerformanceDatasetDeviceTest {
         assertTrue("List state took ${listMs}ms", listMs <= 3_000)
         assertTrue("Search p95 took ${searchP95}ms", searchP95 <= 300)
         assertTrue("Map state took ${mapMs}ms", mapMs <= 3_000)
-            context.deleteDatabase(databaseName)
+            if (!retainForColdLaunch) context.deleteDatabase(databaseName)
         }
     }
 

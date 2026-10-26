@@ -21,11 +21,16 @@ const {pathToFileURL}=require('node:url');
   assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),Object.values(baseline).filter(card=>card.status==='In progress').length);
   for(const [id,card] of Object.entries(baseline))assert.equal(await page.getByLabel(`Status for ${id}`).inputValue(),card.status);
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
-  // Complete the in-progress or verifying card (if any) in this isolated profile so its dependents can
+  // Dependency gate: D23 waits for D22, which is not Done in the repository baseline.
+  await page.getByLabel('Status for D23').selectOption('Ready');
+  assert.equal(await page.getByLabel('Status for D23').inputValue(),'Backlog');
+  // The refusal reason is shown on the card, not only in the notice bar at the top.
+  assert.match(await page.locator('[data-id="D23"] .gate').textContent(),/waiting for D22/);
+  // Complete the in-progress, verifying or blocked card (if any) in this isolated profile so its dependents can
   // exercise their dependency gates. Baseline files stay untouched; localStorage is cleared below.
   let earlyCompleted=0;
-  while(await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"], .column[data-status="Verify"] select[aria-label^="Status for"]').count()){
-   const status=page.locator('.column[data-status="In progress"] select[aria-label^="Status for"], .column[data-status="Verify"] select[aria-label^="Status for"]').first();
+  while(await page.locator('.column[data-status="In progress"] select[aria-label^="Status for"], .column[data-status="Verify"] select[aria-label^="Status for"], .column[data-status="Blocked"] select[aria-label^="Status for"]').count()){
+   const status=page.locator('.column[data-status="In progress"] select[aria-label^="Status for"], .column[data-status="Verify"] select[aria-label^="Status for"], .column[data-status="Blocked"] select[aria-label^="Status for"]').first();
    const id=(await status.getAttribute('aria-label')).replace('Status for ','');
    const details=page.locator(`[data-id="${id}"] details`);
    if(!await details.evaluate(el=>el.open))await page.locator(`[data-id="${id}"] summary`).click();
@@ -35,11 +40,6 @@ const {pathToFileURL}=require('node:url');
    earlyCompleted++;
   }
   assert.match(await page.locator('#endDate').textContent(),/28 Oct 2026/);
-  // Dependency gate: D22 waits for D21, which is in Backlog rather than Done.
-  await page.getByLabel('Status for D22').selectOption('Ready');
-  assert.equal(await page.getByLabel('Status for D22').inputValue(),'Backlog');
-  // The refusal reason is shown on the card, not only in the notice bar at the top.
-  assert.match(await page.locator('[data-id="D22"] .gate').textContent(),/waiting for D21/);
   // Done gate: every checklist item and evidence note are required first.
   await page.getByLabel(`Status for ${nextCard}`).selectOption('Done');
   assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),nextCardStatus);
@@ -66,7 +66,7 @@ const {pathToFileURL}=require('node:url');
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
   assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),'Done');
-  assert.equal(await page.getByLabel('Status for D22').inputValue(),'Backlog');
+  assert.equal(await page.getByLabel('Status for D22').inputValue(),nextCard==='D22'?'Done':'Backlog');
   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress'}).click();
   assert.equal((await download).suggestedFilename(),'tala-native-android-progress.json');
   const raw=await page.evaluate(()=>JSON.stringify(state));
