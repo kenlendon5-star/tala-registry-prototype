@@ -60,6 +60,7 @@ Open ANDROID-KANBAN.html in a browser. Expand a card for its checklist, acceptan
 - D19: Done. [Implementation evidence](../03-evidence/D19.md).
 - D20: Done. [Implementation evidence](../03-evidence/D20.md).
 - D21: Done. [Implementation evidence](../03-evidence/D21.md).
+- D22: Done. [Implementation evidence](../03-evidence/D22.md).
 
 Existing browser progress remains independent. Earlier acceptance is not inferred from a later successful build.
 
@@ -447,17 +448,19 @@ Existing browser progress remains independent. Earlier acceptance is not inferre
 
 **Goal:** Verify the complete app with repeatable evidence.
 
-**Sprint:** 4 · **Budget:** 6 hours · **Owner:** Developer · **Initial status:** Backlog
+**Sprint:** 4 · **Budget:** 6 hours · **Owner:** Developer · **Repository status:** Done
 
 **Depends on:** D21
 
-- [ ] Run Gradle unit tests, Android lint and connected Compose/instrumentation tests; use existing browser scenarios as behavior references, not as native-app verification.
-- [ ] Run focused Kotlin branching, Room persistence/failed-write/migration and restore tests plus the 18-section coverage matrix.
-- [ ] Execute device tests on the target phone and second configuration; record build version, device, scenario, result and evidence.
+- [x] Run Gradle unit tests, Android lint and connected Compose/instrumentation tests; use existing browser scenarios as behavior references, not as native-app verification.
+- [x] Run focused Kotlin branching, Room persistence/failed-write/migration and restore tests plus the 18-section coverage matrix.
+- [x] Execute device tests on the target phone and second configuration; record build version, device, scenario, result and evidence.
 
 **Done when:** Every required test has a pass/fail outcome; no untested feature is marked complete.
 
 **Evidence/deliverable:** Versioned regression report
+
+**Implementation evidence:** 2026-10-26: full regression accepted. Final isolated 0.6.0/6 build: 231 JVM tests pass, lint has 0 errors/26 non-blocking warnings, and both APKs assemble. OPPO CPH2529/API 35 passed 95 accepted test executions covering storage/migrations/failed writes, UI/forms, account/accessibility/reports/backup, permissions/location, all 18 sections, force-stop lifecycle and all map modes. Android 17/API 37 emulator passed 52 distinct required checks plus focused stability retests. Fixed two test-only defects: stale normalized member-order fixture and a date-dialog wait; both passed focused and broad retests. No app defect remains open. Evidence: planning/03-evidence/D22.md and planning/03-evidence/day22/.
 
 ### D23 · 2026-10-21 · Conduct user acceptance
 

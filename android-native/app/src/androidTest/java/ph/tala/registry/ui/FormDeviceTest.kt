@@ -152,7 +152,7 @@ class FormDeviceTest {
     }
 
     private fun clickDialogButton(label: String) {
-        compose.waitUntil(5_000) { compose.onAllNodesWithText(label, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText(label, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText(label, useUnmergedTree = true).performClick()
     }
 

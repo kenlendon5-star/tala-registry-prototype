@@ -187,5 +187,14 @@
       true
     ],
     "notes": "2026-10-26: feature scope is frozen and all four current-build demonstrations pass on OPPO CPH2529/API 35: complete two-member/18-section interview plus force-stop recovery, permission denial/manual coordinates, clean-database backup restore with attachment bytes, and archive/restore. Technical UAT passed 21 automated acceptance tests plus the owner-confirmed TalkBack/contrast check with no open application defects; one test-only reports matcher was corrected and passed focused plus 5/5 class retest. Final demonstration confirmed for 2026-10-30 at 1:00 PM, Barangay Cogon HQ, using the OPPO CPH2529, with the Barangay Secretary as reviewer; backup date is 2026-11-06. D21 is Done. Evidence: planning/03-evidence/D21.md and planning/03-evidence/UAT-2026-10-26.md."
+  },
+  "D22": {
+    "status": "Done",
+    "checks": [
+      true,
+      true,
+      true
+    ],
+    "notes": "2026-10-26: full regression accepted. Final isolated 0.6.0/6 build: 231 JVM tests pass, lint has 0 errors/26 non-blocking warnings, and both APKs assemble. OPPO CPH2529/API 35 passed 95 accepted test executions covering storage/migrations/failed writes, UI/forms, account/accessibility/reports/backup, permissions/location, all 18 sections, force-stop lifecycle and all map modes. Android 17/API 37 emulator passed 52 distinct required checks plus focused stability retests. Fixed two test-only defects: stale normalized member-order fixture and a date-dialog wait; both passed focused and broad retests. No app defect remains open. Evidence: planning/03-evidence/D22.md and planning/03-evidence/day22/."
   }
 }

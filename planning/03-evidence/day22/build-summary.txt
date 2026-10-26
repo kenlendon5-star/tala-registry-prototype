@@ -1,0 +1,10 @@
+D22 regression build summary — 2026-10-26
+App: Tala 0.6.0 (6)
+Package: ph.tala.registry.d08test
+App APK SHA-256: 6C856D6E2CDA854EDD92B03EB1AA416B75585A0B2F0639668F9A992F080043BC
+Test APK SHA-256: A153CF20F703031DC3654617A123017207636A6A0A436D827AAD5A4165B15239
+JVM: 231 tests, 0 failures, 0 errors, 0 skipped
+Lint: 0 errors, 26 warnings
+OPPO: CPH2529, Android 15, API 35, 95 accepted test executions
+Emulator: Android 17, API 37, 52 distinct accepted checks plus focused retests
+Questionnaire: 18 sections, 94 fields, generated inventory check passed

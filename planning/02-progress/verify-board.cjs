@@ -21,11 +21,11 @@ const {pathToFileURL}=require('node:url');
   assert.equal(await page.locator('.column[data-status="In progress"] .card').count(),Object.values(baseline).filter(card=>card.status==='In progress').length);
   for(const [id,card] of Object.entries(baseline))assert.equal(await page.getByLabel(`Status for ${id}`).inputValue(),card.status);
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
-  // Dependency gate: D23 waits for D22, which is not Done in the repository baseline.
-  await page.getByLabel('Status for D23').selectOption('Ready');
-  assert.equal(await page.getByLabel('Status for D23').inputValue(),'Backlog');
+  // Dependency gate: D24 waits for D23, which is not Done in the repository baseline.
+  await page.getByLabel('Status for D24').selectOption('Ready');
+  assert.equal(await page.getByLabel('Status for D24').inputValue(),'Backlog');
   // The refusal reason is shown on the card, not only in the notice bar at the top.
-  assert.match(await page.locator('[data-id="D23"] .gate').textContent(),/waiting for D22/);
+  assert.match(await page.locator('[data-id="D24"] .gate').textContent(),/waiting for D23/);
   // Complete the in-progress, verifying or blocked card (if any) in this isolated profile so its dependents can
   // exercise their dependency gates. Baseline files stay untouched; localStorage is cleared below.
   let earlyCompleted=0;
@@ -66,7 +66,7 @@ const {pathToFileURL}=require('node:url');
   assert.equal(await page.getByLabel('Status for D01').inputValue(),'Done');
   assert.equal(await page.getByLabel('Status for D07').inputValue(),'Done');
   assert.equal(await page.getByLabel(`Status for ${nextCard}`).inputValue(),'Done');
-  assert.equal(await page.getByLabel('Status for D22').inputValue(),nextCard==='D22'?'Done':'Backlog');
+  assert.equal(await page.getByLabel('Status for D22').inputValue(),baseline.D22?.status||'Backlog');
   const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress'}).click();
   assert.equal((await download).suggestedFilename(),'tala-native-android-progress.json');
   const raw=await page.evaluate(()=>JSON.stringify(state));

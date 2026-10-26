@@ -55,8 +55,8 @@ class EducationEmploymentPersistenceTest {
                 HOUSEHOLD_ID, "HH-01001", "Maria Santos", "24 Mabini Street", "InProgress"
             ),
             members = listOf(
-                ph.tala.registry.data.local.MemberRow(MEMBER_ONE_ID, HOUSEHOLD_ID, "Maria Santos"),
-                ph.tala.registry.data.local.MemberRow(MEMBER_TWO_ID, HOUSEHOLD_ID, "Juan Santos")
+                ph.tala.registry.data.local.MemberRow(MEMBER_ONE_ID, HOUSEHOLD_ID, "Maria Santos", sortOrder = 0),
+                ph.tala.registry.data.local.MemberRow(MEMBER_TWO_ID, HOUSEHOLD_ID, "Juan Santos", sortOrder = 1)
             ),
             interview = ph.tala.registry.data.local.InterviewRow(INTERVIEW_ID, HOUSEHOLD_ID),
             visits = emptyList(),
