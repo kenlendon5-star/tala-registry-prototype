@@ -65,6 +65,10 @@ data class MapUiState(
     val untagged: List<UntaggedHousehold> = emptyList(),
     val selectedId: HouseholdId? = null,
     val adjust: PinAdjustDraft? = null,
+    /** Latitude/longitude of a long-press awaiting household selection; null when idle. */
+    val pendingPinLocation: Pair<Double, Double>? = null,
+    /** Whether the unpinned-household picker is visible. */
+    val showPinHouseholdPicker: Boolean = false,
     val writePhase: LocationWritePhase = LocationWritePhase.Idle,
     val message: String = "",
 ) {
@@ -114,8 +118,16 @@ class MapViewModel(
                     UntaggedHousehold(it.id, it.displayCode, it.headName)
                 }.sortedBy { it.displayCode }
                 // A deleted or archived selection closes its card instead of pointing at nothing.
-                val selected = mutable.value.selectedId?.takeIf { id -> households.any { it.id == id && !it.archived } }
-                mutable.value = mutable.value.copy(loading = false, pins = pins, untagged = untagged, selectedId = selected)
+                val current = mutable.value
+                val selected = current.selectedId?.takeIf { id -> households.any { it.id == id && !it.archived } }
+                mutable.value = current.copy(
+                    loading = false,
+                    pins = pins,
+                    untagged = untagged,
+                    selectedId = selected,
+                    pendingPinLocation = current.pendingPinLocation?.takeIf { untagged.isNotEmpty() },
+                    showPinHouseholdPicker = current.showPinHouseholdPicker && untagged.isNotEmpty(),
+                )
             }
         }
         viewModelScope.launch {
@@ -138,6 +150,8 @@ class MapViewModel(
             selectedId = id,
             writePhase = LocationWritePhase.Idle,
             message = "",
+            pendingPinLocation = null,
+            showPinHouseholdPicker = false,
             adjust = PinAdjustDraft(
                 householdId = id,
                 displayCode = pin.displayCode,
@@ -229,6 +243,102 @@ class MapViewModel(
         if (mutable.value.writePhase == LocationWritePhase.Saving) return
         mutable.value = mutable.value.copy(adjust = null, writePhase = LocationWritePhase.Idle, message = "")
         rememberDraft()
+    }
+
+    /** A long press stages a new pin and reveals the confirmation action on the map. */
+    fun startPinHousehold(latitude: Double, longitude: Double) {
+        if (mutable.value.writePhase == LocationWritePhase.Saving) return
+        if (mutable.value.untagged.isEmpty()) {
+            mutable.value = mutable.value.copy(message = "All households already have saved coordinates.")
+            return
+        }
+        val coordinateProblem = LocationRules.coordinateProblem(latitude, longitude, null)
+        val extentProblem = MapRules.extentProblem(latitude, longitude)
+        if (coordinateProblem != null || extentProblem != null) {
+            mutable.value = mutable.value.copy(message = coordinateProblem ?: extentProblem.orEmpty())
+            return
+        }
+        mutable.value = mutable.value.copy(
+            pendingPinLocation = latitude to longitude,
+            showPinHouseholdPicker = false,
+            writePhase = LocationWritePhase.Idle,
+            message = "",
+        )
+    }
+
+    /** Opens the unpinned-household picker after the enumerator confirms the staged point. */
+    fun showPinHouseholdPicker() {
+        val current = mutable.value
+        if (current.pendingPinLocation == null || current.writePhase == LocationWritePhase.Saving) return
+        if (current.untagged.isEmpty()) {
+            mutable.value = current.copy(
+                pendingPinLocation = null,
+                showPinHouseholdPicker = false,
+                message = "All households already have saved coordinates.",
+            )
+            return
+        }
+        mutable.value = current.copy(showPinHouseholdPicker = true, message = "")
+    }
+
+    /** Saves the staged coordinate for an unpinned [householdId] with Manual provenance. */
+    fun pinHousehold(householdId: HouseholdId) {
+        val current = mutable.value
+        val location = current.pendingPinLocation ?: return
+        if (current.writePhase == LocationWritePhase.Saving) return
+        if (current.untagged.none { it.householdId == householdId }) {
+            mutable.value = current.copy(
+                showPinHouseholdPicker = current.untagged.isNotEmpty(),
+                message = "That household already has a saved pin.",
+            )
+            return
+        }
+        val latitude = location.first
+        val longitude = location.second
+        // Validate coordinate (parse + bounds + extent)
+        val parseLat = LocationRules.parse(MapRules.formatCoordinate(latitude))
+        val parseLon = LocationRules.parse(MapRules.formatCoordinate(longitude))
+        if (parseLat == null || parseLon == null) {
+            mutable.value = current.copy(message = "Invalid coordinate. Try a different location.")
+            return
+        }
+        val provenanceProblem = LocationRules.coordinateProblem(parseLat, parseLon, null)
+        val outsideExtent = MapRules.extentProblem(parseLat, parseLon)
+        if (provenanceProblem != null || outsideExtent != null) {
+            mutable.value = current.copy(message = provenanceProblem ?: outsideExtent!!)
+            return
+        }
+        mutable.value = current.copy(
+            writePhase = LocationWritePhase.Saving,
+            message = "Saving pin…",
+            showPinHouseholdPicker = false,
+        )
+        // Manual provenance: no measured accuracy; capture time is now.
+        val coordinate = Coordinate(parseLat, parseLon, accuracyMetres = null, capturedAt = clock(), source = CoordinateSource.Manual)
+        viewModelScope.launch {
+            val result = repository.saveCoordinate(householdId, coordinate)
+            val saved = result is WriteResult.Saved
+            mutable.value = mutable.value.copy(
+                writePhase = if (result is WriteResult.Saved) LocationWritePhase.Saved else LocationWritePhase.Failed,
+                message = when (result) {
+                    is WriteResult.Saved -> "Household pinned on this device."
+                    is WriteResult.Failed -> result.message
+                },
+                pendingPinLocation = if (saved) null else mutable.value.pendingPinLocation,
+                showPinHouseholdPicker = !saved && mutable.value.untagged.isNotEmpty(),
+            )
+        }
+    }
+
+    /** User cancelled the pin-household flow from either the map action or picker. */
+    fun cancelPinHousehold() {
+        if (mutable.value.writePhase == LocationWritePhase.Saving) return
+        mutable.value = mutable.value.copy(
+            pendingPinLocation = null,
+            showPinHouseholdPicker = false,
+            writePhase = LocationWritePhase.Idle,
+            message = "",
+        )
     }
 
     /** The screen could not hand the coordinates to any external map application. */

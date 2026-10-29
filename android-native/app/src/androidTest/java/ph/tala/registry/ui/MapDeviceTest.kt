@@ -21,11 +21,15 @@ import org.junit.Test
 import ph.tala.registry.MainActivity
 import ph.tala.registry.TalaApplication
 import ph.tala.registry.data.local.WriteResult
+import ph.tala.registry.domain.edit.HouseholdDraft
 import ph.tala.registry.domain.model.Coordinate
 import ph.tala.registry.domain.model.CoordinateSource
 import ph.tala.registry.domain.model.HouseholdId
+import ph.tala.registry.domain.model.HouseholdStatus
 import ph.tala.registry.domain.model.MapRules
 import java.io.File
+import java.util.UUID
+import kotlin.math.roundToInt
 
 /**
  * D16 map acceptance on a real Android surface: online basemap with visible
@@ -286,6 +290,72 @@ class MapDeviceTest {
         await("record-id")
         compose.onNodeWithTag("record-id").assertTextEquals("HH-00454")
         captureImage("07-untagged-open-record")
+    }
+
+    @Test fun longPressPinsAnUntaggedHouseholdFromTheMap() {
+        check(context.packageName.endsWith(".d08test"))
+        val target = HouseholdId(UUID.randomUUID().toString())
+        assertEquals(
+            WriteResult.Saved,
+            runBlocking {
+                app.repository.createHousehold(
+                    target,
+                    HouseholdDraft("Long Press Sample", "Fictional Map Street", HouseholdStatus.InProgress),
+                )
+            },
+        )
+        val displayCode = runBlocking { app.repository.households.first().single { it.id == target }.displayCode }
+        try {
+            openMap()
+            // Compose's synthetic longClick does not enter AndroidView on every
+            // OEM. Inject a device-level stationary swipe at the map node's screen
+            // coordinates so osmdroid receives the same native events as a finger.
+            await("osm-map")
+            val mapCenter = compose.onNodeWithTag("osm-map").fetchSemanticsNode().boundsInRoot.center
+            shell(
+                "input swipe ${mapCenter.x.roundToInt()} ${mapCenter.y.roundToInt()} " +
+                    "${mapCenter.x.roundToInt()} ${mapCenter.y.roundToInt()} 1200",
+            )
+            await("pin-household-action")
+            compose.onNodeWithTag("pin-household-action").performClick()
+            await("pin-dropdown-title")
+            compose.onNodeWithTag("pin-dropdown-$displayCode").performClick()
+
+            compose.waitUntil(15_000) { coordinate(target) != null }
+            val saved = requireNotNull(coordinate(target))
+            assertTrue(MapRules.contains(saved.latitude, saved.longitude))
+            assertNull(saved.accuracyMetres)
+            captureImage("08-long-press-household-pinned")
+        } finally {
+            runBlocking { app.repository.setArchived(target, true) }
+        }
+    }
+
+    @Test fun mapViewportRemainsBoundedAfterPan() {
+        check(context.packageName.endsWith(".d08test"))
+        openMap()
+        await("osm-map")
+
+        val surfaceBefore = compose.onNodeWithTag("map-surface").fetchSemanticsNode().boundsInRoot
+        val mapBefore = compose.onNodeWithTag("osm-map").fetchSemanticsNode().boundsInRoot
+        val listBefore = compose.onNodeWithTag("pin-list-title").fetchSemanticsNode().boundsInRoot
+        assertEquals(surfaceBefore, mapBefore)
+        assertTrue(listBefore.top >= surfaceBefore.bottom)
+
+        val center = mapBefore.center
+        shell(
+            "input swipe ${(center.x + 220).roundToInt()} ${center.y.roundToInt()} " +
+                "${(center.x - 220).roundToInt()} ${center.y.roundToInt()} 1200",
+        )
+        compose.waitForIdle()
+
+        val surfaceAfter = compose.onNodeWithTag("map-surface").fetchSemanticsNode().boundsInRoot
+        val mapAfter = compose.onNodeWithTag("osm-map").fetchSemanticsNode().boundsInRoot
+        val listAfter = compose.onNodeWithTag("pin-list-title").fetchSemanticsNode().boundsInRoot
+        assertEquals(surfaceBefore, surfaceAfter)
+        assertEquals(surfaceAfter, mapAfter)
+        assertTrue(listAfter.top >= surfaceAfter.bottom)
+        captureImage("09-map-pan-clipped")
     }
 
     @Test fun externalMapHandOffResolvesWithCoordinatesOnly() {

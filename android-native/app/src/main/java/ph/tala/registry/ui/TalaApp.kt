@@ -256,6 +256,10 @@ fun TalaApp(
                         onEditLongitude = mapModel::editLongitude,
                         onSaveAdjust = mapModel::saveAdjust,
                         onCancelAdjust = mapModel::cancelAdjust,
+                        onStartPinHousehold = mapModel::startPinHousehold,
+                        onShowPinHouseholdPicker = mapModel::showPinHouseholdPicker,
+                        onPinHousehold = mapModel::pinHousehold,
+                        onCancelPinHousehold = mapModel::cancelPinHousehold,
                         onExternalMapUnavailable = mapModel::reportExternalMapUnavailable,
                     )
                 }

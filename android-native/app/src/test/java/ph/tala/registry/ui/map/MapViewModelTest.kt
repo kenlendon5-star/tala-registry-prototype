@@ -215,6 +215,70 @@ class MapViewModelTest {
         // The restored draft is data only; the write path is exercised by the live model.
     }
 
+    @Test fun longPressStagesPointBeforeOpeningTheUnpinnedHouseholdPicker() = runTest(dispatcher) {
+        val m = model()
+
+        m.startPinHousehold(11.0182, 124.6041)
+
+        assertEquals(11.0182, requireNotNull(m.state.value.pendingPinLocation).first, 0.0)
+        assertFalse(m.state.value.showPinHouseholdPicker)
+        assertNull(store.load(untagged.value)?.coordinates)
+
+        m.showPinHouseholdPicker()
+        assertTrue(m.state.value.showPinHouseholdPicker)
+        assertEquals(listOf(untagged), m.state.value.untagged.map { it.householdId })
+
+        m.cancelPinHousehold()
+        assertNull(m.state.value.pendingPinLocation)
+        assertFalse(m.state.value.showPinHouseholdPicker)
+    }
+
+    @Test fun selectingAnUnpinnedHouseholdSavesTheStagedPointAsManual() = runTest(dispatcher) {
+        val m = model()
+        m.startPinHousehold(11.0182, 124.6041)
+        m.showPinHouseholdPicker()
+
+        m.pinHousehold(untagged)
+        assertEquals(LocationWritePhase.Saving, m.state.value.writePhase)
+        settle()
+
+        val stored = requireNotNull(store.load(untagged.value)?.coordinates)
+        assertEquals(11.0182, stored.latitude, 1e-9)
+        assertEquals(124.6041, stored.longitude, 1e-9)
+        assertNull(stored.accuracyMetres)
+        assertEquals(now, stored.capturedAt)
+        assertEquals(LocationWritePhase.Saved, m.state.value.writePhase)
+        assertNull(m.state.value.pendingPinLocation)
+        assertFalse(m.state.value.showPinHouseholdPicker)
+        assertTrue(m.state.value.untagged.isEmpty())
+    }
+
+    @Test fun failedPinSaveKeepsThePointAndReopensThePickerForRetry() = runTest(dispatcher) {
+        store.failWith = "Fictional storage failure"
+        val m = model()
+        m.startPinHousehold(11.0182, 124.6041)
+        m.showPinHouseholdPicker()
+
+        m.pinHousehold(untagged)
+        settle()
+
+        assertEquals(LocationWritePhase.Failed, m.state.value.writePhase)
+        assertNotNull(m.state.value.pendingPinLocation)
+        assertTrue(m.state.value.showPinHouseholdPicker)
+        assertEquals("Fictional storage failure", m.state.value.message)
+        assertNull(store.load(untagged.value)?.coordinates)
+    }
+
+    @Test fun outOfExtentLongPressNeverStagesAHouseholdPin() = runTest(dispatcher) {
+        val m = model()
+
+        m.startPinHousehold(14.5994, 120.9842)
+
+        assertNull(m.state.value.pendingPinLocation)
+        assertFalse(m.state.value.showPinHouseholdPicker)
+        assertEquals(MapRules.OUTSIDE_MESSAGE, m.state.value.message)
+    }
+
     @Test fun coordinateRowsRestoreIntoPinsThroughTheRepositoryContract() = runTest(dispatcher) {
         // The repository maps rows to coordinates by accuracy nullability (D15 contract).
         val row = requireNotNull(store.load(inside.value)?.coordinates)

@@ -13,6 +13,7 @@ Start with the six specifications below. They share the offline native Android r
 
 Supporting artifacts:
 
+- [Map long-press household pinning](design/MAP-LONG-PRESS-HOUSEHOLD-PINNING.md): implemented interaction contract, state ownership, test tags, persistence rules and agent handoff.
 - [Tala Registry Home implementation and agent handoff](design/HOME-REDESIGN-2026-10-21.md): approved design, live-data contracts, responsive behavior, source ownership and verification.
 - [Portrait and landscape UI/UX implementation guide](design/UI-UX-IMPLEMENTATION-PLAN-2026-10-21.md): accepted recommendations, agent instructions, and verification checklist for the upcoming native UI changes.
 - [Linked wireframe gallery](design/wireframes.html): 12 target screens, local/offline HTML.

@@ -18,9 +18,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -75,6 +78,10 @@ fun MapScreen(
     onEditLongitude: (String) -> Unit,
     onSaveAdjust: () -> Unit,
     onCancelAdjust: () -> Unit,
+    onStartPinHousehold: (Double, Double) -> Unit,
+    onShowPinHouseholdPicker: () -> Unit,
+    onPinHousehold: (HouseholdId) -> Unit,
+    onCancelPinHousehold: () -> Unit,
     onExternalMapUnavailable: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
@@ -89,7 +96,14 @@ fun MapScreen(
             )
             Text(MapRules.EXTENT_NOTE, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        MapSurface(state, onSelect, onPlacePin)
+        MapSurface(
+            state = state,
+            onSelect = onSelect,
+            onPlacePin = onPlacePin,
+            onStartPinHousehold = onStartPinHousehold,
+            onShowPinHouseholdPicker = onShowPinHouseholdPicker,
+            onCancelPinHousehold = onCancelPinHousehold,
+        )
         StatusLines(state)
         val selected = state.selectedPin
         when {
@@ -102,6 +116,7 @@ fun MapScreen(
             )
         }
         PinLists(state, onSelect, onOpenHousehold, Modifier.weight(1f))
+        PinHouseholdPicker(state, onPinHousehold, onCancelPinHousehold)
     }
 }
 
@@ -112,7 +127,7 @@ fun MapScreen(
  * gesture, and the draft commits when the drag ends.
  */
 @Composable
-private fun OsmTileMap(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPlacePin: (Double, Double) -> Unit) {
+private fun OsmTileMap(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPlacePin: (Double, Double) -> Unit, onStartPinHousehold: (Double, Double) -> Unit) {
     val context = LocalContext.current
     val dragging = remember { mutableStateOf(false) }
     val map = remember(context) {
@@ -146,11 +161,11 @@ private fun OsmTileMap(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPl
         }
     }
     AndroidView(
-        modifier = Modifier.fillMaxSize().testTag("osm-map").semantics { contentDescription = "Household map with saved pins" },
+        modifier = Modifier.fillMaxSize().clipToBounds().testTag("osm-map").semantics { contentDescription = "Household map with saved pins" },
         factory = { map },
         update = { map ->
             if (dragging.value) return@AndroidView
-            syncOverlays(map, state, context, onSelect, onPlacePin, dragging)
+            syncOverlays(map, state, context, onSelect, onPlacePin, onStartPinHousehold, dragging)
         },
     )
 }
@@ -162,6 +177,7 @@ private fun syncOverlays(
     context: Context,
     onSelect: (HouseholdId?) -> Unit,
     onPlacePin: (Double, Double) -> Unit,
+    onStartPinHousehold: (Double, Double) -> Unit,
     dragging: MutableState<Boolean>,
 ) {
     val keep = map.overlays.filterNot { it is Marker || it is MapEventsOverlay }.toMutableList()
@@ -175,7 +191,13 @@ private fun syncOverlays(
                 }
                 return false
             }
-            override fun longPressHelper(point: GeoPoint?): Boolean = false
+            override fun longPressHelper(point: GeoPoint?): Boolean {
+                if (point != null && state.adjust == null && state.pendingPinLocation == null && !state.showPinHouseholdPicker) {
+                    onStartPinHousehold(point.latitude, point.longitude)
+                    return true
+                }
+                return false
+            }
         }),
     )
     for (pin in state.pins) {
@@ -207,6 +229,14 @@ private fun syncOverlays(
             }
         }
         keep.add(marker)
+    }
+    state.pendingPinLocation?.let { (latitude, longitude) ->
+        keep.add(Marker(map).apply {
+            position = GeoPoint(latitude, longitude)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            icon = pinIcon(context, selected = true)
+            title = "New household pin location"
+        })
     }
     map.overlays.clear()
     map.overlays.addAll(keep)
@@ -288,7 +318,7 @@ private class ExtentTransform(canvasSize: IntSize, density: Float) {
  * move the draft pin.
  */
 @Composable
-private fun OfflinePlot(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPlacePin: (Double, Double) -> Unit) {
+private fun OfflinePlot(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPlacePin: (Double, Double) -> Unit, onStartPinHousehold: (Double, Double) -> Unit) {
     val density = LocalDensity.current.density
     val textMeasurer = rememberTextMeasurer()
     // Hoisted out of the draw scope: MaterialTheme reads are composable-only.
@@ -301,8 +331,9 @@ private fun OfflinePlot(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onP
             .onSizeChanged { canvasSize = it }
             .testTag("map-offline-plot")
             .semantics { contentDescription = "Offline plot of saved household coordinates" }
-            .pointerInput(state.pins, state.adjust) {
-                detectTapGestures { tap ->
+            .pointerInput(state.pins, state.adjust, state.pendingPinLocation, state.showPinHouseholdPicker) {
+                detectTapGestures(
+                    onTap = { tap ->
                     val projection = transform ?: return@detectTapGestures
                     val hitThreshold = 26 * density
                     val hit = state.pins.filter { !it.outOfArea }
@@ -313,7 +344,14 @@ private fun OfflinePlot(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onP
                         hit != null -> onSelect(hit.first.householdId)
                         state.adjust != null -> onPlacePin(projection.latitude(tap.y), projection.longitude(tap.x))
                     }
-                }
+                    },
+                    onLongPress = { press ->
+                        val projection = transform ?: return@detectTapGestures
+                        if (state.adjust == null && state.pendingPinLocation == null && !state.showPinHouseholdPicker) {
+                            onStartPinHousehold(projection.latitude(press.y), projection.longitude(press.x))
+                        }
+                    },
+                )
             }
             .pointerInput(state.adjust) {
                 if (state.adjust == null) return@pointerInput
@@ -365,6 +403,11 @@ private fun OfflinePlot(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onP
                 drawCircle(AccentBlue, radius = 5 * density, center = point)
                 drawCircle(AccentBlue, radius = 18 * density, center = point, style = Stroke(width = 2.dp.toPx()))
             }
+        }
+        state.pendingPinLocation?.let { (latitude, longitude) ->
+            val point = projection.offset(latitude, longitude)
+            drawCircle(AccentBlue.copy(alpha = 0.3f), radius = 14 * density, center = point)
+            drawCircle(AccentBlue, radius = 6 * density, center = point)
         }
         for (pin in state.pins.filter { !it.outOfArea }) {
             val point = projection.offset(pin.coordinate.latitude, pin.coordinate.longitude)
@@ -618,19 +661,147 @@ private fun formatTime(capturedAt: Long): String =
     DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(capturedAt))
 
 @Composable
-private fun MapSurface(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPlacePin: (Double, Double) -> Unit) {
+private fun PinDropdownItem(
+    household: UntaggedHousehold,
+    onClick: () -> Unit,
+) {
+    val pinColor = MaterialTheme.colorScheme.primary
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("pin-dropdown-${household.displayCode}")
+            .clickable { onClick() }
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 2.dp,
+    ) {
+        Row(
+            Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    household.displayCode,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    household.headName,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            // Simple pin indicator (no material-icons artifact in this build)
+            Canvas(Modifier.size(24.dp)) {
+                val centerX = size.width / 2f
+                val centerY = size.height / 2f
+                val radius = size.minDimension / 3f
+                drawCircle(
+                    pinColor,
+                    radius = radius,
+                    center = Offset(centerX, centerY - radius * 0.3f)
+                )
+                val tipPath = Path().apply {
+                    moveTo(centerX - radius * 0.5f, centerY - radius * 0.3f + radius * 0.5f)
+                    lineTo(centerX + radius * 0.5f, centerY - radius * 0.3f + radius * 0.5f)
+                    lineTo(centerX, centerY + radius * 0.7f)
+                    close()
+                }
+                drawPath(tipPath, pinColor)
+            }
+        }
+    }
+}
+
+/**
+ * Bottom-sheet picker opened only after the user confirms the long-pressed point.
+ * Each row is an active, unarchived household without saved coordinates.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PinHouseholdPicker(
+    state: MapUiState,
+    onPinHousehold: (HouseholdId) -> Unit,
+    onCancel: () -> Unit,
+) {
+    if (state.showPinHouseholdPicker && state.untagged.isNotEmpty()) {
+        ModalBottomSheet(onDismissRequest = onCancel) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        "Pin a Household",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.testTag("pin-dropdown-title"),
+                    )
+                    TextButton(onClick = onCancel, modifier = Modifier.testTag("pin-dropdown-close")) {
+                        Text("Close", style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+                Text(
+                    "Long-pressed location: " + (state.pendingPinLocation?.let { "%.6f, %.6f".format(it.first, it.second) } ?: "Unknown"),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                        .testTag("pin-dropdown-location"),
+                )
+                Text(
+                    "Select a household without coordinates:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                LazyColumn(
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 420.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(state.untagged, key = { it.householdId.value }) { household ->
+                        PinDropdownItem(
+                            household = household,
+                            onClick = { onPinHousehold(household.householdId) },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MapSurface(
+    state: MapUiState,
+    onSelect: (HouseholdId?) -> Unit,
+    onPlacePin: (Double, Double) -> Unit,
+    onStartPinHousehold: (Double, Double) -> Unit,
+    onShowPinHouseholdPicker: () -> Unit,
+    onCancelPinHousehold: () -> Unit,
+) {
+    val mapShape = RoundedCornerShape(12.dp)
     Box(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .heightIn(min = 300.dp)
             .height(320.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+            .clip(mapShape)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, mapShape)
             .testTag("map-surface"),
     ) {
         when (state.basemap) {
-            BasemapMode.Online -> OsmTileMap(state, onSelect, onPlacePin)
-            BasemapMode.Offline -> OfflinePlot(state, onSelect, onPlacePin)
+            BasemapMode.Online -> OsmTileMap(state, onSelect, onPlacePin, onStartPinHousehold)
+            BasemapMode.Offline -> OfflinePlot(state, onSelect, onPlacePin, onStartPinHousehold)
         }
         if (state.basemap == BasemapMode.Online) {
             Text(
@@ -656,6 +827,36 @@ private fun MapSurface(state: MapUiState, onSelect: (HouseholdId?) -> Unit, onPl
                 .padding(horizontal = 6.dp, vertical = 2.dp)
                 .testTag("map-extent-label"),
         )
+        if (state.pendingPinLocation != null && !state.showPinHouseholdPicker) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 36.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 6.dp,
+                shadowElevation = 6.dp,
+            ) {
+                Row(
+                    modifier = Modifier.padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Button(
+                        onClick = onShowPinHouseholdPicker,
+                        modifier = Modifier.testTag("pin-household-action"),
+                    ) {
+                        Text("Pin a household")
+                    }
+                    TextButton(
+                        onClick = onCancelPinHousehold,
+                        modifier = Modifier.testTag("cancel-pending-pin"),
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -682,4 +883,5 @@ private fun StatusLines(state: MapUiState) {
         )
     }
 }
+
 
